@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getLots } from "../services/api";
+import {
+  getLots,
+  getStockingAdminUnits,
+  getStockingPurposes,
+  getTransitMethods,
+  getReleaseMethods,
+} from "../services/api";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -19,10 +25,30 @@ export const StockingEventForm = () => {
   // const [hatcheries, setHatcheries] = useState([]);
 
   const {
-    isPending,
-    error,
-    data: serverData,
+    isPending: lotIsPending,
+    error: lotError,
+    data: serverLots,
   } = useQuery({ queryKey: ["lots"], queryFn: () => getLots() });
+
+  const { data: stockingAdminUnits } = useQuery({
+    queryKey: ["stocking-admin-units"],
+    queryFn: () => getStockingAdminUnits(),
+  });
+
+  const { data: stockingPurposes } = useQuery({
+    queryKey: ["stocking-purposes"],
+    queryFn: () => getStockingPurposes(),
+  });
+
+  const { data: releaseMethods } = useQuery({
+    queryKey: ["release-methods"],
+    queryFn: () => getReleaseMethods(),
+  });
+
+  const { data: transitMethods } = useQuery({
+    queryKey: ["transit-methods"],
+    queryFn: () => getTransitMethods(),
+  });
 
   const {
     register,
@@ -41,7 +67,7 @@ export const StockingEventForm = () => {
     console.log("ERROR:::", error);
   };
 
-  let data = serverData ? serverData.results : [];
+  const data = serverLots ? serverLots.results : [];
   // convert spawn year to a string so our filters all work:
   data.forEach((d) => (d.spawn_year = d.spawn_year + ""));
 
@@ -106,9 +132,9 @@ export const StockingEventForm = () => {
     a.label > b.label ? 1 : -1,
   );
 
-  if (isPending) return "Loading...";
+  if (lotIsPending) return "Loading...";
 
-  if (error) return "An error has occurred: " + error.message;
+  if (lotError) return "An error has occurred: " + lotError.message;
 
   const lotFilterChanged = (event) => {
     const { name, value } = event.target;
@@ -124,8 +150,10 @@ export const StockingEventForm = () => {
   return (
     <>
       <Container>
+        <h1>Stocking Event Form</h1>
+
         <Form onSubmit={handleSubmit(onSubmit, onError)}>
-          <Card>
+          <Card className="my-1">
             <Card.Header as="h5">Lot</Card.Header>
             <Card.Body>
               <Row className="my-2">
@@ -257,12 +285,210 @@ export const StockingEventForm = () => {
             </Card.Body>
           </Card>
 
+          <Card className="my-1">
+            <Card.Header as="h5">Event Admin</Card.Header>
+            <Card.Body>
+              <Row className="my-2">
+                <Col>
+                  <Form.Group className="mb-3" controlId="stocking-admin-unit">
+                    <Form.Label>Stocking Admin Unit</Form.Label>
+                    <Form.Select aria-label="Select Admin Unit">
+                      <option value="">---</option>
+                      {stockingAdminUnits &&
+                        stockingAdminUnits.map((x) => (
+                          <option key={x.admin_unit_id} value={x.admin_unit_id}>
+                            {x.admin_unit_name}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group className="mb-3" controlId="pulication-date">
+                    <Form.Label>Publication Date</Form.Label>
+                    <Form.Control
+                      type="date"
+                      placeholder="Publication Date"
+                      aria-describedby="publicationsDateHelpBlock"
+                    />
+                    <Form.Text id="publicationsDateHelpBlock" muted>
+                      The date that this event can be made publicly available.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Card>
+                <Card.Body>
+                  <Card.Title>Stocking Purpose</Card.Title>
+
+                  <p>Check all that apply:</p>
+
+                  <Row className="my-2">
+                    {stockingPurposes &&
+                      stockingPurposes.map((x) => (
+                        <Col className="mt-1" md={4} key={x.code}>
+                          <Form.Check
+                            inline
+                            label={`${x.description} (${x.code})`}
+                            name="stocking-purpose"
+                            type="checkbox"
+                            id={x.code}
+                          />
+                        </Col>
+                      ))}
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Card.Body>
+          </Card>
+
+          <Card className="my-1">
+            <Card.Header as="h5">Event Attributes</Card.Header>
+            <Card.Body>
+              <Row>
+                <Col>
+                  <Form.Group className="mb-3" controlId="stocking-date">
+                    <Form.Label>Stocking Date</Form.Label>
+                    <Form.Control type="date" placeholder="Stocking Date" />
+                  </Form.Group>
+                </Col>
+
+                <Col>
+                  <Form.Group className="mb-3" controlId="release-method">
+                    <Form.Label>Releases Method</Form.Label>
+                    <Form.Select aria-label="Select Release Method">
+                      <option value="">---</option>
+                      {releaseMethods &&
+                        releaseMethods.map((x) => (
+                          <option key={x.code} value={x.code}>
+                            {`${x.description} (${x.code})`}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+
+                <Col>
+                  <Form.Group className="mb-3" controlId="transit-mortality">
+                    <Form.Label>Transit Mortality</Form.Label>
+                    <Form.Control type="number" placeholder="---" />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Card>
+                <Card.Body>
+                  <Card.Title>Transit Methods</Card.Title>
+
+                  <p>Check all that apply:</p>
+
+                  <Row className="my-2">
+                    {transitMethods &&
+                      transitMethods.map((x) => (
+                        <Col className="mt-1" md={4} key={x.code}>
+                          <Form.Check
+                            inline
+                            label={`${x.description} (${x.code})`}
+                            name="transit-method"
+                            type="checkbox"
+                            id={x.code}
+                          />
+                        </Col>
+                      ))}
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Card.Body>
+          </Card>
+
+          <Card className="my-1">
+            <Card.Header as="h5">Spatial Attributes</Card.Header>
+            <Card.Body>
+              <ul>
+                <li>Destination Waterbody</li>
+                <li>Stocked Waterbody</li>
+                <li>Stocking Site</li>
+                <li>DD_LAT and DD_LON</li>
+              </ul>
+            </Card.Body>
+          </Card>
+
+          <Card className="my-1">
+            <Card.Header as="h5">Fish Attributes</Card.Header>
+            <Card.Body>
+              <ul>
+                <li>Number Stocked</li>
+                <li>Development Stage</li>
+                <li>Fish Age</li>
+                <li>Fish Weight</li>
+                <li>Total Biomass</li>
+              </ul>
+            </Card.Body>
+          </Card>
+
+          <Card className="my-1">
+            <Card.Header as="h5">Fin Clips and Marks</Card.Header>
+            <Card.Body>
+              <ul>
+                <li>Clip Flag</li>
+                <ul>
+                  <li>Fin Clips</li>
+                  <li>Clip Retention</li>
+                </ul>
+
+                <li>Marking Flag</li>
+                <ul>
+                  <li>Tag Flag</li>
+                  <li>OTC Flag</li>
+                  <li>Brand Flag</li>
+                  <li>FL. Dye Flag</li>
+                  <li>Other Mark</li>
+                </ul>
+              </ul>
+            </Card.Body>
+          </Card>
+
+          <Card className="my-1">
+            <Card.Header as="h5">Tags Applied</Card.Header>
+            <Card.Body>
+              <Card.Text>
+                This will a form set to capture the tags applied and their
+                series
+              </Card.Text>
+            </Card.Body>
+          </Card>
+
+          <Card className="my-1">
+            <Card.Header as="h5">Comments</Card.Header>
+            <Card.Body>
+              <ul>
+                <li>Inventory Comments</li>
+                <li>Marking Comments</li>
+                <li>Stocking Comments</li>
+              </ul>
+            </Card.Body>
+          </Card>
+
           <Row className="my-2">
             <Button variant="primary" type="submit">
               Submit
             </Button>
           </Row>
         </Form>
+
+        <Card className="my-1">
+          <Card.Header as="h5">To dos</Card.Header>
+          <Card.Body>
+            <ul>
+              <li>Publication Date</li>
+              <li>Admin Unit</li>
+              <li>How</li>
+              <li>When</li>
+              <li>Comments</li>
+            </ul>
+          </Card.Body>
+        </Card>
       </Container>
     </>
   );
