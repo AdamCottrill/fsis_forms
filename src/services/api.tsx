@@ -47,12 +47,19 @@ export const getStockingPurposes = async () => {
   return payload;
 };
 
-export const getWaterbodies = async () => {
-  const url = "stocking/api/v1/stocked_waterbodies/";
+export const getWaterbodies = async (waterbody_like: string) => {
+  let url = "stocking/api/v1/stocked_waterbodies/";
+  if (waterbody_like) url += "?waterbody__like=" + waterbody_like;
   const payload = await fetch(url).then((res) => res.json());
   // the view is paginate
 
-  return payload;
+  const { results } = payload;
+  const results2 = results.map((d) => ({
+    value: d.waterbody_identifier,
+    label: `${d.label} <${d.waterbody_identifier}>)`,
+  }));
+
+  return results2.sort((a, b) => (a.label > b.label ? 1 : -1));
 };
 
 export const getStockingSites = async (site_name_like: string) => {

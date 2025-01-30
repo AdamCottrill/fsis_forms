@@ -9,6 +9,7 @@ import {
   getStockingPurposes,
   getTransitMethods,
   getStockingSites,
+  getWaterbodies,
 } from "../services/api";
 
 import AsyncSelect from "react-select/async";
@@ -161,6 +162,28 @@ export const StockingEventForm = () => {
     } else {
       setLotFilters({ ...lotFilters, [name]: value });
     }
+  };
+
+  const selectDestinationWaterbodyChange = (event) => {
+    console.log(event);
+  };
+
+  const loadDestinationWaterbodyOptions = (inputValue: string) => {
+    if (!inputValue) {
+      return [];
+    }
+    return getWaterbodies(inputValue);
+  };
+
+  const selectStockedWaterbodyChange = (event) => {
+    console.log(event);
+  };
+
+  const loadStockedWaterbodyOptions = (inputValue: string) => {
+    if (!inputValue) {
+      return [];
+    }
+    return getWaterbodies(inputValue);
   };
 
   const selectSiteChange = (event) => {
@@ -440,14 +463,24 @@ export const StockingEventForm = () => {
                       controlId="destination-waterbody"
                     >
                       <Form.Label>Destination Waterbody</Form.Label>
-                      <Form.Control type="number" placeholder="---" />
+                      <AsyncSelect
+                        defaultOptions={[]}
+                        loadOptions={loadDestinationWaterbodyOptions}
+                        onChange={selectDestinationWaterbodyChange}
+                        placeholder="Start typing to select waterbodies"
+                      />
                     </Form.Group>
                   </Row>
 
                   <Row>
                     <Form.Group className="mb-3" controlId="stocked-waterbody">
                       <Form.Label>Stocked Waterbody</Form.Label>
-                      <Form.Control type="number" placeholder="---" />
+                      <AsyncSelect
+                        defaultOptions={[]}
+                        loadOptions={loadStockedWaterbodyOptions}
+                        onChange={selectStockedWaterbodyChange}
+                        placeholder="Start typing to select waterbodies"
+                      />
                     </Form.Group>
                   </Row>
 
