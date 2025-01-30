@@ -1,12 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
+  getDevelopmentStages,
+  getFinClips,
   getLots,
+  getReleaseMethods,
   getStockingAdminUnits,
   getStockingPurposes,
   getTransitMethods,
-  getReleaseMethods,
+  getStockingSites,
 } from "../services/api";
+
+import AsyncSelect from "react-select/async";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -17,18 +22,34 @@ import Form from "react-bootstrap/Form";
 
 import { useForm, SubmitHandler } from "react-hook-form";
 
+interface SiteOption {
+  readonly value: string;
+  readonly label: string;
+}
+
 export const StockingEventForm = () => {
   const [lotFilters, setLotFilters] = useState({});
-  //const [selectedSpecies, setSelectedSpecies] = useState("");
-  // const [strains, setstrains] = useState([]);
-  // const [proponents, setProponents] = useState([]);
-  // const [hatcheries, setHatcheries] = useState([]);
 
   const {
     isPending: lotIsPending,
     error: lotError,
     data: serverLots,
   } = useQuery({ queryKey: ["lots"], queryFn: () => getLots() });
+
+  const { data: developmentStages } = useQuery({
+    queryKey: ["development-stages"],
+    queryFn: () => getDevelopmentStages(),
+  });
+
+  const { data: finClips } = useQuery({
+    queryKey: ["fin-clips"],
+    queryFn: () => getFinClips(),
+  });
+
+  const { data: releaseMethods } = useQuery({
+    queryKey: ["release-methods"],
+    queryFn: () => getReleaseMethods(),
+  });
 
   const { data: stockingAdminUnits } = useQuery({
     queryKey: ["stocking-admin-units"],
@@ -38,11 +59,6 @@ export const StockingEventForm = () => {
   const { data: stockingPurposes } = useQuery({
     queryKey: ["stocking-purposes"],
     queryFn: () => getStockingPurposes(),
-  });
-
-  const { data: releaseMethods } = useQuery({
-    queryKey: ["release-methods"],
-    queryFn: () => getReleaseMethods(),
   });
 
   const { data: transitMethods } = useQuery({
@@ -145,6 +161,17 @@ export const StockingEventForm = () => {
     } else {
       setLotFilters({ ...lotFilters, [name]: value });
     }
+  };
+
+  const selectSiteChange = (event) => {
+    console.log(event);
+  };
+
+  const loadSiteOptions = (inputValue: string) => {
+    if (!inputValue) {
+      return [];
+    }
+    return getStockingSites(inputValue);
   };
 
   return (
@@ -356,7 +383,7 @@ export const StockingEventForm = () => {
 
                 <Col>
                   <Form.Group className="mb-3" controlId="release-method">
-                    <Form.Label>Releases Method</Form.Label>
+                    <Form.Label>Release Method</Form.Label>
                     <Form.Select aria-label="Select Release Method">
                       <option value="">---</option>
                       {releaseMethods &&
@@ -405,47 +432,238 @@ export const StockingEventForm = () => {
           <Card className="my-1">
             <Card.Header as="h5">Spatial Attributes</Card.Header>
             <Card.Body>
-              <ul>
-                <li>Destination Waterbody</li>
-                <li>Stocked Waterbody</li>
-                <li>Stocking Site</li>
-                <li>DD_LAT and DD_LON</li>
-              </ul>
+              <Row>
+                <Col md={3}>
+                  <Row>
+                    <Form.Group
+                      className="mb-3"
+                      controlId="destination-waterbody"
+                    >
+                      <Form.Label>Destination Waterbody</Form.Label>
+                      <Form.Control type="number" placeholder="---" />
+                    </Form.Group>
+                  </Row>
+
+                  <Row>
+                    <Form.Group className="mb-3" controlId="stocked-waterbody">
+                      <Form.Label>Stocked Waterbody</Form.Label>
+                      <Form.Control type="number" placeholder="---" />
+                    </Form.Group>
+                  </Row>
+
+                  <Row>
+                    <Form.Group className="mb-3" controlId="stocking-site">
+                      <Form.Label>Stocking Site</Form.Label>
+                      <AsyncSelect
+                        defaultOptions={[]}
+                        loadOptions={loadSiteOptions}
+                        onChange={selectSiteChange}
+                        placeholder="Start typing to select Stocking Site"
+                      />
+                    </Form.Group>
+                  </Row>
+
+                  <Row>
+                    <Col>
+                      <Form.Group className="mb-3" controlId="latitude">
+                        <Form.Label>Latitude</Form.Label>
+                        <Form.Control
+                          type="number"
+                          placeholder="---"
+                          aria-describedby="latitudeHelpBlock"
+                        />
+                        <Form.Text id="latitudeHelpBlock" muted>
+                          Decimal Degrees North
+                        </Form.Text>
+                      </Form.Group>
+                    </Col>
+                    <Col>
+                      <Form.Group className="mb-3" controlId="longitude">
+                        <Form.Label>Longitude</Form.Label>
+                        <Form.Control
+                          type="number"
+                          placeholder="---"
+                          aria-describedby="longitudeHelpBlock"
+                        />
+                        <Form.Text id="longitudeHelpBlock" muted>
+                          Decimal Degrees East
+                        </Form.Text>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col md={9}>
+                  <p>the map</p>
+                </Col>
+              </Row>
             </Card.Body>
           </Card>
 
           <Card className="my-1">
             <Card.Header as="h5">Fish Attributes</Card.Header>
             <Card.Body>
-              <ul>
-                <li>Number Stocked</li>
-                <li>Development Stage</li>
-                <li>Fish Age</li>
-                <li>Fish Weight</li>
-                <li>Total Biomass</li>
-              </ul>
+              <Row>
+                <Col>
+                  <Form.Group className="mb-3" controlId="number-stocked">
+                    <Form.Label>Number Stocked</Form.Label>
+                    <Form.Control type="number" placeholder="---" />
+                  </Form.Group>
+                </Col>
+
+                <Col>
+                  <Form.Group className="mb-3" controlId="fish-weight">
+                    <Form.Label>Fish Weight (g)</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="---"
+                      aria-describedby="fishWeightHelpBlock"
+                    />
+                    <Form.Text id="fishWeightHelpBlock" muted>
+                      Average weight in grams of an individual fish.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+
+                <Col>
+                  <Form.Group className="mb-3" controlId="total-biomass">
+                    <Form.Label>Total Biomass (kg)</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="---"
+                      aria-describedby="totalBiomassHelpBlock"
+                    />
+                    <Form.Text id="totalBiomassHelpBlock" muted>
+                      Total biomass in kilogram of an all stocked fish.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col>
+                  <Form.Group className="mb-3" controlId="fish-age">
+                    <Form.Label>Fish Age (g)</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="---"
+                      aria-describedby="fishAgeHelpBlock"
+                    />
+                    <Form.Text id="fishAgeHelpBlock" muted>
+                      The age (in months) of the fish at time of stocking.
+                    </Form.Text>
+                  </Form.Group>
+                </Col>
+
+                <Col>
+                  <Form.Group className="mb-3" controlId="development-stage">
+                    <Form.Label>Development Stage</Form.Label>
+                    <Form.Select aria-label="Select Development Stage">
+                      <option value="">---</option>
+                      {developmentStages &&
+                        developmentStages.map((x) => (
+                          <option key={x.code} value={x.code}>
+                            {`${x.description} (${x.code})`}
+                          </option>
+                        ))}
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+              </Row>
             </Card.Body>
           </Card>
 
           <Card className="my-1">
             <Card.Header as="h5">Fin Clips and Marks</Card.Header>
             <Card.Body>
-              <ul>
-                <li>Clip Flag</li>
-                <ul>
-                  <li>Fin Clips</li>
-                  <li>Clip Retention</li>
-                </ul>
+              <Card className="my-1">
+                <Card.Body>
+                  <Card.Title>Fin Clips</Card.Title>
 
-                <li>Marking Flag</li>
-                <ul>
-                  <li>Tag Flag</li>
-                  <li>OTC Flag</li>
-                  <li>Brand Flag</li>
-                  <li>FL. Dye Flag</li>
-                  <li>Other Mark</li>
-                </ul>
-              </ul>
+                  <Row>
+                    <Col>
+                      <Form.Check // prettier-ignore
+                        type="checkbox"
+                        id="clip-flag"
+                        label="Were these fish clipped?"
+                      />
+                    </Col>
+
+                    <Col>
+                      <Form.Group className="mb-3" controlId="clip-retention">
+                        <Form.Label>Clip Retention</Form.Label>
+                        <Form.Control type="number" placeholder="---" />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <Row className="my-2">
+                    <p>Check all that apply:</p>
+
+                    {finClips &&
+                      finClips.map((x) => (
+                        <Col className="mt-1" md={4} key={x.code}>
+                          <Form.Check
+                            inline
+                            label={`${x.description} (${x.code}) [${x.fn2_code}]`}
+                            name="fin-clips"
+                            type="checkbox"
+                            id={x.code}
+                          />
+                        </Col>
+                      ))}
+                  </Row>
+                </Card.Body>
+              </Card>
+
+              <Card className="my-1">
+                <Card.Body>
+                  <Card.Title>Marks and Brands</Card.Title>
+
+                  <Row>
+                    <Col>
+                      <Form.Check // prettier-ignore
+                        type="checkbox"
+                        id="mark-flag"
+                        label="Were these fish marked?"
+                      />
+                    </Col>
+                  </Row>
+
+                  <Row className="my-2">
+                    <Col>
+                      <Form.Check // prettier-ignore
+                        type="checkbox"
+                        id="OTC-flag"
+                        label="Oxytetracycline (OTC)"
+                      />
+                    </Col>
+
+                    <Col>
+                      <Form.Check // prettier-ignore
+                        type="checkbox"
+                        id="brand-flag"
+                        label="Brand"
+                      />
+                    </Col>
+
+                    <Col>
+                      <Form.Check // prettier-ignore
+                        type="checkbox"
+                        id="fl-dye-flag"
+                        label="Fluorescent Dye"
+                      />
+                    </Col>
+
+                    <Col>
+                      <Form.Check // prettier-ignore
+                        type="checkbox"
+                        id="other_mark"
+                        label="Other"
+                      />
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
             </Card.Body>
           </Card>
 
@@ -453,7 +671,7 @@ export const StockingEventForm = () => {
             <Card.Header as="h5">Tags Applied</Card.Header>
             <Card.Body>
               <Card.Text>
-                This will a form set to capture the tags applied and their
+                This will be a formset to capture the tags applied and their
                 series
               </Card.Text>
             </Card.Body>
@@ -462,11 +680,32 @@ export const StockingEventForm = () => {
           <Card className="my-1">
             <Card.Header as="h5">Comments</Card.Header>
             <Card.Body>
-              <ul>
-                <li>Inventory Comments</li>
-                <li>Marking Comments</li>
-                <li>Stocking Comments</li>
-              </ul>
+              <Form.Group className="mb-3" controlId="inventory-comments">
+                <Form.Label>Inventory Comments</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  placeholder=""
+                  style={{ height: "100px" }}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="marking-comments">
+                <Form.Label>Marking Comments</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  placeholder=""
+                  style={{ height: "100px" }}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="stocking-comments">
+                <Form.Label>Stocking Comments</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  placeholder=""
+                  style={{ height: "100px" }}
+                />
+              </Form.Group>
             </Card.Body>
           </Card>
 
@@ -476,19 +715,6 @@ export const StockingEventForm = () => {
             </Button>
           </Row>
         </Form>
-
-        <Card className="my-1">
-          <Card.Header as="h5">To dos</Card.Header>
-          <Card.Body>
-            <ul>
-              <li>Publication Date</li>
-              <li>Admin Unit</li>
-              <li>How</li>
-              <li>When</li>
-              <li>Comments</li>
-            </ul>
-          </Card.Body>
-        </Card>
       </Container>
     </>
   );
