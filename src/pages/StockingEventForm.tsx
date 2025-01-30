@@ -8,6 +8,10 @@ import {
   getStockingAdminUnits,
   getStockingPurposes,
   getTransitMethods,
+  getTagColours,
+  getTagTypes,
+  getTagPositions,
+  getTagOrigins,
   getStockingSites,
   getWaterbodies,
 } from "../services/api";
@@ -84,6 +88,26 @@ export const StockingEventForm = () => {
   const { data: transitMethods } = useQuery({
     queryKey: ["transit-methods"],
     queryFn: () => getTransitMethods(),
+  });
+
+  const { data: tagTypes } = useQuery({
+    queryKey: ["tag-types"],
+    queryFn: () => getTagTypes(),
+  });
+
+  const { data: tagColours } = useQuery({
+    queryKey: ["tag-colours"],
+    queryFn: () => getTagColours(),
+  });
+
+  const { data: tagPositions } = useQuery({
+    queryKey: ["tag-positions"],
+    queryFn: () => getTagPositions(),
+  });
+
+  const { data: tagOrigins } = useQuery({
+    queryKey: ["tag-origins"],
+    queryFn: () => getTagOrigins(),
   });
 
   const {
@@ -660,10 +684,143 @@ export const StockingEventForm = () => {
             <Card className="my-1">
               <Card.Header as="h5">Tags Applied</Card.Header>
               <Card.Body>
-                <Card.Text>
-                  This will be a formset to capture the tags applied and their
-                  series
-                </Card.Text>
+                <Card className="my-1">
+                  <Card.Header>Applied Tag 1</Card.Header>
+                  <Card.Body>
+                    <Row>
+                      <Col md={3}>
+                        <Form.Group className="mb-3" controlId="tagid-1">
+                          <Form.Label>TagID</Form.Label>
+                          <Form.Control placeholder="---" />
+                        </Form.Group>
+                      </Col>
+
+                      <Col md={3}>
+                        <Form.Group
+                          className="mb-3"
+                          controlId="tag-1-series-start"
+                        >
+                          <Form.Label>Tag Series Start</Form.Label>
+                          <Form.Control type="number" placeholder="---" />
+                        </Form.Group>
+                      </Col>
+
+                      <Col md={3}>
+                        <Form.Group
+                          className="mb-3"
+                          controlId="tag-1-series-end"
+                        >
+                          <Form.Label>Tag Series End</Form.Label>
+                          <Form.Control type="number" placeholder="---" />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col>
+                        <Form.Group className="mb-3" controlId="tag-1-type">
+                          <Form.Label>Tag Type</Form.Label>
+                          <Select
+                            placeholder="---"
+                            options={tagTypes}
+                            isLoading={!tagTypes}
+                            closeMenuOnSelect={true}
+                            getOptionValue={(option) => option.code}
+                            getOptionLabel={(option) =>
+                              `${option.description} (${option.code})`
+                            }
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col>
+                        <Form.Group className="mb-3" controlId="tag-1-colour">
+                          <Form.Label>Tag Colour</Form.Label>
+                          <Select
+                            placeholder="---"
+                            options={tagColours}
+                            isLoading={!tagColours}
+                            closeMenuOnSelect={true}
+                            getOptionValue={(option) => option.code}
+                            getOptionLabel={(option) =>
+                              `${option.description} (${option.code})`
+                            }
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col>
+                        <Form.Group className="mb-3" controlId="tag-1-position">
+                          <Form.Label>Tag Position</Form.Label>
+                          <Select
+                            placeholder="---"
+                            options={tagPositions}
+                            isLoading={!tagPositions}
+                            closeMenuOnSelect={true}
+                            getOptionValue={(option) => option.code}
+                            getOptionLabel={(option) =>
+                              `${option.description} (${option.code})`
+                            }
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col>
+                        <Form.Group className="mb-3" controlId="tag-1-origin">
+                          <Form.Label>Tag Origin</Form.Label>
+                          <Select
+                            placeholder="---"
+                            options={tagOrigins}
+                            isLoading={!tagOrigins}
+                            closeMenuOnSelect={true}
+                            getOptionValue={(option) => option.code}
+                            getOptionLabel={(option) =>
+                              `${option.description} (${option.code})`
+                            }
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col md={3}>
+                        <Form.Group
+                          className="mb-3"
+                          controlId="tag-1-retention-pct"
+                        >
+                          <Form.Label>Tag Retention (pct.)</Form.Label>
+                          <Form.Control type="number" placeholder="---" />
+                        </Form.Group>
+                      </Col>
+
+                      <Col md={3}>
+                        <Form.Group
+                          className="mb-3"
+                          controlId="tag-1-retention-sam-size"
+                        >
+                          <Form.Label>Tag Retention Sample Size</Form.Label>
+                          <Form.Control type="number" placeholder="---" />
+                        </Form.Group>
+                      </Col>
+
+                      <Col md={3}>
+                        <Form.Group
+                          className="mb-3"
+                          controlId="tag-1-retention-pop-size"
+                        >
+                          <Form.Label>Tag Retention Population Size</Form.Label>
+                          <Form.Control type="number" placeholder="---" />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+
+                <Row className="mt-2">
+                  <Col md={2}>
+                    {" "}
+                    <Button>Add Another Tag</Button>{" "}
+                  </Col>
+                </Row>
               </Card.Body>
             </Card>
 

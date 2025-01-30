@@ -35,6 +35,30 @@ export const getTransitMethods = async () => {
   return payload;
 };
 
+export const getTagTypes = async () => {
+  const url = "stocking/api/v1/tag_types/";
+  const payload = await fetch(url).then((res) => res.json());
+  return payload;
+};
+
+export const getTagColours = async () => {
+  const url = "stocking/api/v1/tag_colours/";
+  const payload = await fetch(url).then((res) => res.json());
+  return payload;
+};
+
+export const getTagOrigins = async () => {
+  const url = "stocking/api/v1/tag_origins/";
+  const payload = await fetch(url).then((res) => res.json());
+  return payload;
+};
+
+export const getTagPositions = async () => {
+  const url = "stocking/api/v1/tag_positions/";
+  const payload = await fetch(url).then((res) => res.json());
+  return payload;
+};
+
 export const getStockingAdminUnits = async () => {
   const url = "stocking/api/v1/stocking_admin_units/";
   const payload = await fetch(url).then((res) => res.json());
