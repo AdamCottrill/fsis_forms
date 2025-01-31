@@ -16,6 +16,8 @@ import {
   getWaterbodies,
 } from "../services/api";
 
+import { ClickableMap } from "../components/ClickableMap";
+
 import Select from "react-select";
 import AsyncSelect from "react-select/async";
 
@@ -26,11 +28,16 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 interface SiteOption {
   readonly value: string;
   readonly label: string;
+}
+
+interface StockingEventFormInputs {
+  dd_lat: string;
+  dd_lon: string;
 }
 
 // create an key-value array of objects for drop-down lists in fsis-infinity forms
@@ -53,6 +60,16 @@ const get_code_labels = (data, code, label, descending = false) => {
 
 export const StockingEventForm = () => {
   const [lotFilters, setLotFilters] = useState({});
+  const [point, setPoint] = useState([]);
+  const [bounds, setBounds] = useState([
+    [41.67, -95.15],
+    [55.86, -74.32],
+  ]);
+
+  const default_values = {
+    dd_lat: "",
+    dd_lon: "",
+  };
 
   const {
     isPending: lotIsPending,
@@ -112,9 +129,12 @@ export const StockingEventForm = () => {
 
   const {
     register,
+    control,
     handleSubmit,
+    trigger,
+    reset,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = useForm<StockingEventFormInputs>(default_values);
 
   //const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
@@ -211,13 +231,22 @@ export const StockingEventForm = () => {
     return getStockingSites(inputValue);
   };
 
+  const createPoint = (point_attrs) => {
+    setPoint([...point_attrs]);
+    reset({
+      dd_lat: point_attrs[0],
+      dd_lon: point_attrs[1],
+    });
+    trigger(["dd_lat", "dd_lon"]);
+  };
+
   return (
     <>
       <Container>
         <Row className="justify-content-center">
           <h1>Stocking Event Form</h1>
 
-          <Form onSubmit={handleSubmit(onSubmit, onError)}>
+          <Form onSubmit={handleSubmit(onSubmit, onError)} onReset={reset}>
             <Card className="my-1">
               <Card.Header as="h5">Lot</Card.Header>
               <Card.Body>
@@ -380,7 +409,7 @@ export const StockingEventForm = () => {
               <Card.Header as="h5">Event Attributes</Card.Header>
               <Card.Body>
                 <Row>
-                  <Col>
+                  <Col md={2}>
                     <Form.Group className="mb-3" controlId="stocking-date">
                       <Form.Label>Stocking Date</Form.Label>
                       <Form.Control type="date" placeholder="Stocking Date" />
@@ -404,9 +433,23 @@ export const StockingEventForm = () => {
                     </Form.Group>
                   </Col>
 
-                  <Col>
+                  <Col md={2}>
                     <Form.Group className="mb-3" controlId="transit-mortality">
                       <Form.Label>Transit Mortality</Form.Label>
+                      <Form.Control type="number" placeholder="---" />
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={2}>
+                    <Form.Group className="mb-3" controlId="site-temperature">
+                      <Form.Label>Site Temperature (C)</Form.Label>
+                      <Form.Control type="number" placeholder="---" />
+                    </Form.Group>
+                  </Col>
+
+                  <Col md={2}>
+                    <Form.Group className="mb-3" controlId="water-depth">
+                      <Form.Label>Water Depth (m)</Form.Label>
                       <Form.Control type="number" placeholder="---" />
                     </Form.Group>
                   </Col>
@@ -486,35 +529,92 @@ export const StockingEventForm = () => {
 
                     <Row>
                       <Col>
-                        <Form.Group className="mb-3" controlId="latitude">
+                        <Form.Group className="mb-3" controlId="dd_lat">
                           <Form.Label>Latitude</Form.Label>
-                          <Form.Control
-                            type="number"
-                            placeholder="---"
-                            aria-describedby="latitudeHelpBlock"
+
+                          <Controller
+                            control={control}
+                            name="dd_lat"
+                            render={({
+                              field: { onChange, onBlur, value, ref },
+                            }) => (
+                              <Form.Control
+                                onChange={onChange}
+                                value={value}
+                                ref={ref}
+                                isInvalid={errors.dd_lat}
+                                aria-describedby="dd_lat-help-block"
+                                type="number"
+                                placeholder="---"
+                              />
+                            )}
                           />
-                          <Form.Text id="latitudeHelpBlock" muted>
+
+                          <Form.Text id="dd_lat-help-block" muted>
                             Dec. Degrees North
                           </Form.Text>
+
+                          <Form.Control.Feedback type="invalid">
+                            {errors.dd_lat?.type === "required" && (
+                              <small>dd_lat is required</small>
+                            )}
+
+                            {errors.dd_lat?.type === "minValue" && (
+                              <small>{`dd_lat must but greater than or equal to ${bounds[0][0]}`}</small>
+                            )}
+                            {errors.dd_lat?.type === "maxValue" && (
+                              <small>{`dd_lat must but less than or equal to ${bounds[1][0]}`}</small>
+                            )}
+                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
                       <Col>
-                        <Form.Group className="mb-3" controlId="longitude">
+                        <Form.Group className="mb-3" controlId="dd_lon">
                           <Form.Label>Longitude</Form.Label>
-                          <Form.Control
-                            type="number"
-                            placeholder="---"
-                            aria-describedby="longitudeHelpBlock"
+                          <Controller
+                            control={control}
+                            name="dd_lon"
+                            render={({
+                              field: { onChange, onBlur, value, ref },
+                            }) => (
+                              <Form.Control
+                                onChange={onChange}
+                                value={value}
+                                ref={ref}
+                                isInvalid={errors.dd_lon}
+                                aria-describedby="dd_lon-help-block"
+                                type="number"
+                                placeholder="---"
+                              />
+                            )}
                           />
-                          <Form.Text id="longitudeHelpBlock" muted>
+
+                          <Form.Text id="dd_lon-help-block" muted>
                             Dec. Degrees East
                           </Form.Text>
+
+                          <Form.Control.Feedback type="invalid">
+                            {errors.dd_lon?.type === "required" && (
+                              <small>dd_lon is required</small>
+                            )}
+
+                            {errors.dd_lon?.type === "minValue" && (
+                              <small>{`dd_lon must but greater than or equal to ${bounds[0][1]}`}</small>
+                            )}
+                            {errors.dd_lon?.type === "maxValue" && (
+                              <small>{`dd_lon must but less than or equal to ${bounds[1][1]}`}</small>
+                            )}
+                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
                     </Row>
                   </Col>
                   <Col md={9}>
-                    <p>the map</p>
+                    <ClickableMap
+                      bounds={bounds}
+                      point={point}
+                      createPoint={createPoint}
+                    />
                   </Col>
                 </Row>
               </Card.Body>
@@ -563,7 +663,7 @@ export const StockingEventForm = () => {
                 <Row>
                   <Col>
                     <Form.Group className="mb-3" controlId="fish-age">
-                      <Form.Label>Fish Age (g)</Form.Label>
+                      <Form.Label>Fish Age</Form.Label>
                       <Form.Control
                         type="number"
                         placeholder="---"
@@ -604,18 +704,20 @@ export const StockingEventForm = () => {
                     <Row className="my-2">
                       <p>Check all that apply:</p>
 
-                      {finClips &&
-                        finClips.map((x) => (
-                          <Col className="mb-2" md={4} key={x.code}>
-                            <Form.Check
-                              inline
-                              label={`${x.description} (${x.code}) [${x.fn2_code}]`}
-                              name="fin-clips"
-                              type="checkbox"
-                              id={x.code}
-                            />
-                          </Col>
-                        ))}
+                      <Row className="row-cols-4">
+                        {finClips &&
+                          finClips.map((x) => (
+                            <Col className="mb-2" key={x.code}>
+                              <Form.Check
+                                inline
+                                label={`${x.description} (${x.code}) [${x.fn2_code}]`}
+                                name="fin-clips"
+                                type="checkbox"
+                                id={x.code}
+                              />
+                            </Col>
+                          ))}
+                      </Row>
                     </Row>
 
                     <Row>
@@ -856,10 +958,12 @@ export const StockingEventForm = () => {
               </Card.Body>
             </Card>
 
-            <Row className="my-2">
-              <Button variant="primary" type="submit">
-                Submit
-              </Button>
+            <Row className="my-4 justify-content-end">
+              <Col md={1}>
+                <Button variant="primary" type="submit">
+                  Submit
+                </Button>
+              </Col>
             </Row>
           </Form>
         </Row>
