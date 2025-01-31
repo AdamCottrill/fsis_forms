@@ -31,7 +31,7 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 import { ClickableMap } from "../components/ClickableMap";
 import { AccordionToggle } from "../components/AccordionToggle";
-import { get_code_labels } from "../utils";
+import { get_value_labels } from "../utils";
 
 interface SiteOption {
   readonly value: string;
@@ -39,12 +39,14 @@ interface SiteOption {
 }
 
 interface StockingEventFormInputs {
+  lot_id: number;
+  stocking_admin_unit_id: number;
   dd_lat: string;
   dd_lon: string;
 }
 
 export const StockingEventForm = () => {
-  const [lotFilters, setLotFilters] = useState({});
+  const lotFilters = {};
   const [point, setPoint] = useState([]);
   const [bounds, setBounds] = useState([
     [41.67, -95.15],
@@ -113,7 +115,6 @@ export const StockingEventForm = () => {
   });
 
   const {
-    register,
     control,
     handleSubmit,
     trigger,
@@ -140,47 +141,52 @@ export const StockingEventForm = () => {
   // convert spawn year to a string so our filters all work:
   lotData.forEach((d) => (d.spawn_year = d.spawn_year + ""));
 
-  const filteredLots = lotData.filter((item) =>
+  let filteredLots = lotData.filter((item) =>
     Object.entries(lotFilters).every(([key, value]) => item[key] === value),
   );
 
-  const spawnYears = get_code_labels(
+  const spawnYears = get_value_labels(
     filteredLots,
     "spawn_year",
     "spawn_year",
     true,
   );
-  const lot_nums = get_code_labels(filteredLots, "lot_num", "lot_num");
-  const funding_types = get_code_labels(
+  const lot_nums = get_value_labels(filteredLots, "lot_num", "lot_num");
+  const funding_types = get_value_labels(
     filteredLots,
     "funding_type",
     "funding_type",
   );
 
-  const species = get_code_labels(filteredLots, "species_code", "species_name");
-  const strains = get_code_labels(filteredLots, "strain_slug", "strain_name");
+  const species = get_value_labels(
+    filteredLots,
+    "species_code",
+    "species_name",
+  );
+  const strains = get_value_labels(filteredLots, "strain_slug", "strain_name");
 
-  const proponents = get_code_labels(
+  const proponents = get_value_labels(
     filteredLots,
     "proponent_abbrev",
     "proponent_name",
   );
 
-  const hatcheries = get_code_labels(
+  const hatcheries = get_value_labels(
     filteredLots,
     "rearing_location_abbrev",
     "rearing_location_name",
   );
 
   const selectChanged = (event, { name }) => {
-    const { value } = event;
-    if (value === "") {
-      const current = { ...lotFilters };
-      delete current[name];
-      setLotFilters({ ...current });
+    if (event === null) {
+      delete lotFilters[name];
     } else {
-      setLotFilters({ ...lotFilters, [name]: value });
+      lotFilters = { ...lotFilters, [name]: event.value };
     }
+
+    filteredLots = lotData.filter((item) =>
+      Object.entries(lotFilters).every(([key, value]) => item[key] === value),
+    );
   };
 
   const selectDestinationWaterbodyChange = (event) => {
@@ -225,6 +231,16 @@ export const StockingEventForm = () => {
     trigger(["dd_lat", "dd_lon"]);
   };
 
+  const selectLotOptions = filteredLots.map((x) => ({
+    value: x.lot_id,
+    label: x.slug,
+  }));
+
+  const stockingAdminUnitOptions = stockingAdminUnits.map((x) => ({
+    value: x.admin_unit_id,
+    label: x.admin_unit_name,
+  }));
+
   return (
     <>
       <Container>
@@ -244,19 +260,30 @@ export const StockingEventForm = () => {
                       controlId="select-lot-identifier"
                     >
                       <Form.Label>Lot Identifier</Form.Label>
-                      <Select
-                        inputId="select-lot-identifier"
-                        placeholder={
-                          <div className="select-placeholder-text">
-                            Select Lot Identifier...
-                          </div>
-                        }
-                        options={filteredLots}
-                        isLoading={!filteredLots}
-                        name={"lot_slug_select"}
-                        closeMenuOnSelect={true}
-                        getOptionLabel={(option) => option.slug}
-                        getOptionValue={(option) => option.id}
+
+                      <Controller
+                        control={control}
+                        name="lot_id"
+                        render={({ field: { onChange, value, ...field } }) => (
+                          <Select
+                            {...field}
+                            isClearable={true}
+                            inputId="select-lot-identifier"
+                            placeholder={
+                              <div className="select-placeholder-text">
+                                Select Lot Identifier...
+                              </div>
+                            }
+                            value={selectLotOptions.find(
+                              (x) => x.value === value,
+                            )}
+                            onChange={(val) => onChange(val.value)}
+                            options={selectLotOptions}
+                            isLoading={!selectLotOptions}
+                            closeMenuOnSelect={true}
+                          />
+                        )}
+                        rules={{ required: true }}
                       />
                     </Form.Group>
                   </Col>
@@ -265,6 +292,7 @@ export const StockingEventForm = () => {
                       <Form.Label>Lot number</Form.Label>
 
                       <Select
+                        isClearable={true}
                         inputId="select-lot-number"
                         placeholder={
                           <div className="select-placeholder-text">
@@ -287,6 +315,7 @@ export const StockingEventForm = () => {
                       <Form.Label>Species</Form.Label>
 
                       <Select
+                        isClearable={true}
                         inputId="select-species"
                         placeholder={
                           <div className="select-placeholder-text">
@@ -295,7 +324,7 @@ export const StockingEventForm = () => {
                         }
                         options={species}
                         isLoading={!species}
-                        name="species"
+                        name="species_code"
                         closeMenuOnSelect={true}
                         onChange={selectChanged}
                       />
@@ -307,6 +336,7 @@ export const StockingEventForm = () => {
                       <Form.Label>Strain</Form.Label>
 
                       <Select
+                        isClearable={true}
                         inputId="select-strain"
                         placeholder={
                           <div className="select-placeholder-text">
@@ -327,6 +357,7 @@ export const StockingEventForm = () => {
                       <Form.Label>Spawn Year</Form.Label>
 
                       <Select
+                        isClearable={true}
                         inputId="select-spawn-year"
                         placeholder={
                           <div className="select-placeholder-text">
@@ -349,6 +380,7 @@ export const StockingEventForm = () => {
                       <Form.Label>Proponent</Form.Label>
 
                       <Select
+                        isClearable={true}
                         inputId="select-proponent"
                         placeholder={
                           <div className="select-placeholder-text">
@@ -371,6 +403,7 @@ export const StockingEventForm = () => {
                       <Form.Label>Rearing Location</Form.Label>
 
                       <Select
+                        isClearable={true}
                         inputId="select-rearing-location"
                         placeholder={
                           <div className="select-placeholder-text">
@@ -379,7 +412,7 @@ export const StockingEventForm = () => {
                         }
                         options={hatcheries}
                         isLoading={!hatcheries}
-                        name="rearing_type_abbrev"
+                        name="rearing_location_abbrev"
                         closeMenuOnSelect={true}
                         onChange={selectChanged}
                       />
@@ -393,6 +426,7 @@ export const StockingEventForm = () => {
                       <Form.Label>Funding Type</Form.Label>
 
                       <Select
+                        isClearable={true}
                         inputId="select-funding-type"
                         placeholder={
                           <div className="select-placeholder-text">
@@ -424,16 +458,27 @@ export const StockingEventForm = () => {
                     >
                       <Form.Label>Stocking Admin Unit</Form.Label>
 
-                      <Select
-                        placeholder={
-                          <div className="select-placeholder-text">---</div>
-                        }
-                        inputId="select-stocking-admin-unit"
-                        options={stockingAdminUnits}
-                        isLoading={!stockingAdminUnits}
-                        closeMenuOnSelect={true}
-                        getOptionValue={(option) => option.admin_unit_id}
-                        getOptionLabel={(option) => option.admin_unit_name}
+                      <Controller
+                        control={control}
+                        name="stocking_admin_unit_id"
+                        render={({ field: { onChange, value, ...field } }) => (
+                          <Select
+                            {...field}
+                            isClearable={true}
+                            placeholder={
+                              <div className="select-placeholder-text">---</div>
+                            }
+                            inputId="select-stocking-admin-unit"
+                            options={stockingAdminUnitOptions}
+                            isLoading={!stockingAdminUnitOptions}
+                            closeMenuOnSelect={true}
+                            value={stockingAdminUnitOptions.find(
+                              (x) => x.value === value,
+                            )}
+                            onChange={(val) => onChange(val.value)}
+                          />
+                        )}
+                        rules={{ required: true }}
                       />
                     </Form.Group>
                   </Col>
@@ -504,6 +549,7 @@ export const StockingEventForm = () => {
                       <Form.Label>Release Method</Form.Label>
 
                       <Select
+                        isClearable={true}
                         inputId="select-release-method"
                         placeholder={
                           <div className="select-placeholder-text">---</div>
@@ -802,6 +848,7 @@ export const StockingEventForm = () => {
                     >
                       <Form.Label>Development Stage</Form.Label>
                       <Select
+                        isClearable={true}
                         inputId="select-development-stage"
                         placeholder={
                           <div className="select-placeholder-text">---</div>
@@ -966,6 +1013,7 @@ export const StockingEventForm = () => {
                             >
                               <Form.Label>Tag Type</Form.Label>
                               <Select
+                                isClearable={true}
                                 inputId="select-tag-1-type"
                                 placeholder="---"
                                 options={tagTypes}
@@ -985,6 +1033,7 @@ export const StockingEventForm = () => {
                             >
                               <Form.Label>Tag Colour</Form.Label>
                               <Select
+                                isClearable={true}
                                 inputId="select-tag-1-colour"
                                 placeholder="---"
                                 options={tagColours}
@@ -1005,6 +1054,7 @@ export const StockingEventForm = () => {
                             >
                               <Form.Label>Tag Position</Form.Label>
                               <Select
+                                isClearable={true}
                                 inputId="select-tag-1-position"
                                 placeholder="---"
                                 options={tagPositions}
@@ -1025,6 +1075,7 @@ export const StockingEventForm = () => {
                             >
                               <Form.Label>Tag Origin</Form.Label>
                               <Select
+                                isClearable={true}
                                 inputId="select-tag-1-origin"
                                 placeholder="---"
                                 options={tagOrigins}

@@ -1,17 +1,17 @@
 // create an key-value array of objects for drop-down lists in fsis-infinity forms
-export const get_code_labels = (data, code, label, descending = false) => {
+export const get_value_labels = (data, value, label, descending = false) => {
   const sort_order = descending === false ? 1 : -1;
   const tmp = new Map(
     data.map((x) => [
-      x[code],
+      x[value],
       {
-        code: x[code],
-        label: label == code ? x[code] : `${x[label]} (${x[code]})`,
+        value: x[value],
+        label: label == value ? x[value] : `${x[label]} (${x[value]})`,
       },
     ]),
   );
-  const code_labels = [...tmp.values()].sort((a, b) =>
+  const value_labels = [...tmp.values()].sort((a, b) =>
     a.label > b.label ? 1 * sort_order : -1 * sort_order,
   );
-  return code_labels;
+  return value_labels;
 };

@@ -19,6 +19,7 @@ export const getLots = async () => {
   const results2 = results.map((x) => ({
     ...x,
     strain_slug: `${x.species_code}-${x.strain_code}`,
+    lot_id: x.id,
   }));
   return { ...payload, results: results2 };
 };
