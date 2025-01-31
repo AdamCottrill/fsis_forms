@@ -233,115 +233,202 @@ export const StockingEventForm = () => {
 
           <Form onSubmit={handleSubmit(onSubmit, onError)} onReset={reset}>
             <Card className="my-1">
-              <Card.Header as="h5">Lot</Card.Header>
+              <Card.Header as="h2">
+                <div className="h5">Lot</div>
+              </Card.Header>
               <Card.Body>
                 <Row className="my-2">
                   <Col>
-                    <Select
-                      placeholder="Select Lot Identifier..."
-                      options={filteredLots}
-                      isLoading={!filteredLots}
-                      name={"lot_slug_select"}
-                      closeMenuOnSelect={true}
-                      getOptionLabel={(option) => option.slug}
-                      getOptionValue={(option) => option.id}
-                    />
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-lot-identifier"
+                    >
+                      <Form.Label>Lot Identifier</Form.Label>
+                      <Select
+                        inputId="select-lot-identifier"
+                        placeholder={
+                          <div className="select-placeholder-text">
+                            Select Lot Identifier...
+                          </div>
+                        }
+                        options={filteredLots}
+                        isLoading={!filteredLots}
+                        name={"lot_slug_select"}
+                        closeMenuOnSelect={true}
+                        getOptionLabel={(option) => option.slug}
+                        getOptionValue={(option) => option.id}
+                      />
+                    </Form.Group>
                   </Col>
                   <Col>
-                    <Select
-                      placeholder="Select Lot Number..."
-                      options={lot_nums}
-                      isLoading={!lot_nums}
-                      name="lot_num"
-                      closeMenuOnSelect={true}
-                      onChange={selectChanged}
-                    />
+                    <Form.Group className="mb-3" controlId="select-lot-number">
+                      <Form.Label>Lot number</Form.Label>
+
+                      <Select
+                        inputId="select-lot-number"
+                        placeholder={
+                          <div className="select-placeholder-text">
+                            Select Lot Number...
+                          </div>
+                        }
+                        options={lot_nums}
+                        isLoading={!lot_nums}
+                        name="lot_num"
+                        closeMenuOnSelect={true}
+                        onChange={selectChanged}
+                      />
+                    </Form.Group>
                   </Col>
                 </Row>
 
                 <Row className="my-2">
                   <Col>
-                    <Select
-                      placeholder="Select Species..."
-                      options={species}
-                      isLoading={!species}
-                      name="species"
-                      closeMenuOnSelect={true}
-                      onChange={selectChanged}
-                    />
+                    <Form.Group className="mb-3" controlId="select-species">
+                      <Form.Label>Species</Form.Label>
+
+                      <Select
+                        inputId="select-species"
+                        placeholder={
+                          <div className="select-placeholder-text">
+                            Select Species...
+                          </div>
+                        }
+                        options={species}
+                        isLoading={!species}
+                        name="species"
+                        closeMenuOnSelect={true}
+                        onChange={selectChanged}
+                      />
+                    </Form.Group>
                   </Col>
 
                   <Col>
-                    <Select
-                      placeholder="Select Strain..."
-                      options={strains}
-                      isLoading={!strains}
-                      name="strain_slug"
-                      closeMenuOnSelect={true}
-                      onChange={selectChanged}
-                    />
+                    <Form.Group className="mb-3" controlId="select-strain">
+                      <Form.Label>Strain</Form.Label>
+
+                      <Select
+                        inputId="select-strain"
+                        placeholder={
+                          <div className="select-placeholder-text">
+                            Select Strain...
+                          </div>
+                        }
+                        options={strains}
+                        isLoading={!strains}
+                        name="strain_slug"
+                        closeMenuOnSelect={true}
+                        onChange={selectChanged}
+                      />
+                    </Form.Group>
                   </Col>
 
                   <Col>
-                    <Select
-                      placeholder="Select Spawn Year..."
-                      options={spawnYears}
-                      isLoading={!spawnYears}
-                      name="spawn_year"
-                      closeMenuOnSelect={true}
-                      onChange={selectChanged}
-                    />
+                    <Form.Group className="mb-3" controlId="select-spawn-year">
+                      <Form.Label>Spawn Year</Form.Label>
+
+                      <Select
+                        inputId="select-spawn-year"
+                        placeholder={
+                          <div className="select-placeholder-text">
+                            Select Spawn Year...
+                          </div>
+                        }
+                        options={spawnYears}
+                        isLoading={!spawnYears}
+                        name="spawn_year"
+                        closeMenuOnSelect={true}
+                        onChange={selectChanged}
+                      />
+                    </Form.Group>
                   </Col>
                 </Row>
 
                 <Row className="my-2">
                   <Col>
-                    <Select
-                      placeholder="Select Proponent..."
-                      options={proponents}
-                      isLoading={!proponents}
-                      name="proponent_abbrev"
-                      closeMenuOnSelect={true}
-                      onChange={selectChanged}
-                    />
+                    <Form.Group className="mb-3" controlId="select-proponent">
+                      <Form.Label>Proponent</Form.Label>
+
+                      <Select
+                        inputId="select-proponent"
+                        placeholder={
+                          <div className="select-placeholder-text">
+                            Select Proponent...
+                          </div>
+                        }
+                        options={proponents}
+                        isLoading={!proponents}
+                        name="proponent_abbrev"
+                        closeMenuOnSelect={true}
+                        onChange={selectChanged}
+                      />
+                    </Form.Group>
                   </Col>
                   <Col>
-                    <Select
-                      placeholder="Select Rearing Location..."
-                      options={hatcheries}
-                      isLoading={!hatcheries}
-                      name="rearing_type_abbrev"
-                      closeMenuOnSelect={true}
-                      onChange={selectChanged}
-                    />
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-rearing-location"
+                    >
+                      <Form.Label>Rearing Location</Form.Label>
+
+                      <Select
+                        inputId="select-rearing-location"
+                        placeholder={
+                          <div className="select-placeholder-text">
+                            Select Rearing Location...
+                          </div>
+                        }
+                        options={hatcheries}
+                        isLoading={!hatcheries}
+                        name="rearing_type_abbrev"
+                        closeMenuOnSelect={true}
+                        onChange={selectChanged}
+                      />
+                    </Form.Group>
                   </Col>
                   <Col>
-                    <Select
-                      placeholder="Select Funding Type..."
-                      options={funding_types}
-                      isLoading={!funding_types}
-                      name="funding_type"
-                      closeMenuOnSelect={true}
-                      onChange={selectChanged}
-                    />
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-funding-type"
+                    >
+                      <Form.Label>Funding Type</Form.Label>
+
+                      <Select
+                        inputId="select-funding-type"
+                        placeholder={
+                          <div className="select-placeholder-text">
+                            Select Funding Type...
+                          </div>
+                        }
+                        options={funding_types}
+                        isLoading={!funding_types}
+                        name="funding_type"
+                        closeMenuOnSelect={true}
+                        onChange={selectChanged}
+                      />
+                    </Form.Group>
                   </Col>
                 </Row>
               </Card.Body>
             </Card>
 
             <Card className="my-1">
-              <Card.Header as="h5">Event Admin</Card.Header>
+              <Card.Header as="h2">
+                <div className="h5">Event Admin</div>
+              </Card.Header>
               <Card.Body>
                 <Row className="my-2">
                   <Col>
                     <Form.Group
                       className="mb-3"
-                      controlId="stocking-admin-unit"
+                      controlId="select-stocking-admin-unit"
                     >
                       <Form.Label>Stocking Admin Unit</Form.Label>
 
                       <Select
-                        placeholder="---"
+                        placeholder={
+                          <div className="select-placeholder-text">---</div>
+                        }
+                        inputId="select-stocking-admin-unit"
                         options={stockingAdminUnits}
                         isLoading={!stockingAdminUnits}
                         closeMenuOnSelect={true}
@@ -351,7 +438,10 @@ export const StockingEventForm = () => {
                     </Form.Group>
                   </Col>
                   <Col>
-                    <Form.Group className="mb-3" controlId="pulication-date">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-pulication-date"
+                    >
                       <Form.Label>Publication Date</Form.Label>
                       <Form.Control
                         type="date"
@@ -391,22 +481,33 @@ export const StockingEventForm = () => {
             </Card>
 
             <Card className="my-1">
-              <Card.Header as="h5">Event Attributes</Card.Header>
+              <Card.Header as="h2">
+                <div className="h5">Event Attributes</div>
+              </Card.Header>
               <Card.Body>
                 <Row>
                   <Col md={2}>
-                    <Form.Group className="mb-3" controlId="stocking-date">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-stocking-date"
+                    >
                       <Form.Label>Stocking Date</Form.Label>
                       <Form.Control type="date" placeholder="Stocking Date" />
                     </Form.Group>
                   </Col>
 
                   <Col>
-                    <Form.Group className="mb-3" controlId="release-method">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-release-method"
+                    >
                       <Form.Label>Release Method</Form.Label>
 
                       <Select
-                        placeholder="---"
+                        inputId="select-release-method"
+                        placeholder={
+                          <div className="select-placeholder-text">---</div>
+                        }
                         options={releaseMethods}
                         isLoading={!releaseMethods}
                         closeMenuOnSelect={true}
@@ -419,21 +520,27 @@ export const StockingEventForm = () => {
                   </Col>
 
                   <Col md={2}>
-                    <Form.Group className="mb-3" controlId="transit-mortality">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-transit-mortality"
+                    >
                       <Form.Label>Transit Mortality</Form.Label>
                       <Form.Control type="number" placeholder="---" />
                     </Form.Group>
                   </Col>
 
                   <Col md={2}>
-                    <Form.Group className="mb-3" controlId="site-temperature">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-site-temperature"
+                    >
                       <Form.Label>Site Temperature (C)</Form.Label>
                       <Form.Control type="number" placeholder="---" />
                     </Form.Group>
                   </Col>
 
                   <Col md={2}>
-                    <Form.Group className="mb-3" controlId="water-depth">
+                    <Form.Group className="mb-3" controlId="select-water-depth">
                       <Form.Label>Water Depth (m)</Form.Label>
                       <Form.Control type="number" placeholder="---" />
                     </Form.Group>
@@ -466,21 +573,28 @@ export const StockingEventForm = () => {
             </Card>
 
             <Card className="my-1">
-              <Card.Header as="h5">Spatial Attributes</Card.Header>
+              <Card.Header as="h2">
+                <div className="h5">Spatial Attributes</div>
+              </Card.Header>
               <Card.Body>
                 <Row>
                   <Col md={3}>
                     <Row>
                       <Form.Group
                         className="mb-3"
-                        controlId="destination-waterbody"
+                        controlId="select-destination-waterbody"
                       >
                         <Form.Label>Destination Waterbody</Form.Label>
                         <AsyncSelect
+                          inputId="select-destination-waterbody"
                           defaultOptions={[]}
                           loadOptions={loadDestinationWaterbodyOptions}
                           onChange={selectDestinationWaterbodyChange}
-                          placeholder="Start typing to see waterbodies"
+                          placeholder={
+                            <div className="select-placeholder-text">
+                              Start typing to see waterbodies
+                            </div>
+                          }
                         />
                       </Form.Group>
                     </Row>
@@ -488,33 +602,46 @@ export const StockingEventForm = () => {
                     <Row>
                       <Form.Group
                         className="mb-3"
-                        controlId="stocked-waterbody"
+                        controlId="select-stocked-waterbody"
                       >
                         <Form.Label>Stocked Waterbody</Form.Label>
                         <AsyncSelect
+                          inputId="select-stocked-waterbody"
                           defaultOptions={[]}
                           loadOptions={loadStockedWaterbodyOptions}
                           onChange={selectStockedWaterbodyChange}
-                          placeholder="Start typing to see waterbodies"
+                          placeholder={
+                            <div className="select-placeholder-text">
+                              Start typing to see waterbodies
+                            </div>
+                          }
                         />
                       </Form.Group>
                     </Row>
 
                     <Row>
-                      <Form.Group className="mb-3" controlId="stocking-site">
+                      <Form.Group
+                        className="mb-3"
+                        controlId="select-stocking-site"
+                      >
                         <Form.Label>Stocking Site</Form.Label>
                         <AsyncSelect
+                          inputId="select-stocking-site"
                           defaultOptions={[]}
                           loadOptions={loadSiteOptions}
                           onChange={selectSiteChange}
-                          placeholder="Start typing to see Stocking Sites"
+                          placeholder={
+                            <div className="select-placeholder-text">
+                              Start typing to see stocking sites
+                            </div>
+                          }
                         />
                       </Form.Group>
                     </Row>
 
                     <Row>
                       <Col>
-                        <Form.Group className="mb-3" controlId="dd_lat">
+                        <Form.Group className="mb-3" controlId="select-dd_lat">
                           <Form.Label>Latitude</Form.Label>
 
                           <Controller
@@ -554,7 +681,7 @@ export const StockingEventForm = () => {
                         </Form.Group>
                       </Col>
                       <Col>
-                        <Form.Group className="mb-3" controlId="dd_lon">
+                        <Form.Group className="mb-3" controlId="select-dd_lon">
                           <Form.Label>Longitude</Form.Label>
                           <Controller
                             control={control}
@@ -606,18 +733,23 @@ export const StockingEventForm = () => {
             </Card>
 
             <Card className="my-1">
-              <Card.Header as="h5">Fish Attributes</Card.Header>
+              <Card.Header as="h2">
+                <div className="h5">Fish Attributes</div>
+              </Card.Header>
               <Card.Body>
                 <Row>
                   <Col>
-                    <Form.Group className="mb-3" controlId="number-stocked">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-number-stocked"
+                    >
                       <Form.Label>Number Stocked</Form.Label>
                       <Form.Control type="number" placeholder="---" />
                     </Form.Group>
                   </Col>
 
                   <Col>
-                    <Form.Group className="mb-3" controlId="fish-weight">
+                    <Form.Group className="mb-3" controlId="select-fish-weight">
                       <Form.Label>Fish Weight (g)</Form.Label>
                       <Form.Control
                         type="number"
@@ -631,7 +763,10 @@ export const StockingEventForm = () => {
                   </Col>
 
                   <Col>
-                    <Form.Group className="mb-3" controlId="total-biomass">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-total-biomass"
+                    >
                       <Form.Label>Total Biomass (kg)</Form.Label>
                       <Form.Control
                         type="number"
@@ -647,7 +782,7 @@ export const StockingEventForm = () => {
 
                 <Row>
                   <Col>
-                    <Form.Group className="mb-3" controlId="fish-age">
+                    <Form.Group className="mb-3" controlId="select-fish-age">
                       <Form.Label>Fish Age</Form.Label>
                       <Form.Control
                         type="number"
@@ -661,10 +796,16 @@ export const StockingEventForm = () => {
                   </Col>
 
                   <Col>
-                    <Form.Group className="mb-3" controlId="development-stage">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-development-stage"
+                    >
                       <Form.Label>Development Stage</Form.Label>
                       <Select
-                        placeholder="---"
+                        inputId="select-development-stage"
+                        placeholder={
+                          <div className="select-placeholder-text">---</div>
+                        }
                         options={developmentStages}
                         isLoading={!developmentStages}
                         closeMenuOnSelect={true}
@@ -680,7 +821,9 @@ export const StockingEventForm = () => {
             </Card>
 
             <Card className="my-1">
-              <Card.Header as="h5">Fin Clips and Marks</Card.Header>
+              <Card.Header as="h2">
+                <div className="h5">Fin Clips and Marks</div>
+              </Card.Header>
               <Card.Body>
                 <Card className="my-1">
                   <Card.Body>
@@ -707,7 +850,10 @@ export const StockingEventForm = () => {
 
                     <Row>
                       <Col md={3}>
-                        <Form.Group className="mb-3" controlId="clip-retention">
+                        <Form.Group
+                          className="mb-3"
+                          controlId="select-clip-retention"
+                        >
                           <Form.Label>Clip Retention</Form.Label>
                           <Form.Control type="number" placeholder="---" />
                         </Form.Group>
@@ -770,9 +916,9 @@ export const StockingEventForm = () => {
 
             <Accordion>
               <Card className="my-2">
-                <Card.Header as="h5">
+                <Card.Header as="h2">
                   <AccordionToggle eventKey="tags-applied-card">
-                    Tags Applied
+                    <div className="h5 mt-1">Tags Applied</div>
                   </AccordionToggle>
                 </Card.Header>
                 <Accordion.Collapse eventKey="tags-applied-card">
@@ -782,7 +928,10 @@ export const StockingEventForm = () => {
                       <Card.Body>
                         <Row>
                           <Col md={3}>
-                            <Form.Group className="mb-3" controlId="tagid-1">
+                            <Form.Group
+                              className="mb-3"
+                              controlId="select-tagid-1"
+                            >
                               <Form.Label>TagID</Form.Label>
                               <Form.Control placeholder="---" />
                             </Form.Group>
@@ -791,7 +940,7 @@ export const StockingEventForm = () => {
                           <Col md={3}>
                             <Form.Group
                               className="mb-3"
-                              controlId="tag-1-series-start"
+                              controlId="select-tag-1-series-start"
                             >
                               <Form.Label>Tag Series Start</Form.Label>
                               <Form.Control type="number" placeholder="---" />
@@ -801,7 +950,7 @@ export const StockingEventForm = () => {
                           <Col md={3}>
                             <Form.Group
                               className="mb-3"
-                              controlId="tag-1-series-end"
+                              controlId="select-tag-1-series-end"
                             >
                               <Form.Label>Tag Series End</Form.Label>
                               <Form.Control type="number" placeholder="---" />
@@ -811,9 +960,13 @@ export const StockingEventForm = () => {
 
                         <Row>
                           <Col>
-                            <Form.Group className="mb-3" controlId="tag-1-type">
+                            <Form.Group
+                              className="mb-3"
+                              controlId="select-tag-1-type"
+                            >
                               <Form.Label>Tag Type</Form.Label>
                               <Select
+                                inputId="select-tag-1-type"
                                 placeholder="---"
                                 options={tagTypes}
                                 isLoading={!tagTypes}
@@ -828,10 +981,11 @@ export const StockingEventForm = () => {
                           <Col>
                             <Form.Group
                               className="mb-3"
-                              controlId="tag-1-colour"
+                              controlId="select-tag-1-colour"
                             >
                               <Form.Label>Tag Colour</Form.Label>
                               <Select
+                                inputId="select-tag-1-colour"
                                 placeholder="---"
                                 options={tagColours}
                                 isLoading={!tagColours}
@@ -847,10 +1001,11 @@ export const StockingEventForm = () => {
                           <Col>
                             <Form.Group
                               className="mb-3"
-                              controlId="tag-1-position"
+                              controlId="select-tag-1-position"
                             >
                               <Form.Label>Tag Position</Form.Label>
                               <Select
+                                inputId="select-tag-1-position"
                                 placeholder="---"
                                 options={tagPositions}
                                 isLoading={!tagPositions}
@@ -866,10 +1021,11 @@ export const StockingEventForm = () => {
                           <Col>
                             <Form.Group
                               className="mb-3"
-                              controlId="tag-1-origin"
+                              controlId="select-tag-1-origin"
                             >
                               <Form.Label>Tag Origin</Form.Label>
                               <Select
+                                inputId="select-tag-1-origin"
                                 placeholder="---"
                                 options={tagOrigins}
                                 isLoading={!tagOrigins}
@@ -887,7 +1043,7 @@ export const StockingEventForm = () => {
                           <Col md={3}>
                             <Form.Group
                               className="mb-3"
-                              controlId="tag-1-retention-pct"
+                              controlId="select-tag-1-retention-pct"
                             >
                               <Form.Label>Tag Retention (pct.)</Form.Label>
                               <Form.Control type="number" placeholder="---" />
@@ -897,7 +1053,7 @@ export const StockingEventForm = () => {
                           <Col md={3}>
                             <Form.Group
                               className="mb-3"
-                              controlId="tag-1-retention-sam-size"
+                              controlId="select-tag-1-retention-sam-size"
                             >
                               <Form.Label>Tag Retention Sample Size</Form.Label>
                               <Form.Control type="number" placeholder="---" />
@@ -907,7 +1063,7 @@ export const StockingEventForm = () => {
                           <Col md={3}>
                             <Form.Group
                               className="mb-3"
-                              controlId="tag-1-retention-pop-size"
+                              controlId="select-tag-1-retention-pop-size"
                             >
                               <Form.Label>
                                 Tag Retention Population Size
@@ -932,14 +1088,17 @@ export const StockingEventForm = () => {
 
             <Accordion>
               <Card className="my-2">
-                <Card.Header as="h5">
+                <Card.Header as="h2">
                   <AccordionToggle eventKey="comments-card">
-                    Comments
+                    <div className="h5 mt-1">Comments</div>
                   </AccordionToggle>
                 </Card.Header>
                 <Accordion.Collapse eventKey="comments-card">
                   <Card.Body>
-                    <Form.Group className="mb-3" controlId="inventory-comments">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-inventory-comments"
+                    >
                       <Form.Label>Inventory Comments</Form.Label>
                       <Form.Control
                         as="textarea"
@@ -948,7 +1107,10 @@ export const StockingEventForm = () => {
                       />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="marking-comments">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-marking-comments"
+                    >
                       <Form.Label>Marking Comments</Form.Label>
                       <Form.Control
                         as="textarea"
@@ -957,7 +1119,10 @@ export const StockingEventForm = () => {
                       />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="stocking-comments">
+                    <Form.Group
+                      className="mb-3"
+                      controlId="select-stocking-comments"
+                    >
                       <Form.Label>Stocking Comments</Form.Label>
                       <Form.Control
                         as="textarea"

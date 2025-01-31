@@ -20,10 +20,14 @@ export const AccordionToggle = ({ children, eventKey, callback }) => {
 
   return (
     <>
-      <Row className="">
+      <Row>
         <Col>{children}</Col>
         <Col md={1}>
-          <Button onClick={toggleAccordion} variant="outline-primary">
+          <Button
+            onClick={toggleAccordion}
+            aria-label="Toggle Accordion"
+            variant="outline-primary"
+          >
             {isCurrentEventKey ? <FaChevronUp /> : <FaChevronDown />}
           </Button>
         </Col>
