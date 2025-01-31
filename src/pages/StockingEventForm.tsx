@@ -16,11 +16,10 @@ import {
   getWaterbodies,
 } from "../services/api";
 
-import { ClickableMap } from "../components/ClickableMap";
-
 import Select from "react-select";
 import AsyncSelect from "react-select/async";
 
+import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
@@ -29,6 +28,10 @@ import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+
+import { ClickableMap } from "../components/ClickableMap";
+import { AccordionToggle } from "../components/AccordionToggle";
+import { get_code_labels } from "../utils";
 
 interface SiteOption {
   readonly value: string;
@@ -39,24 +42,6 @@ interface StockingEventFormInputs {
   dd_lat: string;
   dd_lon: string;
 }
-
-// create an key-value array of objects for drop-down lists in fsis-infinity forms
-const get_code_labels = (data, code, label, descending = false) => {
-  const sort_order = descending === false ? 1 : -1;
-  const tmp = new Map(
-    data.map((x) => [
-      x[code],
-      {
-        code: x[code],
-        label: label == code ? x[code] : `${x[label]} (${x[code]})`,
-      },
-    ]),
-  );
-  const code_labels = [...tmp.values()].sort((a, b) =>
-    a.label > b.label ? 1 * sort_order : -1 * sort_order,
-  );
-  return code_labels;
-};
 
 export const StockingEventForm = () => {
   const [lotFilters, setLotFilters] = useState({});
@@ -783,180 +768,207 @@ export const StockingEventForm = () => {
               </Card.Body>
             </Card>
 
-            <Card className="my-1">
-              <Card.Header as="h5">Tags Applied</Card.Header>
-              <Card.Body>
-                <Card className="my-1">
-                  <Card.Header>Applied Tag 1</Card.Header>
+            <Accordion>
+              <Card className="my-2">
+                <Card.Header as="h5">
+                  <AccordionToggle eventKey="tags-applied-card">
+                    Tags Applied
+                  </AccordionToggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="tags-applied-card">
                   <Card.Body>
-                    <Row>
-                      <Col md={3}>
-                        <Form.Group className="mb-3" controlId="tagid-1">
-                          <Form.Label>TagID</Form.Label>
-                          <Form.Control placeholder="---" />
-                        </Form.Group>
-                      </Col>
+                    <Card className="my-1">
+                      <Card.Header>Applied Tag 1</Card.Header>
+                      <Card.Body>
+                        <Row>
+                          <Col md={3}>
+                            <Form.Group className="mb-3" controlId="tagid-1">
+                              <Form.Label>TagID</Form.Label>
+                              <Form.Control placeholder="---" />
+                            </Form.Group>
+                          </Col>
 
-                      <Col md={3}>
-                        <Form.Group
-                          className="mb-3"
-                          controlId="tag-1-series-start"
-                        >
-                          <Form.Label>Tag Series Start</Form.Label>
-                          <Form.Control type="number" placeholder="---" />
-                        </Form.Group>
-                      </Col>
+                          <Col md={3}>
+                            <Form.Group
+                              className="mb-3"
+                              controlId="tag-1-series-start"
+                            >
+                              <Form.Label>Tag Series Start</Form.Label>
+                              <Form.Control type="number" placeholder="---" />
+                            </Form.Group>
+                          </Col>
 
-                      <Col md={3}>
-                        <Form.Group
-                          className="mb-3"
-                          controlId="tag-1-series-end"
-                        >
-                          <Form.Label>Tag Series End</Form.Label>
-                          <Form.Control type="number" placeholder="---" />
-                        </Form.Group>
-                      </Col>
-                    </Row>
+                          <Col md={3}>
+                            <Form.Group
+                              className="mb-3"
+                              controlId="tag-1-series-end"
+                            >
+                              <Form.Label>Tag Series End</Form.Label>
+                              <Form.Control type="number" placeholder="---" />
+                            </Form.Group>
+                          </Col>
+                        </Row>
 
-                    <Row>
-                      <Col>
-                        <Form.Group className="mb-3" controlId="tag-1-type">
-                          <Form.Label>Tag Type</Form.Label>
-                          <Select
-                            placeholder="---"
-                            options={tagTypes}
-                            isLoading={!tagTypes}
-                            closeMenuOnSelect={true}
-                            getOptionValue={(option) => option.code}
-                            getOptionLabel={(option) =>
-                              `${option.description} (${option.code})`
-                            }
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col>
-                        <Form.Group className="mb-3" controlId="tag-1-colour">
-                          <Form.Label>Tag Colour</Form.Label>
-                          <Select
-                            placeholder="---"
-                            options={tagColours}
-                            isLoading={!tagColours}
-                            closeMenuOnSelect={true}
-                            getOptionValue={(option) => option.code}
-                            getOptionLabel={(option) =>
-                              `${option.description} (${option.code})`
-                            }
-                          />
-                        </Form.Group>
-                      </Col>
+                        <Row>
+                          <Col>
+                            <Form.Group className="mb-3" controlId="tag-1-type">
+                              <Form.Label>Tag Type</Form.Label>
+                              <Select
+                                placeholder="---"
+                                options={tagTypes}
+                                isLoading={!tagTypes}
+                                closeMenuOnSelect={true}
+                                getOptionValue={(option) => option.code}
+                                getOptionLabel={(option) =>
+                                  `${option.description} (${option.code})`
+                                }
+                              />
+                            </Form.Group>
+                          </Col>
+                          <Col>
+                            <Form.Group
+                              className="mb-3"
+                              controlId="tag-1-colour"
+                            >
+                              <Form.Label>Tag Colour</Form.Label>
+                              <Select
+                                placeholder="---"
+                                options={tagColours}
+                                isLoading={!tagColours}
+                                closeMenuOnSelect={true}
+                                getOptionValue={(option) => option.code}
+                                getOptionLabel={(option) =>
+                                  `${option.description} (${option.code})`
+                                }
+                              />
+                            </Form.Group>
+                          </Col>
 
-                      <Col>
-                        <Form.Group className="mb-3" controlId="tag-1-position">
-                          <Form.Label>Tag Position</Form.Label>
-                          <Select
-                            placeholder="---"
-                            options={tagPositions}
-                            isLoading={!tagPositions}
-                            closeMenuOnSelect={true}
-                            getOptionValue={(option) => option.code}
-                            getOptionLabel={(option) =>
-                              `${option.description} (${option.code})`
-                            }
-                          />
-                        </Form.Group>
-                      </Col>
+                          <Col>
+                            <Form.Group
+                              className="mb-3"
+                              controlId="tag-1-position"
+                            >
+                              <Form.Label>Tag Position</Form.Label>
+                              <Select
+                                placeholder="---"
+                                options={tagPositions}
+                                isLoading={!tagPositions}
+                                closeMenuOnSelect={true}
+                                getOptionValue={(option) => option.code}
+                                getOptionLabel={(option) =>
+                                  `${option.description} (${option.code})`
+                                }
+                              />
+                            </Form.Group>
+                          </Col>
 
-                      <Col>
-                        <Form.Group className="mb-3" controlId="tag-1-origin">
-                          <Form.Label>Tag Origin</Form.Label>
-                          <Select
-                            placeholder="---"
-                            options={tagOrigins}
-                            isLoading={!tagOrigins}
-                            closeMenuOnSelect={true}
-                            getOptionValue={(option) => option.code}
-                            getOptionLabel={(option) =>
-                              `${option.description} (${option.code})`
-                            }
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
+                          <Col>
+                            <Form.Group
+                              className="mb-3"
+                              controlId="tag-1-origin"
+                            >
+                              <Form.Label>Tag Origin</Form.Label>
+                              <Select
+                                placeholder="---"
+                                options={tagOrigins}
+                                isLoading={!tagOrigins}
+                                closeMenuOnSelect={true}
+                                getOptionValue={(option) => option.code}
+                                getOptionLabel={(option) =>
+                                  `${option.description} (${option.code})`
+                                }
+                              />
+                            </Form.Group>
+                          </Col>
+                        </Row>
 
-                    <Row>
-                      <Col md={3}>
-                        <Form.Group
-                          className="mb-3"
-                          controlId="tag-1-retention-pct"
-                        >
-                          <Form.Label>Tag Retention (pct.)</Form.Label>
-                          <Form.Control type="number" placeholder="---" />
-                        </Form.Group>
-                      </Col>
+                        <Row>
+                          <Col md={3}>
+                            <Form.Group
+                              className="mb-3"
+                              controlId="tag-1-retention-pct"
+                            >
+                              <Form.Label>Tag Retention (pct.)</Form.Label>
+                              <Form.Control type="number" placeholder="---" />
+                            </Form.Group>
+                          </Col>
 
-                      <Col md={3}>
-                        <Form.Group
-                          className="mb-3"
-                          controlId="tag-1-retention-sam-size"
-                        >
-                          <Form.Label>Tag Retention Sample Size</Form.Label>
-                          <Form.Control type="number" placeholder="---" />
-                        </Form.Group>
-                      </Col>
+                          <Col md={3}>
+                            <Form.Group
+                              className="mb-3"
+                              controlId="tag-1-retention-sam-size"
+                            >
+                              <Form.Label>Tag Retention Sample Size</Form.Label>
+                              <Form.Control type="number" placeholder="---" />
+                            </Form.Group>
+                          </Col>
 
-                      <Col md={3}>
-                        <Form.Group
-                          className="mb-3"
-                          controlId="tag-1-retention-pop-size"
-                        >
-                          <Form.Label>Tag Retention Population Size</Form.Label>
-                          <Form.Control type="number" placeholder="---" />
-                        </Form.Group>
+                          <Col md={3}>
+                            <Form.Group
+                              className="mb-3"
+                              controlId="tag-1-retention-pop-size"
+                            >
+                              <Form.Label>
+                                Tag Retention Population Size
+                              </Form.Label>
+                              <Form.Control type="number" placeholder="---" />
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+
+                    <Row className="mt-2">
+                      <Col md={2}>
+                        {" "}
+                        <Button>Add Another Tag</Button>{" "}
                       </Col>
                     </Row>
                   </Card.Body>
-                </Card>
+                </Accordion.Collapse>
+              </Card>
+            </Accordion>
 
-                <Row className="mt-2">
-                  <Col md={2}>
-                    {" "}
-                    <Button>Add Another Tag</Button>{" "}
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
+            <Accordion>
+              <Card className="my-2">
+                <Card.Header as="h5">
+                  <AccordionToggle eventKey="comments-card">
+                    Comments
+                  </AccordionToggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="comments-card">
+                  <Card.Body>
+                    <Form.Group className="mb-3" controlId="inventory-comments">
+                      <Form.Label>Inventory Comments</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        placeholder=""
+                        style={{ height: "100px" }}
+                      />
+                    </Form.Group>
 
-            <Card className="my-1">
-              <Card.Header as="h5">Comments</Card.Header>
-              <Card.Body>
-                <Form.Group className="mb-3" controlId="inventory-comments">
-                  <Form.Label>Inventory Comments</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    placeholder=""
-                    style={{ height: "100px" }}
-                  />
-                </Form.Group>
+                    <Form.Group className="mb-3" controlId="marking-comments">
+                      <Form.Label>Marking Comments</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        placeholder=""
+                        style={{ height: "100px" }}
+                      />
+                    </Form.Group>
 
-                <Form.Group className="mb-3" controlId="marking-comments">
-                  <Form.Label>Marking Comments</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    placeholder=""
-                    style={{ height: "100px" }}
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3" controlId="stocking-comments">
-                  <Form.Label>Stocking Comments</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    placeholder=""
-                    style={{ height: "100px" }}
-                  />
-                </Form.Group>
-              </Card.Body>
-            </Card>
+                    <Form.Group className="mb-3" controlId="stocking-comments">
+                      <Form.Label>Stocking Comments</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        placeholder=""
+                        style={{ height: "100px" }}
+                      />
+                    </Form.Group>
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            </Accordion>
 
             <Row className="my-4 justify-content-end">
               <Col md={1}>
