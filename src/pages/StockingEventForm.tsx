@@ -43,10 +43,16 @@ interface StockingEventFormInputs {
   stocking_admin_unit_id: number;
   dd_lat: string;
   dd_lon: string;
+  destination_waterbody: string;
 }
 
 export const StockingEventForm = () => {
   const lotFilters = {};
+
+  const [destinationWaterbody, setDestinationWaterbody] = useState("");
+  const [stockedWaterbody, setStockedWaterbody] = useState("");
+  const [stockingSite, setStockingSite] = useState("");
+
   const [point, setPoint] = useState([]);
   const [bounds, setBounds] = useState([
     [41.67, -95.15],
@@ -189,8 +195,8 @@ export const StockingEventForm = () => {
     );
   };
 
-  const selectDestinationWaterbodyChange = (event) => {
-    console.log(event);
+  const selectDestinationWaterbodyChange = (value) => {
+    setDestinationWaterbody(value);
   };
 
   const loadDestinationWaterbodyOptions = (inputValue: string) => {
@@ -200,8 +206,8 @@ export const StockingEventForm = () => {
     return getWaterbodies(inputValue);
   };
 
-  const selectStockedWaterbodyChange = (event) => {
-    console.log(event);
+  const selectStockedWaterbodyChange = (value) => {
+    setStockedWaterbody(value);
   };
 
   const loadStockedWaterbodyOptions = (inputValue: string) => {
@@ -211,11 +217,11 @@ export const StockingEventForm = () => {
     return getWaterbodies(inputValue);
   };
 
-  const selectSiteChange = (event) => {
-    console.log(event);
+  const selectStockingSiteChange = (value) => {
+    setStockingSite(value);
   };
 
-  const loadSiteOptions = (inputValue: string) => {
+  const loadStockingSiteOptions = (inputValue: string) => {
     if (!inputValue) {
       return [];
     }
@@ -548,19 +554,26 @@ export const StockingEventForm = () => {
                     >
                       <Form.Label>Release Method</Form.Label>
 
-                      <Select
-                        isClearable={true}
-                        inputId="select-release-method"
-                        placeholder={
-                          <div className="select-placeholder-text">---</div>
-                        }
-                        options={releaseMethods}
-                        isLoading={!releaseMethods}
-                        closeMenuOnSelect={true}
-                        getOptionValue={(option) => option.code}
-                        getOptionLabel={(option) =>
-                          `${option.description} (${option.code})`
-                        }
+                      <Controller
+                        control={control}
+                        name="release_method_id"
+                        render={({ field: { onChange, value, ...field } }) => (
+                          <Select
+                            {...field}
+                            value={releaseMethods.find((x) => x.id === value)}
+                            onChange={(val) => onChange(val.id)}
+                            isClearable={true}
+                            inputId="select-release-method"
+                            placeholder={
+                              <div className="select-placeholder-text">---</div>
+                            }
+                            options={releaseMethods}
+                            isLoading={!releaseMethods}
+                            closeMenuOnSelect={true}
+                            getOptionValue={(option) => option.id}
+                          />
+                        )}
+                        rules={{ required: true }}
                       />
                     </Form.Group>
                   </Col>
@@ -631,16 +644,26 @@ export const StockingEventForm = () => {
                         controlId="select-destination-waterbody"
                       >
                         <Form.Label>Destination Waterbody</Form.Label>
-                        <AsyncSelect
-                          inputId="select-destination-waterbody"
-                          defaultOptions={[]}
-                          loadOptions={loadDestinationWaterbodyOptions}
-                          onChange={selectDestinationWaterbodyChange}
-                          placeholder={
-                            <div className="select-placeholder-text">
-                              Start typing to see waterbodies
-                            </div>
-                          }
+
+                        <Controller
+                          control={control}
+                          name="destination_waterbody"
+                          render={({ field: { value, ...field } }) => (
+                            <AsyncSelect
+                              {...field}
+                              inputId="select-destination-waterbody"
+                              defaultOptions={[]}
+                              value={destinationWaterbody?.value}
+                              loadOptions={loadDestinationWaterbodyOptions}
+                              onInputChange={selectDestinationWaterbodyChange}
+                              placeholder={
+                                <div className="select-placeholder-text">
+                                  Start typing to see waterbodies
+                                </div>
+                              }
+                            />
+                          )}
+                          rules={{ required: true }}
                         />
                       </Form.Group>
                     </Row>
@@ -651,16 +674,26 @@ export const StockingEventForm = () => {
                         controlId="select-stocked-waterbody"
                       >
                         <Form.Label>Stocked Waterbody</Form.Label>
-                        <AsyncSelect
-                          inputId="select-stocked-waterbody"
-                          defaultOptions={[]}
-                          loadOptions={loadStockedWaterbodyOptions}
-                          onChange={selectStockedWaterbodyChange}
-                          placeholder={
-                            <div className="select-placeholder-text">
-                              Start typing to see waterbodies
-                            </div>
-                          }
+
+                        <Controller
+                          control={control}
+                          name="stocked_waterbody"
+                          render={({ field: { value, ...field } }) => (
+                            <AsyncSelect
+                              {...field}
+                              inputId="select-stocked-waterbody"
+                              defaultOptions={[]}
+                              value={stockedWaterbody?.value}
+                              loadOptions={loadStockedWaterbodyOptions}
+                              onInputChange={selectStockedWaterbodyChange}
+                              placeholder={
+                                <div className="select-placeholder-text">
+                                  Start typing to see waterbodies
+                                </div>
+                              }
+                            />
+                          )}
+                          rules={{ required: true }}
                         />
                       </Form.Group>
                     </Row>
@@ -671,16 +704,26 @@ export const StockingEventForm = () => {
                         controlId="select-stocking-site"
                       >
                         <Form.Label>Stocking Site</Form.Label>
-                        <AsyncSelect
-                          inputId="select-stocking-site"
-                          defaultOptions={[]}
-                          loadOptions={loadSiteOptions}
-                          onChange={selectSiteChange}
-                          placeholder={
-                            <div className="select-placeholder-text">
-                              Start typing to see stocking sites
-                            </div>
-                          }
+
+                        <Controller
+                          control={control}
+                          name="stocking_site"
+                          render={({ field: { value, ...field } }) => (
+                            <AsyncSelect
+                              {...field}
+                              inputId="select-stocking-site"
+                              defaultOptions={[]}
+                              value={stockingSite?.value}
+                              loadOptions={loadStockingSiteOptions}
+                              onInputChange={selectStockingSiteChange}
+                              placeholder={
+                                <div className="select-placeholder-text">
+                                  Start typing to see stocking sites
+                                </div>
+                              }
+                            />
+                          )}
+                          rules={{ required: true }}
                         />
                       </Form.Group>
                     </Row>

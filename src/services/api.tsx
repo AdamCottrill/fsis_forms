@@ -27,7 +27,12 @@ export const getLots = async () => {
 export const getReleaseMethods = async () => {
   const url = "stocking/api/v1/release_methods/";
   const payload = await fetch(url).then((res) => res.json());
-  return payload;
+  const payload2 = payload.map((x) => ({
+    ...x,
+    label: `${x.description} (${x.code})`,
+  }));
+
+  return payload2;
 };
 
 export const getTransitMethods = async () => {
