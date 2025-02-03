@@ -1,7 +1,12 @@
 export const getDevelopmentStages = async () => {
   const url = "stocking/api/v1/development_stages/";
   const payload = await fetch(url).then((res) => res.json());
-  return payload;
+  const payload2 = payload.map((x) => ({
+    ...x,
+    label: `${x.description} (${x.code})`,
+  }));
+
+  return payload2;
 };
 
 export const getFinClips = async () => {
@@ -44,25 +49,45 @@ export const getTransitMethods = async () => {
 export const getTagTypes = async () => {
   const url = "stocking/api/v1/tag_types/";
   const payload = await fetch(url).then((res) => res.json());
-  return payload;
+  const payload2 = payload.map((x) => ({
+    ...x,
+    label: `${x.description} (${x.code})`,
+  }));
+
+  return payload2;
 };
 
 export const getTagColours = async () => {
   const url = "stocking/api/v1/tag_colours/";
   const payload = await fetch(url).then((res) => res.json());
-  return payload;
+  const payload2 = payload.map((x) => ({
+    ...x,
+    label: `${x.description} (${x.code})`,
+  }));
+
+  return payload2;
 };
 
 export const getTagOrigins = async () => {
   const url = "stocking/api/v1/tag_origins/";
   const payload = await fetch(url).then((res) => res.json());
-  return payload;
+  const payload2 = payload.map((x) => ({
+    ...x,
+    label: `${x.description} (${x.code})`,
+  }));
+
+  return payload2;
 };
 
 export const getTagPositions = async () => {
   const url = "stocking/api/v1/tag_positions/";
   const payload = await fetch(url).then((res) => res.json());
-  return payload;
+  const payload2 = payload.map((x) => ({
+    ...x,
+    label: `${x.description} (${x.code})`,
+  }));
+
+  return payload2;
 };
 
 export const getStockingAdminUnits = async () => {

@@ -890,19 +890,29 @@ export const StockingEventForm = () => {
                       controlId="select-development-stage"
                     >
                       <Form.Label>Development Stage</Form.Label>
-                      <Select
-                        isClearable={true}
-                        inputId="select-development-stage"
-                        placeholder={
-                          <div className="select-placeholder-text">---</div>
-                        }
-                        options={developmentStages}
-                        isLoading={!developmentStages}
-                        closeMenuOnSelect={true}
-                        getOptionValue={(option) => option.code}
-                        getOptionLabel={(option) =>
-                          `${option.description} (${option.code})`
-                        }
+
+                      <Controller
+                        control={control}
+                        name="development_stage_id"
+                        render={({ field: { onChange, value, ...field } }) => (
+                          <Select
+                            {...field}
+                            value={developmentStages.find(
+                              (x) => x.id === value,
+                            )}
+                            onChange={(val) => onChange(val.id)}
+                            isClearable={true}
+                            inputId="select-development-stage"
+                            placeholder={
+                              <div className="select-placeholder-text">---</div>
+                            }
+                            options={developmentStages}
+                            isLoading={!developmentStages}
+                            closeMenuOnSelect={true}
+                            getOptionValue={(option) => option.id}
+                          />
+                        )}
+                        rules={{ required: true }}
                       />
                     </Form.Group>
                   </Col>
@@ -1055,17 +1065,30 @@ export const StockingEventForm = () => {
                               controlId="select-tag-1-type"
                             >
                               <Form.Label>Tag Type</Form.Label>
-                              <Select
-                                isClearable={true}
-                                inputId="select-tag-1-type"
-                                placeholder="---"
-                                options={tagTypes}
-                                isLoading={!tagTypes}
-                                closeMenuOnSelect={true}
-                                getOptionValue={(option) => option.code}
-                                getOptionLabel={(option) =>
-                                  `${option.description} (${option.code})`
-                                }
+
+                              <Controller
+                                control={control}
+                                name="tag_type-1"
+                                render={({
+                                  field: { onChange, value, ...field },
+                                }) => (
+                                  <Select
+                                    {...field}
+                                    value={tagTypes.find((x) => x.id === value)}
+                                    onChange={(val) => onChange(val.id)}
+                                    isClearable={true}
+                                    inputId="select-tag-type-1"
+                                    placeholder={
+                                      <div className="select-placeholder-text">
+                                        ---
+                                      </div>
+                                    }
+                                    options={tagTypes}
+                                    isLoading={!tagTypes}
+                                    closeMenuOnSelect={true}
+                                    getOptionValue={(option) => option.id}
+                                  />
+                                )}
                               />
                             </Form.Group>
                           </Col>
@@ -1075,17 +1098,31 @@ export const StockingEventForm = () => {
                               controlId="select-tag-1-colour"
                             >
                               <Form.Label>Tag Colour</Form.Label>
-                              <Select
-                                isClearable={true}
-                                inputId="select-tag-1-colour"
-                                placeholder="---"
-                                options={tagColours}
-                                isLoading={!tagColours}
-                                closeMenuOnSelect={true}
-                                getOptionValue={(option) => option.code}
-                                getOptionLabel={(option) =>
-                                  `${option.description} (${option.code})`
-                                }
+                              <Controller
+                                control={control}
+                                name="tag_colour-1"
+                                render={({
+                                  field: { onChange, value, ...field },
+                                }) => (
+                                  <Select
+                                    {...field}
+                                    value={tagColours.find(
+                                      (x) => x.id === value,
+                                    )}
+                                    onChange={(val) => onChange(val.id)}
+                                    isClearable={true}
+                                    inputId="select-tag-colour-1"
+                                    placeholder={
+                                      <div className="select-placeholder-text">
+                                        ---
+                                      </div>
+                                    }
+                                    options={tagColours}
+                                    isLoading={!tagColours}
+                                    closeMenuOnSelect={true}
+                                    getOptionValue={(option) => option.id}
+                                  />
+                                )}
                               />
                             </Form.Group>
                           </Col>
@@ -1096,17 +1133,32 @@ export const StockingEventForm = () => {
                               controlId="select-tag-1-position"
                             >
                               <Form.Label>Tag Position</Form.Label>
-                              <Select
-                                isClearable={true}
-                                inputId="select-tag-1-position"
-                                placeholder="---"
-                                options={tagPositions}
-                                isLoading={!tagPositions}
-                                closeMenuOnSelect={true}
-                                getOptionValue={(option) => option.code}
-                                getOptionLabel={(option) =>
-                                  `${option.description} (${option.code})`
-                                }
+
+                              <Controller
+                                control={control}
+                                name="tag_position-1"
+                                render={({
+                                  field: { onChange, value, ...field },
+                                }) => (
+                                  <Select
+                                    {...field}
+                                    value={tagPositions.find(
+                                      (x) => x.id === value,
+                                    )}
+                                    onChange={(val) => onChange(val.id)}
+                                    isClearable={true}
+                                    inputId="select-tag-position-1"
+                                    placeholder={
+                                      <div className="select-placeholder-text">
+                                        ---
+                                      </div>
+                                    }
+                                    options={tagPositions}
+                                    isLoading={!tagPositions}
+                                    closeMenuOnSelect={true}
+                                    getOptionValue={(option) => option.id}
+                                  />
+                                )}
                               />
                             </Form.Group>
                           </Col>
@@ -1117,17 +1169,32 @@ export const StockingEventForm = () => {
                               controlId="select-tag-1-origin"
                             >
                               <Form.Label>Tag Origin</Form.Label>
-                              <Select
-                                isClearable={true}
-                                inputId="select-tag-1-origin"
-                                placeholder="---"
-                                options={tagOrigins}
-                                isLoading={!tagOrigins}
-                                closeMenuOnSelect={true}
-                                getOptionValue={(option) => option.code}
-                                getOptionLabel={(option) =>
-                                  `${option.description} (${option.code})`
-                                }
+
+                              <Controller
+                                control={control}
+                                name="tag_origin-1"
+                                render={({
+                                  field: { onChange, value, ...field },
+                                }) => (
+                                  <Select
+                                    {...field}
+                                    value={tagOrigins.find(
+                                      (x) => x.id === value,
+                                    )}
+                                    onChange={(val) => onChange(val.id)}
+                                    isClearable={true}
+                                    inputId="select-tag-origin-1"
+                                    placeholder={
+                                      <div className="select-placeholder-text">
+                                        ---
+                                      </div>
+                                    }
+                                    options={tagOrigins}
+                                    isLoading={!tagOrigins}
+                                    closeMenuOnSelect={true}
+                                    getOptionValue={(option) => option.id}
+                                  />
+                                )}
                               />
                             </Form.Group>
                           </Col>
