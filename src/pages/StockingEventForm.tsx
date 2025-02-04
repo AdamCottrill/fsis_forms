@@ -33,6 +33,7 @@ import { ClickableMap } from "../components/ClickableMap";
 import { AccordionToggle } from "../components/AccordionToggle";
 import { get_value_labels } from "../utils";
 import { RHFSelect } from "../components/RHFSelect";
+import { RHFInput } from "../components/RHFInput";
 
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
 
@@ -460,20 +461,15 @@ export const StockingEventForm = () => {
                     />
                   </Col>
                   <Col>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-pulication-date"
-                    >
-                      <Form.Label>Publication Date</Form.Label>
-                      <Form.Control
-                        type="date"
-                        placeholder="Publication Date"
-                        aria-describedby="publicationsDateHelpBlock"
-                      />
-                      <Form.Text id="publicationsDateHelpBlock" muted>
-                        The date that this event can be made publicly available.
-                      </Form.Text>
-                    </Form.Group>
+                    <RHFInput
+                      control={control}
+                      name="publication_date"
+                      label="Publication Date"
+                      inputType="date"
+                      errors={errors}
+                      fgClass="mb-3"
+                      helpText="The date that this event can be made publicly available."
+                    />
                   </Col>
                 </Row>
 
@@ -509,30 +505,18 @@ export const StockingEventForm = () => {
               <Card.Body>
                 <Row>
                   <Col md={2}>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-stocking-date"
-                    >
-                      <Form.Label>Stocking Date</Form.Label>
-
-                      <Controller
-                        control={control}
-                        name="stocking_date"
-                        defaultValue=""
-                        rules={{ required: "This field is required" }}
-                        render={({ field }) => (
-                          <Form.Control
-                            {...field}
-                            isInvalid={errors.stocking_date}
-                            type="date"
-                            placeholder="Stocking Date"
-                          />
-                        )}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {errors.stocking_date?.message}
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                    <RHFInput
+                      control={control}
+                      name="stocking_date"
+                      label="Stocking Date"
+                      rules={{
+                        required: "Stocking Date is required.",
+                      }}
+                      required={true}
+                      inputType="date"
+                      errors={errors}
+                      fgClass="mb-3"
+                    />
                   </Col>
 
                   <Col>
@@ -551,130 +535,52 @@ export const StockingEventForm = () => {
                   </Col>
 
                   <Col md={2}>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-transit-mortality"
-                    >
-                      <Form.Label>Transit Mortality</Form.Label>
-
-                      <Controller
-                        control={control}
-                        name="transit_mortality"
-                        defaultValue=""
-                        rules={{
-                          max: 100,
-                          min: 0,
-                        }}
-                        render={({ field }) => (
-                          <Form.Control
-                            {...field}
-                            isInvalid={errors.transit_mortality}
-                            type="number"
-                            placeholder="---"
-                          />
-                        )}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        <span role="alert">
-                          {errors.transit_mortality &&
-                            errors.transit_mortality.type === "max" && (
-                              <span role="alert">
-                                Transit Mortality cannot exceed 100%
-                              </span>
-                            )}
-
-                          {errors.transit_mortality &&
-                            errors.transit_mortality.type === "min" && (
-                              <span role="alert">
-                                Transit Mortality must be greater than 0{" "}
-                              </span>
-                            )}
-                        </span>
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                    <RHFInput
+                      control={control}
+                      name="transit_mortality"
+                      label="Transit Mortality"
+                      rules={{
+                        required: "Transit Mortality is required.",
+                        max: { value: 100, message: "Must be less than 100" },
+                        min: { value: 0, message: "Must be greater than 0" },
+                      }}
+                      errors={errors}
+                      fgClass="mb-3"
+                    />
                   </Col>
 
                   <Col md={2}>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-site-temperature"
-                    >
-                      <Form.Label>Site Temperature</Form.Label>
-                      <Controller
-                        control={control}
-                        name="site_temperature"
-                        defaultValue=""
-                        rules={{
-                          max: 30,
-                          min: -10,
-                        }}
-                        render={({ field }) => (
-                          <Form.Control
-                            {...field}
-                            isInvalid={errors.site_temperature}
-                            type="number"
-                            placeholder="---"
-                          />
-                        )}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        <span role="alert">
-                          {errors.site_temperature &&
-                            errors.site_temperature.type === "max" && (
-                              <span role="alert">
-                                Site Temperature cannot exceed 30
-                              </span>
-                            )}
-
-                          {errors.site_temperature &&
-                            errors.site_temperature.type === "min" && (
-                              <span role="alert">
-                                Site Temperature must be greater than -10
-                              </span>
-                            )}
-                        </span>
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                    <RHFInput
+                      control={control}
+                      name="site_temperature"
+                      label="Site Temperature"
+                      rules={{
+                        max: { value: 30, message: "Must be less than 30" },
+                        min: {
+                          value: -10,
+                          message: "Must be greater than -10",
+                        },
+                      }}
+                      errors={errors}
+                      fgClass="mb-3"
+                    />
                   </Col>
 
                   <Col md={2}>
-                    <Form.Group className="mb-3" controlId="select-water-depth">
-                      <Form.Label>Water Depth (m)</Form.Label>
-                      <Controller
-                        control={control}
-                        name="water_depth"
-                        defaultValue=""
-                        rules={{
-                          max: 300,
-                          min: 0,
-                        }}
-                        render={({ field }) => (
-                          <Form.Control
-                            {...field}
-                            isInvalid={errors.water_depth}
-                            type="number"
-                            placeholder="---"
-                          />
-                        )}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        <span role="alert">
-                          {errors.water_depth &&
-                            errors.water_depth.type === "max" && (
-                              <span role="alert">
-                                Water Depth cannot exceed 300 m
-                              </span>
-                            )}
-
-                          {errors.water_depth &&
-                            errors.water_depth.type === "min" && (
-                              <span role="alert">
-                                Water depth must be at least 0
-                              </span>
-                            )}
-                        </span>
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                    <RHFInput
+                      control={control}
+                      name="water_depth"
+                      label="Water Depth (m)"
+                      rules={{
+                        max: { value: 300, message: "Must be less than 300 m" },
+                        min: {
+                          value: 0,
+                          message: "Must be at least 0 m",
+                        },
+                      }}
+                      errors={errors}
+                      fgClass="mb-3"
+                    />
                   </Col>
                 </Row>
 
@@ -836,83 +742,46 @@ export const StockingEventForm = () => {
 
                     <Row>
                       <Col>
-                        <Form.Group className="mb-3" controlId="select-dd_lat">
-                          <Form.Label>Latitude</Form.Label>
-
-                          <Controller
-                            control={control}
-                            name="dd_lat"
-                            render={({
-                              field: { onChange, onBlur, value, ref },
-                            }) => (
-                              <Form.Control
-                                onChange={onChange}
-                                value={value}
-                                ref={ref}
-                                isInvalid={errors.dd_lat}
-                                aria-describedby="dd_lat-help-block"
-                                type="number"
-                                placeholder="---"
-                              />
-                            )}
-                          />
-
-                          <Form.Text id="dd_lat-help-block" muted>
-                            Dec. Degrees North
-                          </Form.Text>
-
-                          <Form.Control.Feedback type="invalid">
-                            {errors.dd_lat?.type === "required" && (
-                              <small>dd_lat is required</small>
-                            )}
-
-                            {errors.dd_lat?.type === "minValue" && (
-                              <small>{`dd_lat must but greater than or equal to ${bounds[0][0]}`}</small>
-                            )}
-                            {errors.dd_lat?.type === "maxValue" && (
-                              <small>{`dd_lat must but less than or equal to ${bounds[1][0]}`}</small>
-                            )}
-                          </Form.Control.Feedback>
-                        </Form.Group>
+                        <RHFInput
+                          control={control}
+                          name="dd_lat"
+                          label="Latitude"
+                          inputType="number"
+                          errors={errors}
+                          fgClass="mb-3"
+                          helpText="Dec. Degrees North"
+                          rules={{
+                            max: {
+                              value: bounds[1][0],
+                              message: `dd_lat must but less than or equal to ${bounds[1][0]}`,
+                            },
+                            min: {
+                              value: bounds[0][0],
+                              message: `dd_lat must but greater than or equal to ${bounds[0][0]}`,
+                            },
+                          }}
+                        />
                       </Col>
                       <Col>
-                        <Form.Group className="mb-3" controlId="select-dd_lon">
-                          <Form.Label>Longitude</Form.Label>
-                          <Controller
-                            control={control}
-                            name="dd_lon"
-                            render={({
-                              field: { onChange, onBlur, value, ref },
-                            }) => (
-                              <Form.Control
-                                onChange={onChange}
-                                value={value}
-                                ref={ref}
-                                isInvalid={errors.dd_lon}
-                                aria-describedby="dd_lon-help-block"
-                                type="number"
-                                placeholder="---"
-                              />
-                            )}
-                          />
-
-                          <Form.Text id="dd_lon-help-block" muted>
-                            Dec. Degrees East
-                          </Form.Text>
-
-                          <Form.Control.Feedback type="invalid">
-                            {errors.dd_lon?.type === "required" && (
-                              <small>dd_lon is required</small>
-                            )}
-
-                            {errors.dd_lon?.type === "minValue" && (
-                              <small>{`dd_lon must but greater than or equal to ${bounds[0][1]}`}</small>
-                            )}
-                            {errors.dd_lon?.type === "maxValue" && (
-                              <small>{`dd_lon must but less than or equal to ${bounds[1][1]}`}</small>
-                            )}
-                          </Form.Control.Feedback>
-                        </Form.Group>
+                        <RHFInput
+                          control={control}
+                          name="dd_lon"
+                          label="Longitude"
+                          inputType="number"
+                          errors={errors}
+                          fgClass="mb-3"
+                          helpText="Dec. Degrees West"
+                          rules={{
+                            max: {
+                              value: bounds[1][1],
+                              message: `dd_lon must but less than or equal to ${bounds[1][1]}`,
+                            },
+                            min: {
+                              value: bounds[0][1],
+                              message: `dd_lon must but greater than or equal to ${bounds[0][1]}`,
+                            },
+                          }}
+                        />
                       </Col>
                     </Row>
                   </Col>
@@ -934,164 +803,80 @@ export const StockingEventForm = () => {
               <Card.Body>
                 <Row>
                   <Col>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-number-stocked"
-                    >
-                      <Form.Label>Number Stocked</Form.Label>
-
-                      <Controller
-                        control={control}
-                        name="number_stocked"
-                        defaultValue=""
-                        rules={{
-                          min: 1,
-                          required: "Number Stocked is required",
-                        }}
-                        render={({ field }) => (
-                          <Form.Control
-                            {...field}
-                            isInvalid={errors.number_stocked}
-                            type="number"
-                            placeholder="---"
-                          />
-                        )}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        <span role="alert">
-                          {errors.number_stocked &&
-                            errors.number_stocked.type === "required" && (
-                              <span role="alert">
-                                Number stocked is required
-                              </span>
-                            )}
-
-                          {errors.number_stocked &&
-                            errors.number_stocked.type === "min" && (
-                              <span role="alert">
-                                Number stocked must be at least 0
-                              </span>
-                            )}
-                        </span>
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                    <RHFInput
+                      control={control}
+                      name="number_stocked"
+                      label="Number of Fish Stocked"
+                      inputType="number"
+                      errors={errors}
+                      fgClass="mb-3"
+                      required={true}
+                      rules={{
+                        required: "Number Stocked is required.",
+                        min: {
+                          value: 1,
+                          message:
+                            "Number of fish stocked must be greater than 0.",
+                        },
+                      }}
+                    />
                   </Col>
 
                   <Col>
-                    <Form.Group className="mb-3" controlId="select-fish-weight">
-                      <Form.Label>Fish Weight (g)</Form.Label>
-
-                      <Controller
-                        control={control}
-                        name="fish_weight"
-                        defaultValue=""
-                        rules={{
-                          min: 0,
-                        }}
-                        render={({ field }) => (
-                          <Form.Control
-                            {...field}
-                            isInvalid={errors.fish_weight}
-                            type="number"
-                            placeholder="---"
-                            aria-describedby="fishWeightHelpBlock"
-                          />
-                        )}
-                      />
-                      <Form.Text id="fishWeightHelpBlock" muted>
-                        Average weight in grams of an individual fish.
-                      </Form.Text>
-                      <Form.Control.Feedback type="invalid">
-                        <span role="alert">
-                          {errors.fish_weight &&
-                            errors.fish_weight.type === "min" && (
-                              <span role="alert">
-                                Fish Weight must be greater than 0
-                              </span>
-                            )}
-                        </span>
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                    <RHFInput
+                      control={control}
+                      name="fish_weight"
+                      label="Fish Weight (g)"
+                      inputType="number"
+                      errors={errors}
+                      fgClass="mb-3"
+                      helpText="Average weight in grams of an individual fish."
+                      rules={{
+                        min: {
+                          value: 0,
+                          message: "Fish Weight must be greater than 0.",
+                        },
+                      }}
+                    />
                   </Col>
 
                   <Col>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-total-biomass"
-                    >
-                      <Form.Label>Total Biomass (kg)</Form.Label>
-
-                      <Controller
-                        control={control}
-                        name="total_biomass"
-                        defaultValue=""
-                        rules={{
-                          min: 0,
-                        }}
-                        render={({ field }) => (
-                          <Form.Control
-                            {...field}
-                            isInvalid={errors.total_biomass}
-                            type="number"
-                            placeholder="---"
-                            aria-describedby="totalBiomassHelpBlock"
-                          />
-                        )}
-                      />
-                      <Form.Text id="totalBiomassHelpBlock" muted>
-                        Total biomass in kilograms of all stocked fish.
-                      </Form.Text>
-                      <Form.Control.Feedback type="invalid">
-                        <span role="alert">
-                          {errors.total_biomass &&
-                            errors.total_biomass.type === "min" && (
-                              <span role="alert">
-                                Total Biomass must be greater than 0
-                              </span>
-                            )}
-                        </span>
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                    <RHFInput
+                      control={control}
+                      name="total_biomass"
+                      label="Total Biomass (kg)"
+                      inputType="number"
+                      errors={errors}
+                      fgClass="mb-3"
+                      helpText="Total biomass in kilograms of all stocked fish."
+                      rules={{
+                        min: {
+                          value: 0,
+                          message: "Total Biomass must be greater than 0.",
+                        },
+                      }}
+                    />
                   </Col>
                 </Row>
 
                 <Row>
                   <Col>
-                    <Form.Group className="mb-3" controlId="select-fish-age">
-                      <Form.Label>Fish Age</Form.Label>
-
-                      <Controller
-                        control={control}
-                        name="fish_age"
-                        defaultValue=""
-                        rules={{
-                          min: 0,
-                        }}
-                        render={({ field }) => (
-                          <Form.Control
-                            {...field}
-                            isInvalid={errors.fish_age}
-                            type="number"
-                            placeholder="---"
-                            aria-describedby="fishAgeHelpBlock"
-                          />
-                        )}
-                      />
-                      <Form.Text id="fishAgeHelpBlock" muted>
-                        The age (in months) of the fish at time of stocking.
-                      </Form.Text>
-
-                      <Form.Control.Feedback type="invalid">
-                        <span role="alert">
-                          {errors.fish_age &&
-                            errors.fish_age.type === "min" && (
-                              <span role="alert">
-                                Fish Age must be greater than 0
-                              </span>
-                            )}
-                        </span>
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                    <RHFInput
+                      control={control}
+                      name="fish_age"
+                      label="Fish Age"
+                      inputType="number"
+                      errors={errors}
+                      fgClass="mb-3"
+                      helpText="The age of the fish (in months) at time of stocking."
+                      rules={{
+                        min: {
+                          value: 0,
+                          message:
+                            "Fish Age must be greater or equal to than 0.",
+                        },
+                      }}
+                    />
                   </Col>
 
                   <Col>
@@ -1140,40 +925,26 @@ export const StockingEventForm = () => {
 
                     <Row>
                       <Col md={3}>
-                        <Form.Group
-                          className="mb-3"
-                          controlId="select-clip-retention"
-                        >
-                          <Form.Label>Clip Retention</Form.Label>
-
-                          <Controller
-                            control={control}
-                            name="clip_retention"
-                            defaultValue=""
-                            rules={{
-                              min: 0,
-                            }}
-                            render={({ field }) => (
-                              <Form.Control
-                                {...field}
-                                isInvalid={errors.clip_retention}
-                                type="number"
-                                placeholder="---"
-                              />
-                            )}
-                          />
-
-                          <Form.Control.Feedback type="invalid">
-                            <span role="alert">
-                              {errors.clip_retention &&
-                                errors.clip_retention.type === "min" && (
-                                  <span role="alert">
-                                    Clip Retention must be greater than 0
-                                  </span>
-                                )}
-                            </span>
-                          </Form.Control.Feedback>
-                        </Form.Group>
+                        <RHFInput
+                          control={control}
+                          name="clip_retention"
+                          label="Clip Retention (%)"
+                          inputType="number"
+                          errors={errors}
+                          fgClass="mb-3"
+                          rules={{
+                            min: {
+                              value: 0,
+                              message:
+                                "Clip Retention must greater or equal to 0.",
+                            },
+                            max: {
+                              value: 100,
+                              message:
+                                "Clip Retention must less than or equal to 100.",
+                            },
+                          }}
+                        />
                       </Col>
                     </Row>
                   </Card.Body>
@@ -1245,33 +1016,23 @@ export const StockingEventForm = () => {
                       <Card.Body>
                         <Row>
                           <Col md={3}>
-                            <Form.Group
-                              className="mb-3"
-                              controlId="select-tagid-1"
-                            >
-                              <Form.Label>TagID</Form.Label>
-                              <Form.Control placeholder="---" />
-                            </Form.Group>
+                            <RHFInput
+                              control={control}
+                              name="tag_series_start_1"
+                              label="Tag Series Start"
+                              errors={errors}
+                              fgClass="mb-3"
+                            />
                           </Col>
 
                           <Col md={3}>
-                            <Form.Group
-                              className="mb-3"
-                              controlId="select-tag-1-series-start"
-                            >
-                              <Form.Label>Tag Series Start</Form.Label>
-                              <Form.Control type="number" placeholder="---" />
-                            </Form.Group>
-                          </Col>
-
-                          <Col md={3}>
-                            <Form.Group
-                              className="mb-3"
-                              controlId="select-tag-1-series-end"
-                            >
-                              <Form.Label>Tag Series End</Form.Label>
-                              <Form.Control type="number" placeholder="---" />
-                            </Form.Group>
+                            <RHFInput
+                              control={control}
+                              name="tag_series_end_1"
+                              label="Tag Series End"
+                              errors={errors}
+                              fgClass="mb-3"
+                            />
                           </Col>
                         </Row>
 
@@ -1322,35 +1083,62 @@ export const StockingEventForm = () => {
 
                         <Row>
                           <Col md={3}>
-                            <Form.Group
-                              className="mb-3"
-                              controlId="select-tag-1-retention-pct"
-                            >
-                              <Form.Label>Tag Retention (pct.)</Form.Label>
-                              <Form.Control type="number" placeholder="---" />
-                            </Form.Group>
+                            <RHFInput
+                              control={control}
+                              name="tag_retention_1"
+                              label="Tag Retention (%)"
+                              inputType="number"
+                              errors={errors}
+                              fgClass="mb-3"
+                              rules={{
+                                min: {
+                                  value: 0,
+                                  message:
+                                    "Tag Retention must greater or equal to 0.",
+                                },
+                                max: {
+                                  value: 100,
+                                  message:
+                                    "Tag Retention must less than or equal to 100.",
+                                },
+                              }}
+                            />
                           </Col>
 
                           <Col md={3}>
-                            <Form.Group
-                              className="mb-3"
-                              controlId="select-tag-1-retention-sam-size"
-                            >
-                              <Form.Label>Tag Retention Sample Size</Form.Label>
-                              <Form.Control type="number" placeholder="---" />
-                            </Form.Group>
+                            <RHFInput
+                              control={control}
+                              name="tag_retention_sample_size_1"
+                              label="Tag Retention Sample Size"
+                              inputType="number"
+                              errors={errors}
+                              fgClass="mb-3"
+                              rules={{
+                                min: {
+                                  value: 0,
+                                  message:
+                                    "Tag Retention Sample Size  must greater or equal to 0.",
+                                },
+                              }}
+                            />
                           </Col>
 
                           <Col md={3}>
-                            <Form.Group
-                              className="mb-3"
-                              controlId="select-tag-1-retention-pop-size"
-                            >
-                              <Form.Label>
-                                Tag Retention Population Size
-                              </Form.Label>
-                              <Form.Control type="number" placeholder="---" />
-                            </Form.Group>
+                            <RHFInput
+                              control={control}
+                              name="tag_retention_population_size_1"
+                              label="Tag Retention Population Size"
+                              inputType="number"
+                              errors={errors}
+                              fgClass="mb-3"
+                              rules={{
+                                min: {
+                                  value: 0,
+                                  message:
+                                    "Tag Retention Population Size  must greater or equal to 0.",
+                                },
+                              }}
+                            />
                           </Col>
                         </Row>
                       </Card.Body>

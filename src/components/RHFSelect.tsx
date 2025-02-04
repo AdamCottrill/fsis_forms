@@ -10,7 +10,6 @@ export const RHFSelect = ({
   options,
   rules,
   placeholderText,
-  //required
   fgClass,
   errors,
   required,
@@ -48,7 +47,9 @@ export const RHFSelect = ({
         />
 
         {errors[name] && (
-          <div className="text-danger">{errors[name]?.message}</div>
+          <span className="text-danger" role="alert">
+            {errors[name]?.message}
+          </span>
         )}
       </Form.Group>
     </>
