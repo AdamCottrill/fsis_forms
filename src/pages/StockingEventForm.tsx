@@ -17,7 +17,6 @@ import {
 } from "../services/api";
 
 import Select from "react-select";
-import AsyncSelect from "react-select/async";
 
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
@@ -624,12 +623,10 @@ export const StockingEventForm = () => {
                         control={control}
                         name="destination_waterbody"
                         label="Destination Waterbody"
-                        stateValue={destinationWaterbody?.value}
                         loadOptions={loadDestinationWaterbodyOptions}
                         onInputChange={selectDestinationWaterbodyChange}
                         required={true}
                         placeholderText="Start typing to see waterbodies"
-                        require={true}
                         rules={{
                           required: "Destination Waterbody is required.",
                         }}
@@ -643,12 +640,10 @@ export const StockingEventForm = () => {
                         control={control}
                         name="stocked_waterbody"
                         label="Stocked Waterbody"
-                        stateValue={stockedWaterbody?.value}
                         loadOptions={loadStockedWaterbodyOptions}
                         onInputChange={selectStockedWaterbodyChange}
                         required={true}
                         placeholderText="Start typing to see waterbodies"
-                        require={true}
                         rules={{
                           required: "Stocked Waterbody is required.",
                         }}
@@ -662,12 +657,10 @@ export const StockingEventForm = () => {
                         control={control}
                         name="stocking_site"
                         label="Stocking Site"
-                        stateValue={stockingSite?.value}
                         loadOptions={loadStockingSiteOptions}
                         onInputChange={selectStockingSiteChange}
                         required={true}
                         placeholderText="Start typing to see stocking sites"
-                        require={true}
                         rules={{
                           required: "Stocking Site is required.",
                         }}
@@ -926,10 +919,16 @@ export const StockingEventForm = () => {
                       </Col>
 
                       <Col>
-                        <Form.Check // prettier-ignore
-                          type="checkbox"
-                          id="other_mark"
-                          label="Other"
+                        <Controller
+                          control={control}
+                          name="other_mark"
+                          render={({ ...field }) => (
+                            <Form.Check // prettier-ignore
+                              type="checkbox"
+                              id="other_mark"
+                              label="Other"
+                            />
+                          )}
                         />
                       </Col>
                     </Row>

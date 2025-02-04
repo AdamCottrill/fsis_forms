@@ -7,7 +7,6 @@ export const RHFAsyncSelect = ({
   control,
   name,
   label,
-  stateValue,
   loadOptions,
   onInputChange,
   rules,
@@ -27,12 +26,12 @@ export const RHFAsyncSelect = ({
         <Controller
           control={control}
           name={name}
-          render={({ ...field }) => (
+          rules={rules}
+          render={({ field }) => (
             <AsyncSelect
               {...field}
               inputId={`select-${name}`}
               defaultOptions={[]}
-              value={stateValue}
               loadOptions={loadOptions}
               onInputChange={onInputChange}
               placeholder={
@@ -43,7 +42,6 @@ export const RHFAsyncSelect = ({
               className={errors[name] ? "react-select-error" : ""}
             />
           )}
-          rules={rules}
         />
 
         {errors[name] && (
