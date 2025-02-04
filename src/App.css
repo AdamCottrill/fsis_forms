@@ -7,3 +7,17 @@
 .select-placeholder-text {
 color: 	dimgray;
 }
+
+
+.react-select-error div {
+    border-color: #e74c3c;;
+}
+
+.react-select-error:hover div {
+    border-color: #e74c3c;;
+}
+
+.required-field {
+    color: darkred;
+    font-weight: bold;
+}

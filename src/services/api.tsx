@@ -3,6 +3,7 @@ export const getDevelopmentStages = async () => {
   const payload = await fetch(url).then((res) => res.json());
   const payload2 = payload.map((x) => ({
     ...x,
+    value: x.code,
     label: `${x.description} (${x.code})`,
   }));
 
@@ -34,6 +35,7 @@ export const getReleaseMethods = async () => {
   const payload = await fetch(url).then((res) => res.json());
   const payload2 = payload.map((x) => ({
     ...x,
+    value: x.code,
     label: `${x.description} (${x.code})`,
   }));
 
@@ -51,6 +53,7 @@ export const getTagTypes = async () => {
   const payload = await fetch(url).then((res) => res.json());
   const payload2 = payload.map((x) => ({
     ...x,
+    value: x.code,
     label: `${x.description} (${x.code})`,
   }));
 
@@ -62,6 +65,7 @@ export const getTagColours = async () => {
   const payload = await fetch(url).then((res) => res.json());
   const payload2 = payload.map((x) => ({
     ...x,
+    value: x.code,
     label: `${x.description} (${x.code})`,
   }));
 
@@ -73,6 +77,7 @@ export const getTagOrigins = async () => {
   const payload = await fetch(url).then((res) => res.json());
   const payload2 = payload.map((x) => ({
     ...x,
+    value: x.code,
     label: `${x.description} (${x.code})`,
   }));
 
@@ -84,6 +89,7 @@ export const getTagPositions = async () => {
   const payload = await fetch(url).then((res) => res.json());
   const payload2 = payload.map((x) => ({
     ...x,
+    value: x.code,
     label: `${x.description} (${x.code})`,
   }));
 

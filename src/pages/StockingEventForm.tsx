@@ -24,14 +24,17 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 import { ClickableMap } from "../components/ClickableMap";
 import { AccordionToggle } from "../components/AccordionToggle";
 import { get_value_labels } from "../utils";
+import { RHFSelect } from "../components/RHFSelect";
+
+import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
 
 interface SiteOption {
   readonly value: string;
@@ -41,9 +44,13 @@ interface SiteOption {
 interface StockingEventFormInputs {
   lot_id: number;
   stocking_admin_unit_id: number;
+  release_method: number;
+  development_stage: number;
+  destination_waterbody: string;
+  stocked_waterbody: string;
+  stocking_site: string;
   dd_lat: string;
   dd_lon: string;
-  destination_waterbody: string;
 }
 
 export const StockingEventForm = () => {
@@ -132,7 +139,6 @@ export const StockingEventForm = () => {
 
   const onSubmit = (values) => {
     console.log("Values:::", values);
-    console.log("Values:::", JSON.stringify(values));
   };
 
   const onError = (error) => {
@@ -247,12 +253,14 @@ export const StockingEventForm = () => {
     label: x.admin_unit_name,
   }));
 
+  console.log(errors);
+
   return (
     <>
       <Container>
         <Row className="justify-content-center">
           <h1>Stocking Event Form</h1>
-
+          <RequiredFieldsMsg />
           <Form onSubmit={handleSubmit(onSubmit, onError)} onReset={reset}>
             <Card className="my-1">
               <Card.Header as="h2">
@@ -261,37 +269,17 @@ export const StockingEventForm = () => {
               <Card.Body>
                 <Row className="my-2">
                   <Col>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-lot-identifier"
-                    >
-                      <Form.Label>Lot Identifier</Form.Label>
-
-                      <Controller
-                        control={control}
-                        name="lot_id"
-                        render={({ field: { onChange, value, ...field } }) => (
-                          <Select
-                            {...field}
-                            isClearable={true}
-                            inputId="select-lot-identifier"
-                            placeholder={
-                              <div className="select-placeholder-text">
-                                Select Lot Identifier...
-                              </div>
-                            }
-                            value={selectLotOptions.find(
-                              (x) => x.value === value,
-                            )}
-                            onChange={(val) => onChange(val.value)}
-                            options={selectLotOptions}
-                            isLoading={!selectLotOptions}
-                            closeMenuOnSelect={true}
-                          />
-                        )}
-                        rules={{ required: true }}
-                      />
-                    </Form.Group>
+                    <RHFSelect
+                      control={control}
+                      name="lot_id"
+                      label="Lot Identifier"
+                      required={true}
+                      options={selectLotOptions}
+                      placeholderText="Select Lot Identifier..."
+                      rules={{ required: "Lot identifier is required." }}
+                      errors={errors}
+                      fgClass="mb-3"
+                    />
                   </Col>
                   <Col>
                     <Form.Group className="mb-3" controlId="select-lot-number">
@@ -458,35 +446,18 @@ export const StockingEventForm = () => {
               <Card.Body>
                 <Row className="my-2">
                   <Col>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-stocking-admin-unit"
-                    >
-                      <Form.Label>Stocking Admin Unit</Form.Label>
-
-                      <Controller
-                        control={control}
-                        name="stocking_admin_unit_id"
-                        render={({ field: { onChange, value, ...field } }) => (
-                          <Select
-                            {...field}
-                            isClearable={true}
-                            placeholder={
-                              <div className="select-placeholder-text">---</div>
-                            }
-                            inputId="select-stocking-admin-unit"
-                            options={stockingAdminUnitOptions}
-                            isLoading={!stockingAdminUnitOptions}
-                            closeMenuOnSelect={true}
-                            value={stockingAdminUnitOptions.find(
-                              (x) => x.value === value,
-                            )}
-                            onChange={(val) => onChange(val.value)}
-                          />
-                        )}
-                        rules={{ required: true }}
-                      />
-                    </Form.Group>
+                    <RHFSelect
+                      control={control}
+                      name="stocking_admin_unit_id"
+                      label="Stocking Admin Unit"
+                      required={true}
+                      options={stockingAdminUnitOptions}
+                      rules={{
+                        required: "Stocking Admin Unit ID is required.",
+                      }}
+                      errors={errors}
+                      fgClass="mb-2"
+                    />
                   </Col>
                   <Col>
                     <Form.Group
@@ -543,39 +514,40 @@ export const StockingEventForm = () => {
                       controlId="select-stocking-date"
                     >
                       <Form.Label>Stocking Date</Form.Label>
-                      <Form.Control type="date" placeholder="Stocking Date" />
+
+                      <Controller
+                        control={control}
+                        name="stocking_date"
+                        defaultValue=""
+                        rules={{ required: "This field is required" }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            isInvalid={errors.stocking_date}
+                            type="date"
+                            placeholder="Stocking Date"
+                          />
+                        )}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        {errors.stocking_date?.message}
+                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
 
                   <Col>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-release-method"
-                    >
-                      <Form.Label>Release Method</Form.Label>
-
-                      <Controller
-                        control={control}
-                        name="release_method_id"
-                        render={({ field: { onChange, value, ...field } }) => (
-                          <Select
-                            {...field}
-                            value={releaseMethods.find((x) => x.id === value)}
-                            onChange={(val) => onChange(val.id)}
-                            isClearable={true}
-                            inputId="select-release-method"
-                            placeholder={
-                              <div className="select-placeholder-text">---</div>
-                            }
-                            options={releaseMethods}
-                            isLoading={!releaseMethods}
-                            closeMenuOnSelect={true}
-                            getOptionValue={(option) => option.id}
-                          />
-                        )}
-                        rules={{ required: true }}
-                      />
-                    </Form.Group>
+                    <RHFSelect
+                      control={control}
+                      name="release_method"
+                      label="Release Method"
+                      required={true}
+                      options={releaseMethods}
+                      rules={{
+                        required: "Release Method is required.",
+                      }}
+                      errors={errors}
+                      fgClass="mb-2"
+                    />
                   </Col>
 
                   <Col md={2}>
@@ -584,7 +556,41 @@ export const StockingEventForm = () => {
                       controlId="select-transit-mortality"
                     >
                       <Form.Label>Transit Mortality</Form.Label>
-                      <Form.Control type="number" placeholder="---" />
+
+                      <Controller
+                        control={control}
+                        name="transit_mortality"
+                        defaultValue=""
+                        rules={{
+                          max: 100,
+                          min: 0,
+                        }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            isInvalid={errors.transit_mortality}
+                            type="number"
+                            placeholder="---"
+                          />
+                        )}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        <span role="alert">
+                          {errors.transit_mortality &&
+                            errors.transit_mortality.type === "max" && (
+                              <span role="alert">
+                                Transit Mortality cannot exceed 100%
+                              </span>
+                            )}
+
+                          {errors.transit_mortality &&
+                            errors.transit_mortality.type === "min" && (
+                              <span role="alert">
+                                Transit Mortality must be greater than 0{" "}
+                              </span>
+                            )}
+                        </span>
+                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
 
@@ -593,15 +599,81 @@ export const StockingEventForm = () => {
                       className="mb-3"
                       controlId="select-site-temperature"
                     >
-                      <Form.Label>Site Temperature (C)</Form.Label>
-                      <Form.Control type="number" placeholder="---" />
+                      <Form.Label>Site Temperature</Form.Label>
+                      <Controller
+                        control={control}
+                        name="site_temperature"
+                        defaultValue=""
+                        rules={{
+                          max: 30,
+                          min: -10,
+                        }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            isInvalid={errors.site_temperature}
+                            type="number"
+                            placeholder="---"
+                          />
+                        )}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        <span role="alert">
+                          {errors.site_temperature &&
+                            errors.site_temperature.type === "max" && (
+                              <span role="alert">
+                                Site Temperature cannot exceed 30
+                              </span>
+                            )}
+
+                          {errors.site_temperature &&
+                            errors.site_temperature.type === "min" && (
+                              <span role="alert">
+                                Site Temperature must be greater than -10
+                              </span>
+                            )}
+                        </span>
+                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
 
                   <Col md={2}>
                     <Form.Group className="mb-3" controlId="select-water-depth">
                       <Form.Label>Water Depth (m)</Form.Label>
-                      <Form.Control type="number" placeholder="---" />
+                      <Controller
+                        control={control}
+                        name="water_depth"
+                        defaultValue=""
+                        rules={{
+                          max: 300,
+                          min: 0,
+                        }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            isInvalid={errors.water_depth}
+                            type="number"
+                            placeholder="---"
+                          />
+                        )}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        <span role="alert">
+                          {errors.water_depth &&
+                            errors.water_depth.type === "max" && (
+                              <span role="alert">
+                                Water Depth cannot exceed 300 m
+                              </span>
+                            )}
+
+                          {errors.water_depth &&
+                            errors.water_depth.type === "min" && (
+                              <span role="alert">
+                                Water depth must be at least 0
+                              </span>
+                            )}
+                        </span>
+                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
                 </Row>
@@ -622,6 +694,7 @@ export const StockingEventForm = () => {
                               name="transit-method"
                               type="checkbox"
                               id={x.code}
+                              control={control}
                             />
                           </Col>
                         ))}
@@ -661,10 +734,23 @@ export const StockingEventForm = () => {
                                   Start typing to see waterbodies
                                 </div>
                               }
+                              className={
+                                errors.destination_waterbody
+                                  ? "react-select-error"
+                                  : ""
+                              }
                             />
                           )}
-                          rules={{ required: true }}
+                          rules={{
+                            required: "Destination Waterbody is required.",
+                          }}
                         />
+
+                        {errors.destination_waterbody && (
+                          <div className="text-danger">
+                            {errors.destination_waterbody?.message}
+                          </div>
+                        )}
                       </Form.Group>
                     </Row>
 
@@ -691,10 +777,21 @@ export const StockingEventForm = () => {
                                   Start typing to see waterbodies
                                 </div>
                               }
+                              className={
+                                errors.stocked_waterbody
+                                  ? "react-select-error"
+                                  : ""
+                              }
                             />
                           )}
-                          rules={{ required: true }}
+                          rules={{ required: "Stocked Waterbody is required." }}
                         />
+
+                        {errors.stocked_waterbody && (
+                          <div className="text-danger">
+                            {errors.stocked_waterbody?.message}
+                          </div>
+                        )}
                       </Form.Group>
                     </Row>
 
@@ -721,10 +818,19 @@ export const StockingEventForm = () => {
                                   Start typing to see stocking sites
                                 </div>
                               }
+                              className={
+                                errors.stocking_site ? "react-select-error" : ""
+                              }
                             />
                           )}
-                          rules={{ required: true }}
+                          rules={{ required: "Stocking Site is required" }}
                         />
+
+                        {errors.stocking_site && (
+                          <div className="text-danger">
+                            {errors.stocking_site?.message}
+                          </div>
+                        )}
                       </Form.Group>
                     </Row>
 
@@ -833,21 +939,78 @@ export const StockingEventForm = () => {
                       controlId="select-number-stocked"
                     >
                       <Form.Label>Number Stocked</Form.Label>
-                      <Form.Control type="number" placeholder="---" />
+
+                      <Controller
+                        control={control}
+                        name="number_stocked"
+                        defaultValue=""
+                        rules={{
+                          min: 1,
+                          required: "Number Stocked is required",
+                        }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            isInvalid={errors.number_stocked}
+                            type="number"
+                            placeholder="---"
+                          />
+                        )}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                        <span role="alert">
+                          {errors.number_stocked &&
+                            errors.number_stocked.type === "required" && (
+                              <span role="alert">
+                                Number stocked is required
+                              </span>
+                            )}
+
+                          {errors.number_stocked &&
+                            errors.number_stocked.type === "min" && (
+                              <span role="alert">
+                                Number stocked must be at least 0
+                              </span>
+                            )}
+                        </span>
+                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
 
                   <Col>
                     <Form.Group className="mb-3" controlId="select-fish-weight">
                       <Form.Label>Fish Weight (g)</Form.Label>
-                      <Form.Control
-                        type="number"
-                        placeholder="---"
-                        aria-describedby="fishWeightHelpBlock"
+
+                      <Controller
+                        control={control}
+                        name="fish_weight"
+                        defaultValue=""
+                        rules={{
+                          min: 0,
+                        }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            isInvalid={errors.fish_weight}
+                            type="number"
+                            placeholder="---"
+                            aria-describedby="fishWeightHelpBlock"
+                          />
+                        )}
                       />
                       <Form.Text id="fishWeightHelpBlock" muted>
                         Average weight in grams of an individual fish.
                       </Form.Text>
+                      <Form.Control.Feedback type="invalid">
+                        <span role="alert">
+                          {errors.fish_weight &&
+                            errors.fish_weight.type === "min" && (
+                              <span role="alert">
+                                Fish Weight must be greater than 0
+                              </span>
+                            )}
+                        </span>
+                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
 
@@ -857,14 +1020,37 @@ export const StockingEventForm = () => {
                       controlId="select-total-biomass"
                     >
                       <Form.Label>Total Biomass (kg)</Form.Label>
-                      <Form.Control
-                        type="number"
-                        placeholder="---"
-                        aria-describedby="totalBiomassHelpBlock"
+
+                      <Controller
+                        control={control}
+                        name="total_biomass"
+                        defaultValue=""
+                        rules={{
+                          min: 0,
+                        }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            isInvalid={errors.total_biomass}
+                            type="number"
+                            placeholder="---"
+                            aria-describedby="totalBiomassHelpBlock"
+                          />
+                        )}
                       />
                       <Form.Text id="totalBiomassHelpBlock" muted>
                         Total biomass in kilograms of all stocked fish.
                       </Form.Text>
+                      <Form.Control.Feedback type="invalid">
+                        <span role="alert">
+                          {errors.total_biomass &&
+                            errors.total_biomass.type === "min" && (
+                              <span role="alert">
+                                Total Biomass must be greater than 0
+                              </span>
+                            )}
+                        </span>
+                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
                 </Row>
@@ -873,48 +1059,52 @@ export const StockingEventForm = () => {
                   <Col>
                     <Form.Group className="mb-3" controlId="select-fish-age">
                       <Form.Label>Fish Age</Form.Label>
-                      <Form.Control
-                        type="number"
-                        placeholder="---"
-                        aria-describedby="fishAgeHelpBlock"
+
+                      <Controller
+                        control={control}
+                        name="fish_age"
+                        defaultValue=""
+                        rules={{
+                          min: 0,
+                        }}
+                        render={({ field }) => (
+                          <Form.Control
+                            {...field}
+                            isInvalid={errors.fish_age}
+                            type="number"
+                            placeholder="---"
+                            aria-describedby="fishAgeHelpBlock"
+                          />
+                        )}
                       />
                       <Form.Text id="fishAgeHelpBlock" muted>
                         The age (in months) of the fish at time of stocking.
                       </Form.Text>
+
+                      <Form.Control.Feedback type="invalid">
+                        <span role="alert">
+                          {errors.fish_age &&
+                            errors.fish_age.type === "min" && (
+                              <span role="alert">
+                                Fish Age must be greater than 0
+                              </span>
+                            )}
+                        </span>
+                      </Form.Control.Feedback>
                     </Form.Group>
                   </Col>
 
                   <Col>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-development-stage"
-                    >
-                      <Form.Label>Development Stage</Form.Label>
-
-                      <Controller
-                        control={control}
-                        name="development_stage_id"
-                        render={({ field: { onChange, value, ...field } }) => (
-                          <Select
-                            {...field}
-                            value={developmentStages.find(
-                              (x) => x.id === value,
-                            )}
-                            onChange={(val) => onChange(val.id)}
-                            isClearable={true}
-                            inputId="select-development-stage"
-                            placeholder={
-                              <div className="select-placeholder-text">---</div>
-                            }
-                            options={developmentStages}
-                            isLoading={!developmentStages}
-                            closeMenuOnSelect={true}
-                            getOptionValue={(option) => option.id}
-                          />
-                        )}
-                        rules={{ required: true }}
-                      />
-                    </Form.Group>
+                    <RHFSelect
+                      control={control}
+                      name="development_stage_id"
+                      inputId="select-development-stage"
+                      options={developmentStages}
+                      label="Development Stage"
+                      rules={{ required: "Development Stage is required." }}
+                      errors={errors}
+                      fgClass="mb-3"
+                    />
                   </Col>
                 </Row>
               </Card.Body>
@@ -955,7 +1145,34 @@ export const StockingEventForm = () => {
                           controlId="select-clip-retention"
                         >
                           <Form.Label>Clip Retention</Form.Label>
-                          <Form.Control type="number" placeholder="---" />
+
+                          <Controller
+                            control={control}
+                            name="clip_retention"
+                            defaultValue=""
+                            rules={{
+                              min: 0,
+                            }}
+                            render={({ field }) => (
+                              <Form.Control
+                                {...field}
+                                isInvalid={errors.clip_retention}
+                                type="number"
+                                placeholder="---"
+                              />
+                            )}
+                          />
+
+                          <Form.Control.Feedback type="invalid">
+                            <span role="alert">
+                              {errors.clip_retention &&
+                                errors.clip_retention.type === "min" && (
+                                  <span role="alert">
+                                    Clip Retention must be greater than 0
+                                  </span>
+                                )}
+                            </span>
+                          </Form.Control.Feedback>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -1060,143 +1277,46 @@ export const StockingEventForm = () => {
 
                         <Row>
                           <Col>
-                            <Form.Group
-                              className="mb-3"
-                              controlId="select-tag-1-type"
-                            >
-                              <Form.Label>Tag Type</Form.Label>
-
-                              <Controller
-                                control={control}
-                                name="tag_type-1"
-                                render={({
-                                  field: { onChange, value, ...field },
-                                }) => (
-                                  <Select
-                                    {...field}
-                                    value={tagTypes.find((x) => x.id === value)}
-                                    onChange={(val) => onChange(val.id)}
-                                    isClearable={true}
-                                    inputId="select-tag-type-1"
-                                    placeholder={
-                                      <div className="select-placeholder-text">
-                                        ---
-                                      </div>
-                                    }
-                                    options={tagTypes}
-                                    isLoading={!tagTypes}
-                                    closeMenuOnSelect={true}
-                                    getOptionValue={(option) => option.id}
-                                  />
-                                )}
-                              />
-                            </Form.Group>
+                            <RHFSelect
+                              control={control}
+                              name="tag_type_1"
+                              label="Tag Type"
+                              options={tagTypes}
+                              errors={errors}
+                              fgClass="mb-3"
+                            />
                           </Col>
                           <Col>
-                            <Form.Group
-                              className="mb-3"
-                              controlId="select-tag-1-colour"
-                            >
-                              <Form.Label>Tag Colour</Form.Label>
-                              <Controller
-                                control={control}
-                                name="tag_colour-1"
-                                render={({
-                                  field: { onChange, value, ...field },
-                                }) => (
-                                  <Select
-                                    {...field}
-                                    value={tagColours.find(
-                                      (x) => x.id === value,
-                                    )}
-                                    onChange={(val) => onChange(val.id)}
-                                    isClearable={true}
-                                    inputId="select-tag-colour-1"
-                                    placeholder={
-                                      <div className="select-placeholder-text">
-                                        ---
-                                      </div>
-                                    }
-                                    options={tagColours}
-                                    isLoading={!tagColours}
-                                    closeMenuOnSelect={true}
-                                    getOptionValue={(option) => option.id}
-                                  />
-                                )}
-                              />
-                            </Form.Group>
+                            <RHFSelect
+                              control={control}
+                              name="tag_colour_1"
+                              label="Tag Colour"
+                              options={tagColours}
+                              errors={errors}
+                              fgClass="mb-3"
+                            />
                           </Col>
 
                           <Col>
-                            <Form.Group
-                              className="mb-3"
-                              controlId="select-tag-1-position"
-                            >
-                              <Form.Label>Tag Position</Form.Label>
-
-                              <Controller
-                                control={control}
-                                name="tag_position-1"
-                                render={({
-                                  field: { onChange, value, ...field },
-                                }) => (
-                                  <Select
-                                    {...field}
-                                    value={tagPositions.find(
-                                      (x) => x.id === value,
-                                    )}
-                                    onChange={(val) => onChange(val.id)}
-                                    isClearable={true}
-                                    inputId="select-tag-position-1"
-                                    placeholder={
-                                      <div className="select-placeholder-text">
-                                        ---
-                                      </div>
-                                    }
-                                    options={tagPositions}
-                                    isLoading={!tagPositions}
-                                    closeMenuOnSelect={true}
-                                    getOptionValue={(option) => option.id}
-                                  />
-                                )}
-                              />
-                            </Form.Group>
+                            <RHFSelect
+                              control={control}
+                              name="tag_position_1"
+                              label="Tag Position"
+                              options={tagPositions}
+                              errors={errors}
+                              fgClass="mb-3"
+                            />
                           </Col>
 
                           <Col>
-                            <Form.Group
-                              className="mb-3"
-                              controlId="select-tag-1-origin"
-                            >
-                              <Form.Label>Tag Origin</Form.Label>
-
-                              <Controller
-                                control={control}
-                                name="tag_origin-1"
-                                render={({
-                                  field: { onChange, value, ...field },
-                                }) => (
-                                  <Select
-                                    {...field}
-                                    value={tagOrigins.find(
-                                      (x) => x.id === value,
-                                    )}
-                                    onChange={(val) => onChange(val.id)}
-                                    isClearable={true}
-                                    inputId="select-tag-origin-1"
-                                    placeholder={
-                                      <div className="select-placeholder-text">
-                                        ---
-                                      </div>
-                                    }
-                                    options={tagOrigins}
-                                    isLoading={!tagOrigins}
-                                    closeMenuOnSelect={true}
-                                    getOptionValue={(option) => option.id}
-                                  />
-                                )}
-                              />
-                            </Form.Group>
+                            <RHFSelect
+                              control={control}
+                              name="tag_origin_1"
+                              label="Tag Origin"
+                              options={tagOrigins}
+                              errors={errors}
+                              fgClass="mb-3"
+                            />
                           </Col>
                         </Row>
 
