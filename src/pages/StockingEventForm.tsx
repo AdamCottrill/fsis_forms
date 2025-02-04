@@ -32,8 +32,9 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { ClickableMap } from "../components/ClickableMap";
 import { AccordionToggle } from "../components/AccordionToggle";
 import { get_value_labels } from "../utils";
-import { RHFSelect } from "../components/RHFSelect";
+import { RHFAsyncSelect } from "../components/RHFAsyncSelect";
 import { RHFInput } from "../components/RHFInput";
+import { RHFSelect } from "../components/RHFSelect";
 import { RHFTextArea } from "../components/RHFTextArea";
 
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
@@ -619,126 +620,60 @@ export const StockingEventForm = () => {
                 <Row>
                   <Col md={3}>
                     <Row>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="select-destination-waterbody"
-                      >
-                        <Form.Label>Destination Waterbody</Form.Label>
-
-                        <Controller
-                          control={control}
-                          name="destination_waterbody"
-                          render={({ field: { value, ...field } }) => (
-                            <AsyncSelect
-                              {...field}
-                              inputId="select-destination-waterbody"
-                              defaultOptions={[]}
-                              value={destinationWaterbody?.value}
-                              loadOptions={loadDestinationWaterbodyOptions}
-                              onInputChange={selectDestinationWaterbodyChange}
-                              placeholder={
-                                <div className="select-placeholder-text">
-                                  Start typing to see waterbodies
-                                </div>
-                              }
-                              className={
-                                errors.destination_waterbody
-                                  ? "react-select-error"
-                                  : ""
-                              }
-                            />
-                          )}
-                          rules={{
-                            required: "Destination Waterbody is required.",
-                          }}
-                        />
-
-                        {errors.destination_waterbody && (
-                          <div className="text-danger">
-                            {errors.destination_waterbody?.message}
-                          </div>
-                        )}
-                      </Form.Group>
+                      <RHFAsyncSelect
+                        control={control}
+                        name="destination_waterbody"
+                        label="Destination Waterbody"
+                        stateValue={destinationWaterbody?.value}
+                        loadOptions={loadDestinationWaterbodyOptions}
+                        onInputChange={selectDestinationWaterbodyChange}
+                        required={true}
+                        placeholderText="Start typing to see waterbodies"
+                        require={true}
+                        rules={{
+                          required: "Destination Waterbody is required.",
+                        }}
+                        errors={errors}
+                        fgClass="mb-3"
+                      />
                     </Row>
 
                     <Row>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="select-stocked-waterbody"
-                      >
-                        <Form.Label>Stocked Waterbody</Form.Label>
-
-                        <Controller
-                          control={control}
-                          name="stocked_waterbody"
-                          render={({ field: { value, ...field } }) => (
-                            <AsyncSelect
-                              {...field}
-                              inputId="select-stocked-waterbody"
-                              defaultOptions={[]}
-                              value={stockedWaterbody?.value}
-                              loadOptions={loadStockedWaterbodyOptions}
-                              onInputChange={selectStockedWaterbodyChange}
-                              placeholder={
-                                <div className="select-placeholder-text">
-                                  Start typing to see waterbodies
-                                </div>
-                              }
-                              className={
-                                errors.stocked_waterbody
-                                  ? "react-select-error"
-                                  : ""
-                              }
-                            />
-                          )}
-                          rules={{ required: "Stocked Waterbody is required." }}
-                        />
-
-                        {errors.stocked_waterbody && (
-                          <div className="text-danger">
-                            {errors.stocked_waterbody?.message}
-                          </div>
-                        )}
-                      </Form.Group>
+                      <RHFAsyncSelect
+                        control={control}
+                        name="stocked_waterbody"
+                        label="Stocked Waterbody"
+                        stateValue={stockedWaterbody?.value}
+                        loadOptions={loadStockedWaterbodyOptions}
+                        onInputChange={selectStockedWaterbodyChange}
+                        required={true}
+                        placeholderText="Start typing to see waterbodies"
+                        require={true}
+                        rules={{
+                          required: "Stocked Waterbody is required.",
+                        }}
+                        errors={errors}
+                        fgClass="mb-3"
+                      />
                     </Row>
 
                     <Row>
-                      <Form.Group
-                        className="mb-3"
-                        controlId="select-stocking-site"
-                      >
-                        <Form.Label>Stocking Site</Form.Label>
-
-                        <Controller
-                          control={control}
-                          name="stocking_site"
-                          render={({ field: { value, ...field } }) => (
-                            <AsyncSelect
-                              {...field}
-                              inputId="select-stocking-site"
-                              defaultOptions={[]}
-                              value={stockingSite?.value}
-                              loadOptions={loadStockingSiteOptions}
-                              onInputChange={selectStockingSiteChange}
-                              placeholder={
-                                <div className="select-placeholder-text">
-                                  Start typing to see stocking sites
-                                </div>
-                              }
-                              className={
-                                errors.stocking_site ? "react-select-error" : ""
-                              }
-                            />
-                          )}
-                          rules={{ required: "Stocking Site is required" }}
-                        />
-
-                        {errors.stocking_site && (
-                          <div className="text-danger">
-                            {errors.stocking_site?.message}
-                          </div>
-                        )}
-                      </Form.Group>
+                      <RHFAsyncSelect
+                        control={control}
+                        name="stocking_site"
+                        label="Stocking Site"
+                        stateValue={stockingSite?.value}
+                        loadOptions={loadStockingSiteOptions}
+                        onInputChange={selectStockingSiteChange}
+                        required={true}
+                        placeholderText="Start typing to see stocking sites"
+                        require={true}
+                        rules={{
+                          required: "Stocking Site is required.",
+                        }}
+                        errors={errors}
+                        fgClass="mb-3"
+                      />
                     </Row>
 
                     <Row>
