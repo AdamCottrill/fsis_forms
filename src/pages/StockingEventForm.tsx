@@ -34,6 +34,7 @@ import { AccordionToggle } from "../components/AccordionToggle";
 import { get_value_labels } from "../utils";
 import { RHFSelect } from "../components/RHFSelect";
 import { RHFInput } from "../components/RHFInput";
+import { RHFTextArea } from "../components/RHFTextArea";
 
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
 
@@ -1164,41 +1165,32 @@ export const StockingEventForm = () => {
                 </Card.Header>
                 <Accordion.Collapse eventKey="comments-card">
                   <Card.Body>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-inventory-comments"
-                    >
-                      <Form.Label>Inventory Comments</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        placeholder=""
-                        style={{ height: "100px" }}
-                      />
-                    </Form.Group>
+                    <RHFTextArea
+                      control={control}
+                      name="inventory_comments"
+                      label="Inventory Comments"
+                      errors={errors}
+                      fgClass="mb-3"
+                      style={{ height: "100px" }}
+                    />
 
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-marking-comments"
-                    >
-                      <Form.Label>Marking Comments</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        placeholder=""
-                        style={{ height: "100px" }}
-                      />
-                    </Form.Group>
+                    <RHFTextArea
+                      control={control}
+                      name="marking_comments"
+                      label="Marking Comments"
+                      errors={errors}
+                      fgClass="mb-3"
+                      style={{ height: "100px" }}
+                    />
 
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-stocking-comments"
-                    >
-                      <Form.Label>Stocking Comments</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        placeholder=""
-                        style={{ height: "100px" }}
-                      />
-                    </Form.Group>
+                    <RHFTextArea
+                      control={control}
+                      name="stocking_comments"
+                      label="Stocking Comments"
+                      errors={errors}
+                      fgClass="mb-3"
+                      style={{ height: "100px" }}
+                    />
                   </Card.Body>
                 </Accordion.Collapse>
               </Card>
