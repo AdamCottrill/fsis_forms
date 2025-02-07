@@ -56,7 +56,7 @@ interface StockingEventFormInputs {
 }
 
 export const StockingEventForm = () => {
-  const lotFilters = {};
+  let lotFilters = {};
 
   const [destinationWaterbody, setDestinationWaterbody] = useState("");
   const [stockedWaterbody, setStockedWaterbody] = useState("");
@@ -131,6 +131,7 @@ export const StockingEventForm = () => {
 
   const {
     control,
+    register,
     handleSubmit,
     trigger,
     reset,
@@ -489,7 +490,8 @@ export const StockingEventForm = () => {
                               label={`${x.description} (${x.code})`}
                               name="stocking-purpose"
                               type="checkbox"
-                              id={x.code}
+                              value={x.code}
+                              {...register(`stocking_purpose_${x.code}`)}
                             />
                           </Col>
                         ))}
@@ -600,8 +602,8 @@ export const StockingEventForm = () => {
                               label={`${x.description} (${x.code})`}
                               name="transit-method"
                               type="checkbox"
-                              id={x.code}
-                              control={control}
+                              value={x.code}
+                              {...register(`transit_method_${x.code}`)}
                             />
                           </Col>
                         ))}
@@ -845,7 +847,8 @@ export const StockingEventForm = () => {
                                 label={`${x.description} (${x.code}) [${x.fn2_code}]`}
                                 name="fin-clips"
                                 type="checkbox"
-                                id={x.code}
+                                value={x.code}
+                                {...register(`fin_clip_${x.code}`)}
                               />
                             </Col>
                           ))}
@@ -899,6 +902,7 @@ export const StockingEventForm = () => {
                           type="checkbox"
                           id="OTC-flag"
                           label="Oxytetracycline (OTC)"
+                          {...register("oxytetracycline")}
                         />
                       </Col>
 
@@ -907,6 +911,7 @@ export const StockingEventForm = () => {
                           type="checkbox"
                           id="brand-flag"
                           label="Brand"
+                          {...register("brand")}
                         />
                       </Col>
 
@@ -915,20 +920,16 @@ export const StockingEventForm = () => {
                           type="checkbox"
                           id="fl-dye-flag"
                           label="Fluorescent Dye"
+                          {...register("fluorescent_dye")}
                         />
                       </Col>
 
                       <Col>
-                        <Controller
-                          control={control}
-                          name="other_mark"
-                          render={({ ...field }) => (
-                            <Form.Check // prettier-ignore
-                              type="checkbox"
-                              id="other_mark"
-                              label="Other"
-                            />
-                          )}
+                        <Form.Check // prettier-ignore
+                          type="checkbox"
+                          id="other_mark"
+                          label="Other"
+                          {...register("other_mark")}
                         />
                       </Col>
                     </Row>
