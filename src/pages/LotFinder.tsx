@@ -3,6 +3,7 @@ import React, { useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 
+import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
@@ -18,7 +19,7 @@ const species = (filteredLots: Lot[]): SelectChoice[] =>
   get_value_labels(filteredLots, "species_code", "species_name", false, "---");
 
 const lot_nums = (filteredLots: Lot[]): SelectChoice[] =>
-  get_value_labels(filteredLots, "lot_num", "slug", false, "---");
+  get_value_labels(filteredLots, "lot_num", "lot_num", false, "---");
 
 const strains = (filteredLots: Lot[]): SelectChoice[] =>
   get_value_labels(filteredLots, "strain_slug", "strain_name", false, "---");
@@ -79,6 +80,10 @@ export const LotFinder = () => {
       current[name] = value;
     }
     setLotFilters({ ...current });
+  };
+
+  const handleResetClick = (event) => {
+    setLotFilters({});
   };
 
   if (lotIsPending) return "Loading...";
@@ -221,12 +226,18 @@ export const LotFinder = () => {
                 </Form.Group>
               </Col>
             </Row>
+
+            <Row>
+              <Button variant="primary" onClick={handleResetClick}>
+                Reset
+              </Button>
+            </Row>
           </Card.Body>
         </Card>
       </Row>
 
       <Row className="my-2">
-        <h2>Matching Lots:</h2>
+        <h2>Matching Lots (n={filteredLots.length}):</h2>
         <LotTable lots={filteredLots} />
       </Row>
     </Container>
