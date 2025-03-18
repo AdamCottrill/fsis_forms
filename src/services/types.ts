@@ -1,3 +1,9 @@
+
+interface SelectChoice {
+  label: string;
+  value: string;
+}
+
 export interface CodeTable {
   id: number;
   code: string;

@@ -1,5 +1,5 @@
 // return an empty page that will have form with just lot related elements:
-import React from "react";
+import React, { useState } from "react";
 
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
@@ -12,23 +12,43 @@ import { getLots } from "../services/api";
 
 import { get_value_labels } from "../utils";
 
-interface SelectChoice {
-  label: string;
-  value: string;
-}
+import { Lot, SelectChoice } from "../services/types";
+
+const species = (filteredLots: Lot[]): SelectChoice[] =>
+  get_value_labels(filteredLots, "species_code", "species_name", false, "---");
+
+const lot_nums = (filteredLots: Lot[]): SelectChoice[] =>
+  get_value_labels(filteredLots, "lot_num", "slug", false, "---");
+
+const strains = (filteredLots: Lot[]): SelectChoice[] =>
+  get_value_labels(filteredLots, "strain_slug", "strain_name", false, "---");
+
+const spawnYears = (filteredLots: Lot[]): SelectChoice[] =>
+  get_value_labels(filteredLots, "spawn_year", "spawn_year", true, "---");
+
+const proponents = (filteredLots: Lot[]): SelectChoice[] =>
+  get_value_labels(
+    filteredLots,
+    "proponent_abbrev",
+    "proponent_name",
+    false,
+    "---",
+  );
+
+const hatcheries = (filteredLots: Lot[]): SelectChoice[] =>
+  get_value_labels(
+    filteredLots,
+    "rearing_location_abbrev",
+    "rearing_location_name",
+    false,
+    "---",
+  );
+
+const funding_types = (filteredLots: Lot[]): SelectChoice[] =>
+  get_value_labels(filteredLots, "funding_type", "funding_type", false, "---");
 
 export const LotFinder = () => {
-  const filterLots = (all_lots, filters) => {
-    const lots =
-      Object.keys(filters).length === 0
-        ? all_lots
-        : all_lots.filter((item) =>
-            Object.entries(filters).every(
-              ([key, value]) => item[key] === value,
-            ),
-          );
-    return lots;
-  };
+  const [lotFilters, setLotFilters] = useState({});
 
   // get all of our lots:
   const {
@@ -41,78 +61,24 @@ export const LotFinder = () => {
   // convert spawn year to a string so our filters all work:
   lotData.forEach((d) => (d.spawn_year = d.spawn_year + ""));
 
-  let filteredLots = [...lotData];
-  let lotFilters = {};
-
-  const lot_nums = (): SelectChoice[] =>
-    get_value_labels(filteredLots, "lot_num", "slug", false, "---");
-
-  const species = (filteredLots): SelectChoice[] =>
-    get_value_labels(
-      filteredLots,
-      "species_code",
-      "species_name",
-      false,
-      "---",
-    );
-
-  const strains = (filteredLots): SelectChoice[] =>
-    get_value_labels(filteredLots, "strain_slug", "strain_name", false, "---");
-
-  const spawnYears = (): SelectChoice[] =>
-    get_value_labels(filteredLots, "spawn_year", "spawn_year", true, "---");
-
-  const proponents = (): SelectChoice[] =>
-    get_value_labels(
-      filteredLots,
-      "proponent_abbrev",
-      "proponent_name",
-      false,
-      "---",
-    );
-
-  const hatcheries = (): SelectChoice[] =>
-    get_value_labels(
-      filteredLots,
-      "rearing_location_abbrev",
-      "rearing_location_name",
-      false,
-      "---",
-    );
-
-  const funding_types = (): SelectChoice[] =>
-    get_value_labels(
-      filteredLots,
-      "funding_type",
-      "funding_type",
-      false,
-      "---",
-    );
+  const filteredLots =
+    Object.keys(lotFilters).length === 0
+      ? lotData
+      : lotData.filter((item) =>
+          Object.entries(lotFilters).every(
+            ([key, value]) => item[key] === value,
+          ),
+        );
 
   const handleChange2 = (event) => {
-    //console.log(event.target.name, event.target.value);
     const { name, value } = event.target;
-    const tmp = { ...lotFilters };
+    let current = { ...lotFilters };
     if (value === "") {
-      delete tmp[name];
+      delete current[name];
     } else {
-      tmp[name] = value;
+      current[name] = value;
     }
-    lotFilters = { ...tmp };
-    console.log("filters: ", lotFilters);
-    filteredLots = filterLots(lotData, lotFilters);
-
-    lot_nums();
-    species(filteredLots);
-    strains(filteredLots);
-    console.log(strains(filteredLots));
-    spawnYears();
-    proponents();
-    hatcheries();
-    funding_types();
-
-    //setFilteredLots(filterLots(lotData, lotFilters));
-    console.log("filteredLots", filteredLots);
+    setLotFilters({ ...current });
   };
 
   if (lotIsPending) return "Loading...";
@@ -137,7 +103,7 @@ export const LotFinder = () => {
                     name="lot_num"
                     onChange={handleChange2}
                   >
-                    {lot_nums().map((x) => (
+                    {lot_nums(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
                         {x.label}
                       </option>
@@ -189,7 +155,7 @@ export const LotFinder = () => {
                     name="spawn_year"
                     onChange={handleChange2}
                   >
-                    {spawnYears().map((x) => (
+                    {spawnYears(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
                         {x.label}
                       </option>
@@ -209,7 +175,7 @@ export const LotFinder = () => {
                     name="proponent_abbrev"
                     onChange={handleChange2}
                   >
-                    {proponents().map((x) => (
+                    {proponents(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
                         {x.label}
                       </option>
@@ -229,7 +195,7 @@ export const LotFinder = () => {
                     name="rearing_location_abbrev"
                     onChange={handleChange2}
                   >
-                    {hatcheries().map((x) => (
+                    {hatcheries(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
                         {x.label}
                       </option>
@@ -246,7 +212,7 @@ export const LotFinder = () => {
                     name="funding_type"
                     onChange={handleChange2}
                   >
-                    {funding_types().map((x) => (
+                    {funding_types(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
                         {x.label}
                       </option>
