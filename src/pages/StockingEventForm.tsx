@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   getDevelopmentStages,
@@ -35,6 +35,7 @@ import { RHFAsyncSelect } from "../components/RHFAsyncSelect";
 import { RHFInput } from "../components/RHFInput";
 import { RHFSelect } from "../components/RHFSelect";
 import { RHFTextArea } from "../components/RHFTextArea";
+import { LotSelector } from "../components/LotSelector";
 
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
 
@@ -55,8 +56,25 @@ interface StockingEventFormInputs {
   dd_lon: string;
 }
 
+//function reducer(state, action) {
+//  switch (action.type) {
+//    case "change": {
+//      return { ...state, [action.name]: action.value };
+//    }
+//    case "delete": {
+//      const current = { ...state };
+//      delete current[action.name];
+//      return current;
+//    }
+//  }
+//  throw Error("Unknown action: " + action.type);
+//}
+//
 export const StockingEventForm = () => {
   let lotFilters = {};
+  let filteredLots = [];
+
+  //const [state, dispatch] = useReducer(reducer, {});
 
   const [destinationWaterbody, setDestinationWaterbody] = useState("");
   const [stockedWaterbody, setStockedWaterbody] = useState("");
@@ -129,6 +147,37 @@ export const StockingEventForm = () => {
     queryFn: () => getTagOrigins(),
   });
 
+  const lotData = serverLots ? serverLots.results : [];
+  // convert spawn year to a string so our filters all work:
+  lotData.forEach((d) => (d.spawn_year = d.spawn_year + ""));
+
+  // let filteredLots =
+  //   Object.keys(lotFilters).length === 0
+  //     ? lotData
+  //     : lotData.filter((item) =>
+  //         lotData
+  //           .entries(lotFilters)
+  //           .every(([key, value]) => item[key] === value),
+  //       );
+
+  const filterLots = (all_lots, filters) => {
+    const lots =
+      Object.keys(filters).length === 0
+        ? all_lots
+        : all_lots.filter((item) =>
+            Object.entries(filters).every(
+              ([key, value]) => item[key] === value,
+            ),
+          );
+    return lots;
+  };
+
+  filteredLots = filterLots(lotData, lotFilters);
+
+  useEffect(() => {
+    filteredLots = filterLots(lotData, lotFilters);
+  }, [lotData, lotFilters]);
+
   const {
     control,
     register,
@@ -152,13 +201,7 @@ export const StockingEventForm = () => {
 
   if (lotError) return "An error has occurred: " + lotError.message;
 
-  const lotData = serverLots ? serverLots.results : [];
-  // convert spawn year to a string so our filters all work:
-  lotData.forEach((d) => (d.spawn_year = d.spawn_year + ""));
-
-  let filteredLots = lotData.filter((item) =>
-    Object.entries(lotFilters).every(([key, value]) => item[key] === value),
-  );
+  //=============================================================
 
   const spawnYears = get_value_labels(
     filteredLots,
@@ -178,6 +221,7 @@ export const StockingEventForm = () => {
     "species_code",
     "species_name",
   );
+
   const strains = get_value_labels(filteredLots, "strain_slug", "strain_name");
 
   const proponents = get_value_labels(
@@ -193,16 +237,31 @@ export const StockingEventForm = () => {
   );
 
   const selectChanged = (event, { name }) => {
+    console.log(event, name);
     if (event === null) {
-      delete lotFilters[name];
+      const tmp = { ...lotFilters };
+      delete tmp[name];
+      lotFilters = { ...tmp };
+      //dispatch({ type: "delete", name });
     } else {
       lotFilters = { ...lotFilters, [name]: event.value };
+      //dispatch({ type: "change", name: name, value: event.value });
     }
 
-    filteredLots = lotData.filter((item) =>
-      Object.entries(lotFilters).every(([key, value]) => item[key] === value),
-    );
+    filteredLots = filterLots(lotData, lotFilters);
+
+    console.log(lotFilters);
+    console.log(filteredLots);
+    //console.log("state:", state);
+
+    console.log(strains);
+
+    // filteredLots = lotData.filter((item) =>
+    //   Object.entries(lotFilters).every(([key, value]) => item[key] === value),
+    // );
   };
+
+  //=============================================================
 
   const selectDestinationWaterbodyChange = (value) => {
     setDestinationWaterbody(value);
@@ -251,17 +310,16 @@ export const StockingEventForm = () => {
     label: x.slug,
   }));
 
-  const stockingAdminUnitOptions = stockingAdminUnits.map((x) => ({
+  const stockingAdminUnitOptions = stockingAdminUnits ? stockingAdminUnits.map((x) => ({
     value: x.admin_unit_id,
     label: x.admin_unit_name,
-  }));
-
-  console.log(errors);
+  })): [];
 
   return (
     <>
       <Container>
         <Row className="justify-content-center">
+          <LotSelector lots={lotData} />
           <h1>Stocking Event Form</h1>
           <RequiredFieldsMsg />
           <Form onSubmit={handleSubmit(onSubmit, onError)} onReset={reset}>
@@ -341,7 +399,7 @@ export const StockingEventForm = () => {
                           </div>
                         }
                         options={strains}
-                        isLoading={!strains}
+                        isLoading={strains}
                         name="strain_slug"
                         closeMenuOnSelect={true}
                         onChange={selectChanged}
