@@ -1,5 +1,5 @@
 
-interface SelectChoice {
+export interface SelectChoice {
   label: string;
   value: string;
 }

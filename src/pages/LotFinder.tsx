@@ -1,18 +1,18 @@
 // return an empty page that will have form with just lot related elements:
 import React, { useState } from "react";
 
+import { useQuery } from "@tanstack/react-query";
+
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 
-import { useQuery } from "@tanstack/react-query";
 import { getLots } from "../services/api";
-
-import { get_value_labels } from "../utils";
-
 import { Lot, SelectChoice } from "../services/types";
+import { get_value_labels } from "../utils";
+import { LotTable } from "../components/LotTable";
 
 const species = (filteredLots: Lot[]): SelectChoice[] =>
   get_value_labels(filteredLots, "species_code", "species_name", false, "---");
@@ -223,6 +223,11 @@ export const LotFinder = () => {
             </Row>
           </Card.Body>
         </Card>
+      </Row>
+
+      <Row className="my-2">
+        <h2>Matching Lots:</h2>
+        <LotTable lots={filteredLots} />
       </Row>
     </Container>
   );
