@@ -15,41 +15,36 @@ import { Lot, SelectChoice } from "../services/types";
 import { get_value_labels } from "../utils";
 import { LotTable } from "../components/LotTable";
 
-const species = (filteredLots: Lot[]): SelectChoice[] =>
-  get_value_labels(filteredLots, "species_code", "species_name", false, "---");
+const species = (lots: Lot[]): SelectChoice[] =>
+  get_value_labels(lots, "species_code", "species_name", false, "---");
 
-const lot_nums = (filteredLots: Lot[]): SelectChoice[] =>
-  get_value_labels(filteredLots, "lot_num", "lot_num", false, "---");
+const lot_nums = (lots: Lot[]): SelectChoice[] =>
+  get_value_labels(lots, "lot_num", "lot_num", false, "---");
 
-const strains = (filteredLots: Lot[]): SelectChoice[] =>
-  get_value_labels(filteredLots, "strain_slug", "strain_name", false, "---");
+const strains = (lots: Lot[]): SelectChoice[] =>
+  get_value_labels(lots, "strain_slug", "strain_name", false, "---");
 
-const spawnYears = (filteredLots: Lot[]): SelectChoice[] =>
-  get_value_labels(filteredLots, "spawn_year", "spawn_year", true, "---");
+const spawnYears = (lots: Lot[]): SelectChoice[] =>
+  get_value_labels(lots, "spawn_year", "spawn_year", true, "---");
 
-const proponents = (filteredLots: Lot[]): SelectChoice[] =>
+const proponents = (lots: Lot[]): SelectChoice[] =>
+  get_value_labels(lots, "proponent_abbrev", "proponent_name", false, "---");
+
+const hatcheries = (lots: Lot[]): SelectChoice[] =>
   get_value_labels(
-    filteredLots,
-    "proponent_abbrev",
-    "proponent_name",
-    false,
-    "---",
-  );
-
-const hatcheries = (filteredLots: Lot[]): SelectChoice[] =>
-  get_value_labels(
-    filteredLots,
+    lots,
     "rearing_location_abbrev",
     "rearing_location_name",
     false,
     "---",
   );
 
-const funding_types = (filteredLots: Lot[]): SelectChoice[] =>
-  get_value_labels(filteredLots, "funding_type", "funding_type", false, "---");
+const funding_types = (lots: Lot[]): SelectChoice[] =>
+  get_value_labels(lots, "funding_type", "funding_type", false, "---");
 
-export const LotFinder = () => {
+export const LotLocator = () => {
   const [lotFilters, setLotFilters] = useState({});
+  const [selectedLot, setSelectedLot] = useState("");
 
   // get all of our lots:
   const {
@@ -71,7 +66,7 @@ export const LotFinder = () => {
           ),
         );
 
-  const handleChange2 = (event) => {
+  const handleChange = (event) => {
     const { name, value } = event.target;
     let current = { ...lotFilters };
     if (value === "") {
@@ -84,29 +79,52 @@ export const LotFinder = () => {
 
   const handleResetClick = (event) => {
     setLotFilters({});
+    setSelectedLot("");
   };
 
   if (lotIsPending) return "Loading...";
 
   if (lotError) return "An error has occurred: " + lotError.message;
 
+  const rowClicked = (event) => {
+    setSelectedLot(event.target.id);
+  };
+
+  const selectLotClicked = (event) => {
+    alert(`You selected lot: ${selectedLot}`);
+    setSelectedLot("");
+    // todo - add to context and return to main form...
+  };
+
   return (
     <Container>
       <Row className="justify-content-center">
-        <Card className="my-1">
-          <Card.Header as="h2">
-            <div className="h5">Lot Selector</div>
+        <Card className="my-4 px-0">
+          <Card.Header as="h1">
+            <div className="h2">Lot Locator</div>
           </Card.Header>
           <Card.Body>
+            <Row>
+              <p>
+                This form is intended to help you select the correct Lot for
+                your stocking event. Selected the appropropriate values from any
+                of the drop down lists and the matching lots will be dynamically
+                updated. Once you find your lot check radio button in the
+                corresponding row and then click on 'Select Lot' to return to
+                the main stocking event form.{" "}
+              </p>
+            </Row>
+
             <Row className="my-2">
               <Col>
                 <Form.Group className="mb-3" controlId="select-lot-number">
-                  <Form.Label>Lot number</Form.Label>
+                  <Form.Label>Fish Culture Lot Number</Form.Label>
 
                   <Form.Select
                     aria-label="select-lot-number"
                     name="lot_num"
-                    onChange={handleChange2}
+                    onChange={handleChange}
+                    value={lotFilters?.lot_num || ""}
                   >
                     {lot_nums(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
@@ -123,7 +141,8 @@ export const LotFinder = () => {
                   <Form.Select
                     aria-label="select-species"
                     name="species_code"
-                    onChange={handleChange2}
+                    onChange={handleChange}
+                    value={lotFilters?.species_code || ""}
                   >
                     {species(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
@@ -140,7 +159,8 @@ export const LotFinder = () => {
                   <Form.Select
                     aria-label="select-strain"
                     name="strain_slug"
-                    onChange={handleChange2}
+                    onChange={handleChange}
+                    value={lotFilters?.strain_slug || ""}
                   >
                     {strains(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
@@ -158,7 +178,8 @@ export const LotFinder = () => {
                   <Form.Select
                     aria-label="select-spawn-year"
                     name="spawn_year"
-                    onChange={handleChange2}
+                    onChange={handleChange}
+                    value={lotFilters?.spawn_year || ""}
                   >
                     {spawnYears(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
@@ -178,7 +199,8 @@ export const LotFinder = () => {
                   <Form.Select
                     aria-label="select-proponent"
                     name="proponent_abbrev"
-                    onChange={handleChange2}
+                    onChange={handleChange}
+                    value={lotFilters?.proponent_abbrev || ""}
                   >
                     {proponents(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
@@ -198,7 +220,8 @@ export const LotFinder = () => {
                   <Form.Select
                     aria-label="select-hatchery"
                     name="rearing_location_abbrev"
-                    onChange={handleChange2}
+                    onChange={handleChange}
+                    value={lotFilters?.rearing_location_abbrev || ""}
                   >
                     {hatcheries(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
@@ -215,7 +238,8 @@ export const LotFinder = () => {
                   <Form.Select
                     aria-label="select-funding_type"
                     name="funding_type"
-                    onChange={handleChange2}
+                    onChange={handleChange}
+                    value={lotFilters?.funding_type || ""}
                   >
                     {funding_types(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
@@ -227,18 +251,37 @@ export const LotFinder = () => {
               </Col>
             </Row>
 
-            <Row>
-              <Button variant="primary" onClick={handleResetClick}>
-                Reset
-              </Button>
+            <Row className="justify-content-between">
+              <Col md="2">
+                <Button
+                  variant="secondary"
+                  disabled={Object.keys(lotFilters).length === 0 ? true : false}
+                  onClick={handleResetClick}
+                >
+                  Reset Filters
+                </Button>
+              </Col>
+              <Col md="2">
+                <Button
+                  variant="primary"
+                  disabled={!!!selectedLot}
+                  onClick={selectLotClicked}
+                >
+                  Select Lot
+                </Button>
+              </Col>
             </Row>
           </Card.Body>
         </Card>
       </Row>
 
-      <Row className="my-2">
-        <h2>Matching Lots (n={filteredLots.length}):</h2>
-        <LotTable lots={filteredLots} />
+      <Row className="my-4">
+        <h2 className="my-4 h4">Matching Lots (n={filteredLots.length}):</h2>
+        <LotTable
+          lots={filteredLots}
+          selectedLot={selectedLot}
+          rowClicked={rowClicked}
+        />
       </Row>
     </Container>
   );

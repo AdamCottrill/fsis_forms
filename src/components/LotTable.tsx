@@ -1,9 +1,24 @@
 import React from "react";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
-export const LotTable = ({ lots }) => {
+export const LotTable = ({ lots, selectedLot, rowClicked }) => {
   const render_rows = (rows) => {
     return rows.map((row) => (
       <tr key={row.id}>
+        <td>
+          <label for={row.slug} class="visuallyhidden">
+            Select Lot {row.slug}{" "}
+          </label>
+          <Form.Check // prettier-ignore
+            className="mt-2"
+            type="radio"
+            id={row.slug}
+            onChange={rowClicked}
+            name="lot-options"
+            checked={row.slug == selectedLot}
+          />
+        </td>
         <td>{row.slug}</td>
         <td>{row.lot_num}</td>
         <td>{row.spawn_year}</td>
@@ -27,10 +42,19 @@ export const LotTable = ({ lots }) => {
     ));
   };
 
+  if (lots.length === 0) {
+    return (
+      <div className="alert alert-warning" role="alert">
+        <p>Oops! No Lots match those criteria.</p>
+      </div>
+    );
+  }
+
   return (
-    <table className="table">
+    <table className="table table-sm table-hover">
       <thead>
         <tr>
+          <th scope="col">Select</th>
           <th scope="col">Lot Label</th>
           <th scope="col">Lot Num</th>
           <th scope="col">Spawn Year</th>
