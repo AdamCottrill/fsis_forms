@@ -42,9 +42,8 @@ const hatcheries = (lots: Lot[]): SelectChoice[] =>
 const funding_types = (lots: Lot[]): SelectChoice[] =>
   get_value_labels(lots, "funding_type", "funding_type", false, "---");
 
-export const LotLocator = () => {
+export const LotLocator = ({ selectedLot, setSelectedLot }) => {
   const [lotFilters, setLotFilters] = useState({});
-  const [selectedLot, setSelectedLot] = useState("");
 
   // get all of our lots:
   const {
@@ -251,23 +250,14 @@ export const LotLocator = () => {
               </Col>
             </Row>
 
-            <Row className="justify-content-between">
-              <Col md="2">
+            <Row className="justify-content-end">
+              <Col md={2}>
                 <Button
                   variant="secondary"
                   disabled={Object.keys(lotFilters).length === 0 ? true : false}
                   onClick={handleResetClick}
                 >
                   Reset Filters
-                </Button>
-              </Col>
-              <Col md="2">
-                <Button
-                  variant="primary"
-                  disabled={!!!selectedLot}
-                  onClick={selectLotClicked}
-                >
-                  Select Lot
                 </Button>
               </Col>
             </Row>

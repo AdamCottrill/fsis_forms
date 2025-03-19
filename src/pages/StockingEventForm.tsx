@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   getDevelopmentStages,
@@ -24,20 +24,22 @@ import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
+import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 import { ClickableMap } from "../components/ClickableMap";
 import { AccordionToggle } from "../components/AccordionToggle";
-import { get_value_labels } from "../utils";
+
 import { RHFAsyncSelect } from "../components/RHFAsyncSelect";
 import { RHFInput } from "../components/RHFInput";
 import { RHFSelect } from "../components/RHFSelect";
 import { RHFTextArea } from "../components/RHFTextArea";
-import { LotSelector } from "../components/LotSelector";
-
+import { ShowLotAttributes } from "../components/ShowLotAttributes";
+import { LotLocator } from "../components/LotLocator";
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
+import { parseLotSlug } from "../utils";
 
 interface SiteOption {
   readonly value: string;
@@ -56,23 +58,13 @@ interface StockingEventFormInputs {
   dd_lon: string;
 }
 
-//function reducer(state, action) {
-//  switch (action.type) {
-//    case "change": {
-//      return { ...state, [action.name]: action.value };
-//    }
-//    case "delete": {
-//      const current = { ...state };
-//      delete current[action.name];
-//      return current;
-//    }
-//  }
-//  throw Error("Unknown action: " + action.type);
-//}
-//
 export const StockingEventForm = () => {
-  let lotFilters = {};
-  let filteredLots = [];
+  const [show, setShow] = useState(false);
+
+  const handleModalClose = () => setShow(false);
+  const handleModalShow = () => setShow(true);
+
+  const [selectedLot, setSelectedLot] = useState("");
 
   //const [state, dispatch] = useReducer(reducer, {});
 
@@ -147,37 +139,6 @@ export const StockingEventForm = () => {
     queryFn: () => getTagOrigins(),
   });
 
-  const lotData = serverLots ? serverLots.results : [];
-  // convert spawn year to a string so our filters all work:
-  lotData.forEach((d) => (d.spawn_year = d.spawn_year + ""));
-
-  // let filteredLots =
-  //   Object.keys(lotFilters).length === 0
-  //     ? lotData
-  //     : lotData.filter((item) =>
-  //         lotData
-  //           .entries(lotFilters)
-  //           .every(([key, value]) => item[key] === value),
-  //       );
-
-  const filterLots = (all_lots, filters) => {
-    const lots =
-      Object.keys(filters).length === 0
-        ? all_lots
-        : all_lots.filter((item) =>
-            Object.entries(filters).every(
-              ([key, value]) => item[key] === value,
-            ),
-          );
-    return lots;
-  };
-
-  filteredLots = filterLots(lotData, lotFilters);
-
-  useEffect(() => {
-    filteredLots = filterLots(lotData, lotFilters);
-  }, [lotData, lotFilters]);
-
   const {
     control,
     register,
@@ -200,66 +161,6 @@ export const StockingEventForm = () => {
   if (lotIsPending) return "Loading...";
 
   if (lotError) return "An error has occurred: " + lotError.message;
-
-  //=============================================================
-
-  const spawnYears = get_value_labels(
-    filteredLots,
-    "spawn_year",
-    "spawn_year",
-    true,
-  );
-  const lot_nums = get_value_labels(filteredLots, "lot_num", "lot_num");
-  const funding_types = get_value_labels(
-    filteredLots,
-    "funding_type",
-    "funding_type",
-  );
-
-  const species = get_value_labels(
-    filteredLots,
-    "species_code",
-    "species_name",
-  );
-
-  const strains = get_value_labels(filteredLots, "strain_slug", "strain_name");
-
-  const proponents = get_value_labels(
-    filteredLots,
-    "proponent_abbrev",
-    "proponent_name",
-  );
-
-  const hatcheries = get_value_labels(
-    filteredLots,
-    "rearing_location_abbrev",
-    "rearing_location_name",
-  );
-
-  const selectChanged = (event, { name }) => {
-    console.log(event, name);
-    if (event === null) {
-      const tmp = { ...lotFilters };
-      delete tmp[name];
-      lotFilters = { ...tmp };
-      //dispatch({ type: "delete", name });
-    } else {
-      lotFilters = { ...lotFilters, [name]: event.value };
-      //dispatch({ type: "change", name: name, value: event.value });
-    }
-
-    filteredLots = filterLots(lotData, lotFilters);
-
-    console.log(lotFilters);
-    console.log(filteredLots);
-    //console.log("state:", state);
-
-    console.log(strains);
-
-    // filteredLots = lotData.filter((item) =>
-    //   Object.entries(lotFilters).every(([key, value]) => item[key] === value),
-    // );
-  };
 
   //=============================================================
 
@@ -305,27 +206,47 @@ export const StockingEventForm = () => {
     trigger(["dd_lat", "dd_lon"]);
   };
 
-  const selectLotOptions = filteredLots.map((x) => ({
-    value: x.lot_id,
+  const lotData = serverLots ? serverLots.results : [];
+  const selectLotOptions = lotData.map((x) => ({
+    value: x.slug,
     label: x.slug,
   }));
 
-  const stockingAdminUnitOptions = stockingAdminUnits ? stockingAdminUnits.map((x) => ({
-    value: x.admin_unit_id,
-    label: x.admin_unit_name,
-  })): [];
+  const stockingAdminUnitOptions = stockingAdminUnits
+    ? stockingAdminUnits.map((x) => ({
+        value: x.admin_unit_id,
+        label: x.admin_unit_name,
+      }))
+    : [];
+
+  if (selectedLot) {
+    const foo = parseLotSlug(lotData, selectedLot);
+    console.log(foo);
+  }
 
   return (
     <>
       <Container>
         <Row className="justify-content-center">
-          <LotSelector lots={lotData} />
           <h1>Stocking Event Form</h1>
           <RequiredFieldsMsg />
           <Form onSubmit={handleSubmit(onSubmit, onError)} onReset={reset}>
             <Card className="my-1">
               <Card.Header as="h2">
-                <div className="h5">Lot</div>
+                <Row>
+                  <Col>
+                    <div className="h5">Lot</div>
+                  </Col>
+                  <Col>
+                    <Button
+                      className="float-end"
+                      size="sm"
+                      onClick={handleModalShow}
+                    >
+                      Lot Locator
+                    </Button>
+                  </Col>
+                </Row>
               </Card.Header>
               <Card.Body>
                 <Row className="my-2">
@@ -342,161 +263,11 @@ export const StockingEventForm = () => {
                       fgClass="mb-3"
                     />
                   </Col>
-                  <Col>
-                    <Form.Group className="mb-3" controlId="select-lot-number">
-                      <Form.Label>Lot number</Form.Label>
-
-                      <Select
-                        isClearable={true}
-                        inputId="select-lot-number"
-                        placeholder={
-                          <div className="select-placeholder-text">
-                            Select Lot Number...
-                          </div>
-                        }
-                        options={lot_nums}
-                        isLoading={!lot_nums}
-                        name="lot_num"
-                        closeMenuOnSelect={true}
-                        onChange={selectChanged}
-                      />
-                    </Form.Group>
-                  </Col>
                 </Row>
 
-                <Row className="my-2">
-                  <Col>
-                    <Form.Group className="mb-3" controlId="select-species">
-                      <Form.Label>Species</Form.Label>
-
-                      <Select
-                        isClearable={true}
-                        inputId="select-species"
-                        placeholder={
-                          <div className="select-placeholder-text">
-                            Select Species...
-                          </div>
-                        }
-                        options={species}
-                        isLoading={!species}
-                        name="species_code"
-                        closeMenuOnSelect={true}
-                        onChange={selectChanged}
-                      />
-                    </Form.Group>
-                  </Col>
-
-                  <Col>
-                    <Form.Group className="mb-3" controlId="select-strain">
-                      <Form.Label>Strain</Form.Label>
-
-                      <Select
-                        isClearable={true}
-                        inputId="select-strain"
-                        placeholder={
-                          <div className="select-placeholder-text">
-                            Select Strain...
-                          </div>
-                        }
-                        options={strains}
-                        isLoading={strains}
-                        name="strain_slug"
-                        closeMenuOnSelect={true}
-                        onChange={selectChanged}
-                      />
-                    </Form.Group>
-                  </Col>
-
-                  <Col>
-                    <Form.Group className="mb-3" controlId="select-spawn-year">
-                      <Form.Label>Spawn Year</Form.Label>
-
-                      <Select
-                        isClearable={true}
-                        inputId="select-spawn-year"
-                        placeholder={
-                          <div className="select-placeholder-text">
-                            Select Spawn Year...
-                          </div>
-                        }
-                        options={spawnYears}
-                        isLoading={!spawnYears}
-                        name="spawn_year"
-                        closeMenuOnSelect={true}
-                        onChange={selectChanged}
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Row className="my-2">
-                  <Col>
-                    <Form.Group className="mb-3" controlId="select-proponent">
-                      <Form.Label>Proponent</Form.Label>
-
-                      <Select
-                        isClearable={true}
-                        inputId="select-proponent"
-                        placeholder={
-                          <div className="select-placeholder-text">
-                            Select Proponent...
-                          </div>
-                        }
-                        options={proponents}
-                        isLoading={!proponents}
-                        name="proponent_abbrev"
-                        closeMenuOnSelect={true}
-                        onChange={selectChanged}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-rearing-location"
-                    >
-                      <Form.Label>Rearing Location</Form.Label>
-
-                      <Select
-                        isClearable={true}
-                        inputId="select-rearing-location"
-                        placeholder={
-                          <div className="select-placeholder-text">
-                            Select Rearing Location...
-                          </div>
-                        }
-                        options={hatcheries}
-                        isLoading={!hatcheries}
-                        name="rearing_location_abbrev"
-                        closeMenuOnSelect={true}
-                        onChange={selectChanged}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col>
-                    <Form.Group
-                      className="mb-3"
-                      controlId="select-funding-type"
-                    >
-                      <Form.Label>Funding Type</Form.Label>
-
-                      <Select
-                        isClearable={true}
-                        inputId="select-funding-type"
-                        placeholder={
-                          <div className="select-placeholder-text">
-                            Select Funding Type...
-                          </div>
-                        }
-                        options={funding_types}
-                        isLoading={!funding_types}
-                        name="funding_type"
-                        closeMenuOnSelect={true}
-                        onChange={selectChanged}
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
+                {selectedLot && (
+                  <ShowLotAttributes lots={lotData} selectedLot={selectedLot} />
+                )}
               </Card.Body>
             </Card>
 
@@ -1198,6 +969,26 @@ export const StockingEventForm = () => {
             </Row>
           </Form>
         </Row>
+
+        <Modal show={show} onHide={handleModalClose} fullscreen={true}>
+          <Modal.Header closeButton>
+            <Modal.Title>Lot Locator</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <LotLocator
+              selectedLot={selectedLot}
+              setSelectedLot={setSelectedLot}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleModalClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleModalClose}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Container>
     </>
   );

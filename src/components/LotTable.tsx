@@ -7,7 +7,7 @@ export const LotTable = ({ lots, selectedLot, rowClicked }) => {
     return rows.map((row) => (
       <tr key={row.id}>
         <td>
-          <label for={row.slug} class="visuallyhidden">
+          <label htmlFor={row.slug} className="visuallyhidden">
             Select Lot {row.slug}{" "}
           </label>
           <Form.Check // prettier-ignore
