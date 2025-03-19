@@ -1,3 +1,4 @@
+import React from "react";
 import Select from "react-select";
 import Form from "react-bootstrap/Form";
 
@@ -28,8 +29,8 @@ export const RHFSelect = ({
           render={({ field: { onChange, value, ...field } }) => (
             <Select
               {...field}
-              value={options.find((x) => x.value === value)}
-              onChange={(val) => onChange(val.value)}
+              value={options?.find((x) => x.value === value)}
+              onChange={(val) => onChange((val?.value||val))}
               isClearable={true}
               inputId={`select-${name}`}
               placeholder={

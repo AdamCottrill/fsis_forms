@@ -47,7 +47,7 @@ interface SiteOption {
 }
 
 interface StockingEventFormInputs {
-  lot_id: number;
+  lot_slug: string;
   stocking_admin_unit_id: number;
   release_method: number;
   development_stage: number;
@@ -63,8 +63,6 @@ export const StockingEventForm = () => {
 
   const handleModalClose = () => setShow(false);
   const handleModalShow = () => setShow(true);
-
-  const [selectedLot, setSelectedLot] = useState("");
 
   //const [state, dispatch] = useReducer(reducer, {});
 
@@ -145,8 +143,13 @@ export const StockingEventForm = () => {
     handleSubmit,
     trigger,
     reset,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<StockingEventFormInputs>(default_values);
+
+  const [lot_slug] = watch(["lot_slug"]);
+  const setSelectedLot = (slug) => setValue("lot_slug", slug);
 
   //const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
@@ -219,11 +222,6 @@ export const StockingEventForm = () => {
       }))
     : [];
 
-  if (selectedLot) {
-    const foo = parseLotSlug(lotData, selectedLot);
-    console.log(foo);
-  }
-
   return (
     <>
       <Container>
@@ -253,7 +251,7 @@ export const StockingEventForm = () => {
                   <Col>
                     <RHFSelect
                       control={control}
-                      name="lot_id"
+                      name="lot_slug"
                       label="Lot Identifier"
                       required={true}
                       options={selectLotOptions}
@@ -265,8 +263,8 @@ export const StockingEventForm = () => {
                   </Col>
                 </Row>
 
-                {selectedLot && (
-                  <ShowLotAttributes lots={lotData} selectedLot={selectedLot} />
+                {lot_slug && (
+                  <ShowLotAttributes lots={lotData} selectedLot={lot_slug} />
                 )}
               </Card.Body>
             </Card>
@@ -976,7 +974,7 @@ export const StockingEventForm = () => {
           </Modal.Header>
           <Modal.Body>
             <LotLocator
-              selectedLot={selectedLot}
+              selectedLot={lot_slug}
               setSelectedLot={setSelectedLot}
             />
           </Modal.Body>

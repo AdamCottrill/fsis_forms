@@ -12,7 +12,7 @@ export const ShowLotAttributes = ({ lots, selectedLot }) => {
     <Card className="px-4 py-2">
       <Row className="my-1">
         <Col>
-          <strong>Lot Number</strong> {attrs.lot_num}
+          <strong>Lot Number:</strong> {attrs.lot_num || "---"}
         </Col>
         <Col>
           <strong>Spawn Year:</strong>
