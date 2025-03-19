@@ -112,6 +112,11 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
                 corresponding row and then click on 'Select Lot' to return to
                 the main stocking event form.{" "}
               </p>
+
+              <p>
+                If you are still unable to find a Lot matching the attributes of
+                your stocking event you can create one here:
+              </p>
             </Row>
 
             <Row className="my-2">

@@ -14,6 +14,7 @@ export const RHFSelect = ({
   fgClass,
   errors,
   required,
+  ...rest
 }) => {
   return (
     <>
@@ -42,6 +43,7 @@ export const RHFSelect = ({
               isLoading={!options}
               closeMenuOnSelect={true}
               className={errors[name] ? "react-select-error" : ""}
+              {...rest}
             />
           )}
           rules={rules}

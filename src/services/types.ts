@@ -39,6 +39,62 @@ export interface Lot {
   strain_slug: string;
 }
 
+export interface Species {
+
+  id: number;
+  spc: string;
+  abbrev: string;
+  spc_nm: string;
+  spc_nmco: string;
+  spc_nmsc: string;
+  spc_lab: string;
+  spc_nmfam: string;
+  nhic_species_id: string;
+  species_at_risk: string;
+  fill_color: string;
+  is_active: boolean;
+
+}
+
+
+export interface Strain {
+  id:number;
+  strain_name: string;
+  strain_code: string;
+  spc: string;
+  spc_nmco: string;
+  spc_nmsc: string;
+  fill_color: string;
+  is_active: string;
+  slug: string;
+
+}
+
+
+export interface Proponent {
+  id:number;
+  proponent_name: string;
+  proponent_abbrev: string;
+  fill_color: string;
+  is_active: string;
+  slug: string;
+
+}
+
+export interface RearingLocation {
+  id:number;
+  name: string;
+  abbrev: string;
+  site_type: string;
+  fill_color: string;
+  is_active: string;
+  slug: string;
+}
+
+
+
+
+
 export interface StockingAdminUnit {
   id: number;
   admin_unit_id: number;

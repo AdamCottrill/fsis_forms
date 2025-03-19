@@ -39,7 +39,6 @@ import { RHFTextArea } from "../components/RHFTextArea";
 import { ShowLotAttributes } from "../components/ShowLotAttributes";
 import { LotLocator } from "../components/LotLocator";
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
-import { parseLotSlug } from "../utils";
 
 interface SiteOption {
   readonly value: string;
@@ -497,7 +496,6 @@ export const StockingEventForm = () => {
                         fgClass="mb-3"
                       />
                     </Row>
-
                     <Row>
                       <Col>
                         <RHFInput

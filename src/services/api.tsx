@@ -3,6 +3,10 @@ import {
   OptionsTable,
   Fn2CodeTable,
   Lot,
+  Proponent,
+  RearingLocation,
+  Species,
+  Strain,
   StockingAdminUnit,
   Waterbody,
   StockingSite,
@@ -40,6 +44,30 @@ export const getLots = async (): Promise<Array<Lot>> => {
   return { ...payload, results: results2 };
 };
 
+export const getProponents = async (): Promise<Array<Proponent>> => {
+  const url = "stocking/api/v1/proponents/";
+
+  const payload = await fetch(url).then((res) => res.json());
+  const { results } = payload;
+  return results;
+};
+
+export const getRearingLocations = async (
+  proponent_slug?: string,
+): Promise<Array<RearingLocation>> => {
+  //NOTE: this will be parameterized by proponent some day soon:
+  let url = "stocking/api/v1/rearing_locations/";
+  if (typeof proponent_slug !== "undefined") {
+    url += `?proponent=${proponent_slug}`;
+  }
+
+  const payload = await fetch(url).then((res) => res.json());
+
+  const { results } = payload;
+
+  return results;
+};
+
 export const getReleaseMethods = async (): Promise<Array<OptionsTable>> => {
   const url = "stocking/api/v1/release_methods/";
   const payload = await fetch(url).then((res) => res.json());
@@ -50,6 +78,30 @@ export const getReleaseMethods = async (): Promise<Array<OptionsTable>> => {
   }));
 
   return payload2;
+};
+
+export const getSpecies = async (): Promise<Array<Species>> => {
+  const url = "stocking/api/v1/species/";
+  const payload = await fetch(url).then((res) => res.json());
+
+  const { results } = payload;
+
+  return results;
+};
+
+export const getStrains = async (spc?: string): Promise<Array<Strain>> => {
+  //NOTE: this will be parameterized by species some day soon:
+  let url = "stocking/api/v1/strains/";
+
+  if (typeof spc !== "undefined") {
+    url += `?spc=${spc}`;
+  }
+
+  const payload = await fetch(url).then((res) => res.json());
+
+  const { results } = payload;
+
+  return results;
 };
 
 export const getTransitMethods = async (): Promise<Array<OptionsTable>> => {
