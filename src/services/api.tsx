@@ -2,6 +2,8 @@ import {
   CodeTable,
   OptionsTable,
   Fn2CodeTable,
+  CreatedLot,
+  CreateLotFormInputs,
   Lot,
   Proponent,
   RearingLocation,
@@ -10,7 +12,7 @@ import {
   StockingAdminUnit,
   Waterbody,
   StockingSite,
-} from "types";
+} from "./types";
 
 export const getDevelopmentStages = async (): Promise<Array<OptionsTable>> => {
   const url = "stocking/api/v1/development_stages/";
@@ -42,6 +44,21 @@ export const getLots = async (): Promise<Array<Lot>> => {
     lot_id: x.id,
   }));
   return { ...payload, results: results2 };
+};
+
+export const postLot = async (
+  body: CreateLotFormInputs,
+): Promise<CreatedLot> => {
+  const url = "stocking/api/v1/lot/create/";
+  const payload = await fetch(url, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  }).then((res) => res.json());
+  return payload;
 };
 
 export const getProponents = async (): Promise<Array<Proponent>> => {

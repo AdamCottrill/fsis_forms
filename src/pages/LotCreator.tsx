@@ -1,7 +1,7 @@
 // return an empty page that will have form with just lot related elements:
 import React, { useState } from "react";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import Button from "react-bootstrap/Button";
@@ -18,22 +18,26 @@ import {
   getRearingLocations,
 } from "../services/api";
 
+import { CreateLotFormInputs } from "../services/types";
+import { postLot } from "../services/api";
+
 import { RHFInput } from "../components/RHFInput";
 import { RHFSelect } from "../components/RHFSelect";
 
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
 
-interface CreateLotFormInputs {
-  lot_number: string;
-  spc: string;
-  strain_id: number;
-  proponent_slug: string;
-  rearing_location_id: number;
-  spawn_year: number;
-  funding_type: number;
-}
-
 export const LotCreator = () => {
+  const queryClient = useQueryClient();
+
+  const addLot = useMutation({
+    mutationFn: postLot,
+    onSuccess: () => {
+      return queryClient.invalidateQueries({
+        queryKey: ["lots"],
+      });
+    },
+  });
+
   const default_values = {};
 
   const {
@@ -113,19 +117,19 @@ export const LotCreator = () => {
 
   //TO DO - create as a lookup in backend with api:
   const fundingTypeChoices = [
-    { value: 1, label: "CFHIP" },
-    { value: 2, label: "MNR" },
-    { value: 3, label: "Private" },
-    { value: 4, label: "Other" },
+    { value: "private", label: "Private" },
+    { value: "cfip", label: "CFIP" },
+    { value: "mnr", label: "MNR" },
+    { value: "unkn", label: "Unknown" },
   ];
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    console.log(name, value);
-  };
-
-  const onSubmit = (values) => {
+  const onSubmit = (values: CreateLotFormInputs) => {
     console.log("Values:::", values);
+    //TODO: add {onSuccess: (data) => history.push(<somewhere>)}
+    addLot.mutate(
+      values,
+      // { onSuccess: () => (window.location.href = "../") }
+    );
   };
 
   const onError = (error) => {
@@ -140,12 +144,14 @@ export const LotCreator = () => {
             <Card.Header as="h1">
               <div className="h2">Lot Creator</div>
             </Card.Header>
+
+            {addLot.isError && <span>Error: {addLot.error.message}</span>}
             <Card.Body>
               <Row className="my-2">
                 <Col>
                   <RHFInput
                     control={control}
-                    name="lot_number"
+                    name="lot_num"
                     label="FC Lot Number"
                     inputType="text"
                     required={false}
@@ -172,7 +178,7 @@ export const LotCreator = () => {
                 <Col>
                   <RHFSelect
                     control={control}
-                    name="strain_id"
+                    name="species_strain_id"
                     label="Strain"
                     required={true}
                     options={strainChoices}

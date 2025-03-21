@@ -1,4 +1,3 @@
-
 export interface SelectChoice {
   label: string;
   value: string;
@@ -39,8 +38,27 @@ export interface Lot {
   strain_slug: string;
 }
 
-export interface Species {
+export interface CreatedLot {
+  slug: string;
+  lot_num: string;
+  spawn_year: number;
+  species_strain_id: string;
+  proponent_id: string;
+  rearing_location_id: string;
+  funding_type: string;
+}
 
+export interface CreateLotFormInputs {
+  lot_num: string;
+  spc: string;
+  species_strain_id: number;
+  proponent_slug: string;
+  rearing_location_id: number;
+  spawn_year: number;
+  funding_type: number;
+}
+
+export interface Species {
   id: number;
   spc: string;
   abbrev: string;
@@ -53,12 +71,10 @@ export interface Species {
   species_at_risk: string;
   fill_color: string;
   is_active: boolean;
-
 }
 
-
 export interface Strain {
-  id:number;
+  id: number;
   strain_name: string;
   strain_code: string;
   spc: string;
@@ -67,22 +83,19 @@ export interface Strain {
   fill_color: string;
   is_active: string;
   slug: string;
-
 }
 
-
 export interface Proponent {
-  id:number;
+  id: number;
   proponent_name: string;
   proponent_abbrev: string;
   fill_color: string;
   is_active: string;
   slug: string;
-
 }
 
 export interface RearingLocation {
-  id:number;
+  id: number;
   name: string;
   abbrev: string;
   site_type: string;
@@ -90,10 +103,6 @@ export interface RearingLocation {
   is_active: string;
   slug: string;
 }
-
-
-
-
 
 export interface StockingAdminUnit {
   id: number;
