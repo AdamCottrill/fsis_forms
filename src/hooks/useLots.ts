@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { PreLot, Lot } from "../types/types";
+import { queryKeys } from "../react-query/constants";
 
 const getLots = async (): Promise<Array<Lot>> => {
   const url = "stocking/api/v1/lots/";
@@ -21,7 +22,7 @@ export function useLots(): Lot[] {
   const fallback: Lot[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: ["lots"],
+    queryKey: [queryKeys.lots],
     queryFn: getLots,
   });
 

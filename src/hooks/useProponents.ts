@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { Proponent, OptionsTable } from "../types/types";
+import { queryKeys } from "../react-query/constants";
+
 
 const getProponents = async (): Promise<Array<OptionsTable>> => {
   const url = "stocking/api/v1/proponents/";
@@ -23,7 +25,7 @@ export function useProponents(): OptionsTable[] {
   const fallback: OptionsTable[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: ["proponents"],
+    queryKey: [queryKeys.proponents],
     queryFn: getProponents,
   });
 

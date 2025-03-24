@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { CodeTable, OptionsTable } from "../types/types";
+import { queryKeys} from "../react-query/constants";
 
 
 const getDevelopmentStages = async (): Promise<Array<OptionsTable>> => {
@@ -20,7 +21,7 @@ export function useDevelopmentStages(): OptionsTable[] {
   const fallback: OptionsTable[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: ["development-stages"],
+    queryKey: [queryKeys.developmentStages],
     queryFn: getDevelopmentStages,
   });
 

@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { OptionsTable, Strain } from "../types/types";
+import { queryKeys } from "../react-query/constants";
 
-const getStrains = async (
-  spc?: string,
-): Promise<Array<OptionsTable>> => {
+const getStrains = async (spc?: string): Promise<Array<OptionsTable>> => {
   let url = "stocking/api/v1/strains/";
 
   if (typeof spc !== "undefined") {
@@ -29,7 +28,7 @@ export function useStrains(species: string): OptionsTable[] {
   const fallback: OptionsTable[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: ["strains", species],
+    queryKey: [queryKeys.strains, species],
     queryFn: () => getStrains(species),
     enabled: !!species,
   });

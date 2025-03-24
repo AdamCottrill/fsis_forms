@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { OptionsTable, Waterbody } from "../types/types";
+import { queryKeys } from "../react-query/constants";
 
 export const getWaterbodies = async (
   waterbody_like: string | null,
@@ -27,7 +28,7 @@ export function useWaterbodies(
   const fallback: OptionsTable[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: ["waterbody", waterbody_name_like],
+    queryKey: [queryKeys.waterbodies, waterbody_name_like],
     queryFn: () => getWaterbodies(waterbody_name_like),
   });
 

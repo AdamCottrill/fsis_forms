@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { RearingLocation, OptionsTable } from "../types/types";
+import { queryKeys } from "../react-query/constants";
 
 const getRearingLocations = async (
   proponent_slug?: string,
@@ -25,7 +26,8 @@ export function useRearingLocations(proponent: string): OptionsTable[] {
   const fallback: OptionsTable[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: ["rearing-locations", proponent],
+    queryKey: [queryKeys.rearingLocations, proponent],
+
     queryFn: () => getRearingLocations(proponent),
     enabled: !!proponent,
   });

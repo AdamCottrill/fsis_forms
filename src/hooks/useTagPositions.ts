@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { Fn2CodeTable, OptionsTable } from "../types/types";
+import { queryKeys } from "../react-query/constants";
 
 const getTagPositions = async (): Promise<Array<OptionsTable>> => {
   const url = "stocking/api/v1/tag_positions/";
@@ -18,7 +19,7 @@ export function useTagPositions(): OptionsTable[] {
   const fallback: OptionsTable[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: ["tag-positions"],
+    queryKey: [queryKeys.tagPositions],
     queryFn: getTagPositions,
   });
 

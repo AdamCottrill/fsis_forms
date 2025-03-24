@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { OptionsTable, StockingSite } from "../types/types";
+import { queryKeys } from "../react-query/constants";
 
 export const getStockingSites = async (
   site_name_like: string,
@@ -27,7 +28,7 @@ export function useStockingSites(site_name_like: string): OptionsTable[] {
   const fallback: OptionsTable[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: ["stocking-sites", site_name_like],
+    queryKey: [queryKeys.stockingSites, site_name_like],
     queryFn: () => getStockingSites(site_name_like),
   });
 

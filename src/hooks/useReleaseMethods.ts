@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { CodeTable, OptionsTable } from "../types/types";
+import { queryKeys } from "../react-query/constants";
 
 const getReleaseMethods = async (): Promise<Array<OptionsTable>> => {
   const url = "stocking/api/v1/release_methods/";
@@ -18,7 +19,7 @@ export function useReleaseMethods(): OptionsTable[] {
   const fallback: OptionsTable[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: ["release-methods"],
+    queryKey: [queryKeys.releaseMethods],
     queryFn: getReleaseMethods,
   });
 

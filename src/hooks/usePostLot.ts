@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { CreatedLot, CreateLotFormInputs } from "../types/types";
+import { queryKeys } from "../react-query/constants";
 
 const postLot = async (body: CreateLotFormInputs): Promise<CreatedLot> => {
   const url = "stocking/api/v1/lot/create/";
@@ -28,7 +29,7 @@ const usePostLot = () => {
     mutationFn: postLot,
     onSuccess: () => {
       return queryClient.invalidateQueries({
-        queryKey: ["lots"],
+        queryKey: [queryKeys.lots],
       });
     },
   });

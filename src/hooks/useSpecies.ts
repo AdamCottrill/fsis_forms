@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { Species, OptionsTable } from "../types/types";
+import { queryKeys } from "../react-query/constants";
 
 const getSpecies = async (): Promise<Array<OptionsTable>> => {
   const url = "stocking/api/v1/species/";
@@ -21,7 +22,7 @@ export function useSpecies(): OptionsTable[] {
   const fallback: OptionsTable[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: ["species"],
+    queryKey: [queryKeys.species],
     queryFn: getSpecies,
   });
 
