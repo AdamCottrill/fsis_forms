@@ -1,9 +1,10 @@
 // return an empty page that will have form with just lot related elements:
 import React, { useState } from "react";
 
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
+import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
@@ -11,32 +12,38 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 
-import {
-  getSpecies,
-  getStrains,
-  getProponents,
-  getRearingLocations,
-} from "../services/api";
-
 import { CreateLotFormInputs } from "../services/types";
-import { postLot } from "../services/api";
-
+//import { postLot } from "../services/api";
+import usePostLot from "../hooks/usePostLot";
 import { RHFInput } from "../components/RHFInput";
 import { RHFSelect } from "../components/RHFSelect";
 
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
+import { useSpecies } from "../hooks/useSpecies";
+import { useStrains } from "../hooks/useStrains";
+import { useProponents } from "../hooks/useProponents";
+import { useRearingLocations } from "../hooks/useRearingLocations";
 
 export const LotCreator = () => {
   const queryClient = useQueryClient();
 
-  const addLot = useMutation({
-    mutationFn: postLot,
-    onSuccess: () => {
-      return queryClient.invalidateQueries({
-        queryKey: ["lots"],
-      });
-    },
-  });
+  const [newSlug, setNewSlug] = useState("");
+
+  const addLot = usePostLot();
+
+  // const addLot = useMutation({
+  //   mutationFn: postLot,
+  //   onSuccess: () => {
+  //     return queryClient.invalidateQueries({
+  //       queryKey: ["lots"],
+  //     });
+  //   },
+  //   onError: (error) => {
+  //     console.log(error.response.data);
+  //     console.log(error.response.status);
+  //     debugger;
+  //   },
+  // });
 
   const default_values = {};
 
@@ -50,70 +57,10 @@ export const LotCreator = () => {
 
   const [selectedSpecies, selectedProponent] = watch(["spc", "proponent_slug"]);
 
-  const { data: species } = useQuery({
-    queryKey: ["species"],
-    queryFn: () => getSpecies(),
-  });
-
-  // parametersize by species
-  const { data: strains } = useQuery({
-    queryKey: ["strains", selectedSpecies],
-    queryFn: () => getStrains(selectedSpecies),
-    // The query will not execute until the species exists
-    enabled: !!selectedSpecies,
-  });
-
-  const { data: proponents } = useQuery({
-    queryKey: ["proponents"],
-    queryFn: () => getProponents(),
-  });
-
-  // parametersize by proponent
-  const { data: rearingLocations } = useQuery({
-    queryKey: ["rearing-locations", selectedProponent],
-    queryFn: () => getRearingLocations(selectedProponent),
-    enabled: !!selectedProponent,
-  });
-
-  const speciesChoices = species
-    ? species.map((x) => {
-        return {
-          value: x.spc,
-          label: `${x.spc_nmco} (${x.spc_nmsc}) [${x.spc}]`,
-        };
-      })
-    : [];
-  speciesChoices.sort((a, b) => (a.label > b.label ? 1 : -1));
-
-  const strainChoices = strains
-    ? strains.map((x) => {
-        return {
-          value: x.id,
-          label: `${x.strain_name} (${x.strain_code})`,
-        };
-      })
-    : [];
-
-  strainChoices.sort((a, b) => (a.label > b.label ? 1 : -1));
-
-  const proponentChoices = proponents
-    ? proponents.map((x) => {
-        return {
-          value: x.slug,
-          label: `${x.proponent_name} (${x.proponent_abbrev})`,
-        };
-      })
-    : [];
-
-  proponentChoices.sort((a, b) => (a.label > b.label ? 1 : -1));
-
-  const rearingLocationChoices = rearingLocations
-    ? rearingLocations.map((x) => {
-        return { value: x.id, label: `${x.name} (${x.abbrev})` };
-      })
-    : [];
-
-  rearingLocationChoices.sort((a, b) => (a.label > b.label ? 1 : -1));
+  const species = useSpecies();
+  const strains = useStrains(selectedSpecies);
+  const proponents = useProponents();
+  const rearingLocations = useRearingLocations(selectedProponent);
 
   //TO DO - create as a lookup in backend with api:
   const fundingTypeChoices = [
@@ -126,10 +73,16 @@ export const LotCreator = () => {
   const onSubmit = (values: CreateLotFormInputs) => {
     console.log("Values:::", values);
     //TODO: add {onSuccess: (data) => history.push(<somewhere>)}
-    addLot.mutate(
-      values,
-      // { onSuccess: () => (window.location.href = "../") }
-    );
+    addLot.mutate(values, {
+      onSuccess: (data) => {
+        console.log(data);
+        setNewSlug(data.slug);
+        // add data.slug to context and return to main page. Use value
+        // in context to populate the form.
+        // SuccessToast();
+        //window.location.href = "../";
+      },
+    });
   };
 
   const onError = (error) => {
@@ -145,7 +98,27 @@ export const LotCreator = () => {
               <div className="h2">Lot Creator</div>
             </Card.Header>
 
-            {addLot.isError && <span>Error: {addLot.error.message}</span>}
+            {addLot.isError && (
+              <Alert variant="danger">
+                <Alert.Heading>Server Response:</Alert.Heading>
+                <span>Error: {addLot.error.message}</span>
+              </Alert>
+            )}
+
+            {addLot.isPending && (
+              <Alert variant="info">
+                <Alert.Heading>Request Pending:</Alert.Heading>
+                <span>Inserting the new Lot.</span>
+              </Alert>
+            )}
+
+            {addLot.isSuccess && newSlug && (
+              <Alert variant="success">
+                <Alert.Heading>Success!</Alert.Heading>
+                <span>The new Lot ({newSlug}) has been created.</span>
+              </Alert>
+            )}
+
             <Card.Body>
               <Row className="my-2">
                 <Col>
@@ -166,7 +139,7 @@ export const LotCreator = () => {
                     name="spc"
                     label="Species"
                     required={true}
-                    options={speciesChoices}
+                    options={species}
                     rules={{
                       required: "Species is required.",
                     }}
@@ -181,7 +154,7 @@ export const LotCreator = () => {
                     name="species_strain_id"
                     label="Strain"
                     required={true}
-                    options={strainChoices}
+                    options={strains}
                     isDisabled={!!!selectedSpecies}
                     rules={{
                       required: "Strain is required.",
@@ -221,7 +194,7 @@ export const LotCreator = () => {
                     name="proponent_slug"
                     label="Proponent"
                     required={true}
-                    options={proponentChoices}
+                    options={proponents}
                     rules={{
                       required: "Proponent is required.",
                     }}
@@ -235,7 +208,7 @@ export const LotCreator = () => {
                     name="rearing_location_id"
                     label="Rearing Location"
                     required={true}
-                    options={rearingLocationChoices}
+                    options={rearingLocations}
                     rules={{
                       required: "Rearing Location is required.",
                     }}

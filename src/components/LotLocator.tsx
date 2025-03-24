@@ -10,7 +10,7 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 
-import { getLots } from "../services/api";
+import { useLots } from "../hooks/UseLots";
 import { Lot, SelectChoice } from "../services/types";
 import { get_value_labels } from "../utils";
 import { LotTable } from "../components/LotTable";
@@ -45,16 +45,12 @@ const funding_types = (lots: Lot[]): SelectChoice[] =>
 export const LotLocator = ({ selectedLot, setSelectedLot }) => {
   const [lotFilters, setLotFilters] = useState({});
 
-  // get all of our lots:
-  const {
-    isPending: lotIsPending,
-    error: lotError,
-    data: serverLots,
-  } = useQuery({ queryKey: ["lots"], queryFn: () => getLots() });
-
-  const lotData = serverLots ? serverLots.results : [];
+  const serverLots = useLots();
+  const lotData = serverLots ? serverLots : [];
   // convert spawn year to a string so our filters all work:
-  lotData.forEach((d) => (d.spawn_year = d.spawn_year + ""));
+  if (lotData) {
+    lotData.forEach((d) => (d.spawn_year = d.spawn_year + ""));
+  }
 
   const filteredLots =
     Object.keys(lotFilters).length === 0
@@ -80,10 +76,6 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
     setLotFilters({});
     setSelectedLot("");
   };
-
-  if (lotIsPending) return "Loading...";
-
-  if (lotError) return "An error has occurred: " + lotError.message;
 
   const rowClicked = (event) => {
     setSelectedLot(event.target.id);
@@ -271,7 +263,9 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
       </Row>
 
       <Row className="my-4">
-        <h2 className="my-4 h4">Matching Lots (n={filteredLots.length}):</h2>
+        <h2 className="my-4 h4">
+          Matching Lots (n={filteredLots ? filteredLots.length : 0}):
+        </h2>
         <LotTable
           lots={filteredLots}
           selectedLot={selectedLot}

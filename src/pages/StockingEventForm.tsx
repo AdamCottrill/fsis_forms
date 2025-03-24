@@ -1,22 +1,5 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  getDevelopmentStages,
-  getFinClips,
-  getLots,
-  getReleaseMethods,
-  getStockingAdminUnits,
-  getStockingPurposes,
-  getTransitMethods,
-  getTagColours,
-  getTagTypes,
-  getTagPositions,
-  getTagOrigins,
-  getStockingSites,
-  getWaterbodies,
-} from "../services/api";
-
-import Select from "react-select";
 
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
@@ -39,6 +22,20 @@ import { RHFTextArea } from "../components/RHFTextArea";
 import { ShowLotAttributes } from "../components/ShowLotAttributes";
 import { LotLocator } from "../components/LotLocator";
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
+
+import { getStockingSites } from "../hooks/useStockingSites";
+import { getWaterbodies } from "../hooks/useWaterbody";
+import { useDevelopmentStages } from "../hooks/useDevelopmentStages";
+import { useFinClips } from "../hooks/useFinClips";
+import { useReleaseMethods } from "../hooks/useReleaseMethods";
+import { useTransitMethods } from "../hooks/useTransitMethods";
+import { useLots } from "../hooks/useLots";
+import { useTagTypes } from "../hooks/useTagTypes";
+import { useTagColours } from "../hooks/useTagColours";
+import { useTagOrigins } from "../hooks/useTagOrigins";
+import { useTagPositions } from "../hooks/useTagPositions";
+import { useStockingPurposes } from "../hooks/useStockingPurpose";
+import { useStockingAdminUnits } from "../hooks/useStockingAdminUnits";
 
 interface SiteOption {
   readonly value: string;
@@ -80,61 +77,18 @@ export const StockingEventForm = () => {
     dd_lon: "",
   };
 
-  const {
-    isPending: lotIsPending,
-    error: lotError,
-    data: serverLots,
-  } = useQuery({ queryKey: ["lots"], queryFn: () => getLots() });
+  const developmentStages = useDevelopmentStages();
+  const finClips = useFinClips();
+  const releaseMethods = useReleaseMethods();
+  const transitMethods = useTransitMethods();
+  const tagTypes = useTagTypes();
+  const tagColours = useTagColours();
+  const tagOrigins = useTagOrigins();
+  const tagPositions = useTagPositions();
+  const stockingPurposes = useStockingPurposes();
+  const stockingAdminUnits = useStockingAdminUnits();
 
-  const { data: developmentStages } = useQuery({
-    queryKey: ["development-stages"],
-    queryFn: () => getDevelopmentStages(),
-  });
-
-  const { data: finClips } = useQuery({
-    queryKey: ["fin-clips"],
-    queryFn: () => getFinClips(),
-  });
-
-  const { data: releaseMethods } = useQuery({
-    queryKey: ["release-methods"],
-    queryFn: () => getReleaseMethods(),
-  });
-
-  const { data: stockingAdminUnits } = useQuery({
-    queryKey: ["stocking-admin-units"],
-    queryFn: () => getStockingAdminUnits(),
-  });
-
-  const { data: stockingPurposes } = useQuery({
-    queryKey: ["stocking-purposes"],
-    queryFn: () => getStockingPurposes(),
-  });
-
-  const { data: transitMethods } = useQuery({
-    queryKey: ["transit-methods"],
-    queryFn: () => getTransitMethods(),
-  });
-
-  const { data: tagTypes } = useQuery({
-    queryKey: ["tag-types"],
-    queryFn: () => getTagTypes(),
-  });
-
-  const { data: tagColours } = useQuery({
-    queryKey: ["tag-colours"],
-    queryFn: () => getTagColours(),
-  });
-
-  const { data: tagPositions } = useQuery({
-    queryKey: ["tag-positions"],
-    queryFn: () => getTagPositions(),
-  });
-
-  const { data: tagOrigins } = useQuery({
-    queryKey: ["tag-origins"],
-    queryFn: () => getTagOrigins(),
-  });
+  const lotData = useLots();
 
   const {
     control,
@@ -159,10 +113,6 @@ export const StockingEventForm = () => {
   const onError = (error) => {
     console.log("ERROR:::", error);
   };
-
-  if (lotIsPending) return "Loading...";
-
-  if (lotError) return "An error has occurred: " + lotError.message;
 
   //=============================================================
 
@@ -208,11 +158,12 @@ export const StockingEventForm = () => {
     trigger(["dd_lat", "dd_lon"]);
   };
 
-  const lotData = serverLots ? serverLots.results : [];
-  const selectLotOptions = lotData.map((x) => ({
-    value: x.slug,
-    label: x.slug,
-  }));
+  const selectLotOptions = lotData
+    ? lotData.map((x) => ({
+        value: x.slug,
+        label: x.slug,
+      }))
+    : [];
 
   const stockingAdminUnitOptions = stockingAdminUnits
     ? stockingAdminUnits.map((x) => ({

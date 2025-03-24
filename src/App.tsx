@@ -1,6 +1,6 @@
 import React from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 
@@ -24,14 +24,15 @@ import "leaflet/dist/leaflet.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-// Create a client
-const queryClient = new QueryClient();
+import {queryClient} from "./react-query/QueryClient"
+
 
 function App() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
+        <ReactQueryDevtools />
       </QueryClientProvider>
     </>
   );

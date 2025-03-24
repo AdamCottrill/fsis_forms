@@ -19,9 +19,14 @@ export interface Fn2CodeTable extends CodeTable {
   fn2_code: string;
 }
 
-export interface Lot {
+interface apiMeta {
+  count: number;
+  next: string | null;
+  previous: string | null;
+}
+
+export interface PreLot {
   id: number;
-  lot_id: number;
   lot_num: string;
   spawn_year: number;
   species_name: string;
@@ -35,6 +40,10 @@ export interface Lot {
   rearing_location_abbrev: string;
   is_active: boolean;
   slug: string;
+}
+
+export interface Lot extends PreLot {
+  lot_id: number;
   strain_slug: string;
 }
 

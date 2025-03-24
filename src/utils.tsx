@@ -9,6 +9,11 @@ export const get_value_labels = (
   null_string?: string,
 ): SelectChoice[] => {
   const sort_order = descending === false ? 1 : -1;
+
+  if (!data) {
+    return [];
+  }
+
   const tmp = new Map(
     data.map((x) => [
       x[value],
