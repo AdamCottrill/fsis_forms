@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { RearingLocation, OptionsTable } from "../services/types";
+import { RearingLocation, OptionsTable } from "../types/types";
 
 const getRearingLocations = async (
   proponent_slug?: string,

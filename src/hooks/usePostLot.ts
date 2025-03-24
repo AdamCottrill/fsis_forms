@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { CreatedLot, CreateLotFormInputs } from "../services/types";
+import { CreatedLot, CreateLotFormInputs } from "../types/types";
 
 const postLot = async (body: CreateLotFormInputs): Promise<CreatedLot> => {
   const url = "stocking/api/v1/lot/create/";

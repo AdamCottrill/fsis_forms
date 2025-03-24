@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { StockingAdminUnit } from "../services/types";
+import { StockingAdminUnit } from "../types/types";
 
 
 // TODO: parameterize to accept user id someday

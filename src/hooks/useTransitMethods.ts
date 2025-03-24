@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { OptionsTable } from "../services/types";
+import { OptionsTable } from "../types/types";
 
 
 const getTransitMethods = async (): Promise<Array<OptionsTable>> => {

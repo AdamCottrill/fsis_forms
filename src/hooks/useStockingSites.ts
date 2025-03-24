@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { OptionsTable, StockingSite } from "../services/types";
+import { OptionsTable, StockingSite } from "../types/types";
 
 export const getStockingSites = async (
   site_name_like: string,

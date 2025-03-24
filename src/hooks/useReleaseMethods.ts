@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { CodeTable, OptionsTable } from "../services/types";
+import { CodeTable, OptionsTable } from "../types/types";
 
 const getReleaseMethods = async (): Promise<Array<OptionsTable>> => {
   const url = "stocking/api/v1/release_methods/";

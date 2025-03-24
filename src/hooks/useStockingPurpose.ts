@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { CodeTable } from "../services/types";
+import { CodeTable } from "../types/types";
 
 export const getStockingPurposes = async (): Promise<Array<CodeTable>> => {
   const url = "stocking/api/v1/stocking_purposes/";

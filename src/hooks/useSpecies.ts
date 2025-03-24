@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { Species, OptionsTable } from "../services/types";
+import { Species, OptionsTable } from "../types/types";
 
 const getSpecies = async (): Promise<Array<OptionsTable>> => {
   const url = "stocking/api/v1/species/";

@@ -1,7 +1,7 @@
 // return an empty page that will have form with just lot related elements:
 import React, { useState } from "react";
 
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import Alert from "react-bootstrap/Alert";
@@ -12,8 +12,8 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 
-import { CreateLotFormInputs } from "../services/types";
-//import { postLot } from "../services/api";
+import { CreateLotFormInputs } from "../types/types";
+
 import usePostLot from "../hooks/usePostLot";
 import { RHFInput } from "../components/RHFInput";
 import { RHFSelect } from "../components/RHFSelect";
@@ -30,20 +30,6 @@ export const LotCreator = () => {
   const [newSlug, setNewSlug] = useState("");
 
   const addLot = usePostLot();
-
-  // const addLot = useMutation({
-  //   mutationFn: postLot,
-  //   onSuccess: () => {
-  //     return queryClient.invalidateQueries({
-  //       queryKey: ["lots"],
-  //     });
-  //   },
-  //   onError: (error) => {
-  //     console.log(error.response.data);
-  //     console.log(error.response.status);
-  //     debugger;
-  //   },
-  // });
 
   const default_values = {};
 

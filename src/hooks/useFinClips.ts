@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { Fn2CodeTable } from "../services/types";
+import { Fn2CodeTable } from "../types/types";
 
 const getFinClips = async (): Promise<Array<Fn2CodeTable>> => {
   const url = "stocking/api/v1/fin_clips/";

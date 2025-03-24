@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { OptionsTable, Strain } from "../services/types";
+import { OptionsTable, Strain } from "../types/types";
 
 const getStrains = async (
   spc?: string,

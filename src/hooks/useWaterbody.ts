@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { OptionsTable, Waterbody } from "../services/types";
+import { OptionsTable, Waterbody } from "../types/types";
 
 export const getWaterbodies = async (
   waterbody_like: string | null,

@@ -11,7 +11,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 
 import { useLots } from "../hooks/UseLots";
-import { Lot, SelectChoice } from "../services/types";
+import { Lot, SelectChoice } from "../types/types";
 import { get_value_labels } from "../utils";
 import { LotTable } from "../components/LotTable";
 

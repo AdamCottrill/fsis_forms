@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { PreLot, Lot } from "../services/types";
+import { PreLot, Lot } from "../types/types";
 
 const getLots = async (): Promise<Array<Lot>> => {
   const url = "stocking/api/v1/lots/";

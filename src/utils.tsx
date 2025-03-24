@@ -1,4 +1,4 @@
-import { Lot, SelectChoice } from "./services/types";
+import { Lot, SelectChoice } from "./types/types";
 
 // create an key-value array of objects for drop-down lists in fsis-infinity forms
 export const get_value_labels = (
