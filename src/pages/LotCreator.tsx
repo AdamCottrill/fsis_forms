@@ -1,10 +1,9 @@
 // return an empty page that will have form with just lot related elements:
 import React, { useState } from "react";
 
-import { useQueryClient } from "@tanstack/react-query";
+import { useIsFetching } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
-import Alert from "react-bootstrap/Alert";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
@@ -15,19 +14,22 @@ import Row from "react-bootstrap/Row";
 import { CreateLotFormInputs } from "../types/types";
 
 import usePostLot from "../hooks/usePostLot";
+import { Alert } from "../components/Alert";
 import { RHFInput } from "../components/RHFInput";
 import { RHFSelect } from "../components/RHFSelect";
-
+import Loading from "../components/Loading";
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
+
 import { useSpecies } from "../hooks/useSpecies";
 import { useStrains } from "../hooks/useStrains";
 import { useProponents } from "../hooks/useProponents";
 import { useRearingLocations } from "../hooks/useRearingLocations";
 
 export const LotCreator = () => {
-  const queryClient = useQueryClient();
+  const isFetching = useIsFetching();
 
   const [newSlug, setNewSlug] = useState("");
+  const [serverErrors, setServerErrors] = useState("");
 
   const addLot = usePostLot();
 
@@ -63,10 +65,15 @@ export const LotCreator = () => {
       onSuccess: (data) => {
         console.log(data);
         setNewSlug(data.slug);
+        setServerErrors("");
         // add data.slug to context and return to main page. Use value
         // in context to populate the form.
         // SuccessToast();
-        //window.location.href = "../";
+        window.location.href = "../";
+      },
+      onError: (error) => {
+        console.log("ERROR2:::", error);
+        setServerErrors(error.message);
       },
     });
   };
@@ -77,6 +84,7 @@ export const LotCreator = () => {
 
   return (
     <Container>
+      <Loading isFetching={isFetching} />
       <Form onSubmit={handleSubmit(onSubmit, onError)} onReset={reset}>
         <Row className="justify-content-center">
           <Card className="my-4 px-0">
@@ -84,26 +92,38 @@ export const LotCreator = () => {
               <div className="h2">Lot Creator</div>
             </Card.Header>
 
-            {addLot.isError && (
-              <Alert variant="danger">
-                <Alert.Heading>Server Response:</Alert.Heading>
-                <span>Error: {addLot.error.message}</span>
-              </Alert>
-            )}
+            <Container className="mx-2 my-4">
+              {addLot.isError && (
+                <Alert
+                  variant="danger"
+                  dismissible={true}
+                  headingText="Server Response:"
+                  message={
+                    serverErrors
+                      ? JSON.stringify(serverErrors)
+                      : "An error has occured."
+                  }
+                />
+              )}
 
-            {addLot.isPending && (
-              <Alert variant="info">
-                <Alert.Heading>Request Pending:</Alert.Heading>
-                <span>Inserting the new Lot.</span>
-              </Alert>
-            )}
+              {addLot.isPending && (
+                <Alert
+                  variant="info"
+                  dismissible={true}
+                  headingText="Request Pending:"
+                  message="Inserting the new Lot..."
+                />
+              )}
 
-            {addLot.isSuccess && newSlug && (
-              <Alert variant="success">
-                <Alert.Heading>Success!</Alert.Heading>
-                <span>The new Lot ({newSlug}) has been created.</span>
-              </Alert>
-            )}
+              {addLot.isSuccess && newSlug && (
+                <Alert
+                  variant="success"
+                  dismissible={true}
+                  headingText="Success!:"
+                  message={`The new Lot (${newSlug}) has been created.`}
+                />
+              )}
+            </Container>
 
             <Card.Body>
               <Row className="my-2">

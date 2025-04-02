@@ -15,13 +15,18 @@ const postLot = async (body: CreateLotFormInputs): Promise<CreatedLot> => {
     body: JSON.stringify(body),
   });
 
-  if (!response.ok) {
-    debugger;
-    throw new Error("Network response was not ok");
+  const data = await response.json();
+
+  if (response.status !== 201) {
+    // print the errrors:
+    throw new Error(JSON.stringify(data));
   }
 
-  return response.json();
+  return data;
 };
+
+// we need to rework this - react query considerss success a promise
+// that has been resolved.  It doesn't check for errors from the server.
 
 const usePostLot = () => {
   const queryClient = useQueryClient();

@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/stocking/api": {
-        target: "http://127.0.0.1:8000",
+        target: "http://142.143.160.113:8000",
         changeOrigin: true,
         secure: false,
       },

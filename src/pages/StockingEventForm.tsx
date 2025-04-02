@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useIsFetching } from "@tanstack/react-query";
 
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
@@ -14,6 +14,7 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 import { ClickableMap } from "../components/ClickableMap";
 import { AccordionToggle } from "../components/AccordionToggle";
+import Loading from "../components/Loading";
 
 import { RHFAsyncSelect } from "../components/RHFAsyncSelect";
 import { RHFInput } from "../components/RHFInput";
@@ -59,6 +60,8 @@ export const StockingEventForm = () => {
 
   const handleModalClose = () => setShow(false);
   const handleModalShow = () => setShow(true);
+
+  const isFetching = useIsFetching();
 
   //const [state, dispatch] = useReducer(reducer, {});
 
@@ -178,6 +181,9 @@ export const StockingEventForm = () => {
         <Row className="justify-content-center">
           <h1>Stocking Event Form</h1>
           <RequiredFieldsMsg />
+
+          <Loading isFetching={isFetching} />
+
           <Form onSubmit={handleSubmit(onSubmit, onError)} onReset={reset}>
             <Card className="my-1">
               <Card.Header as="h2">
