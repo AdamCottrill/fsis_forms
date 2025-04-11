@@ -52,10 +52,45 @@ export const handlers = [
   http.get(`${apiUrl}/stocking_purposes/`, () => {
     return HttpResponse.json(mockStockingPurposes);
   }),
-  http.get(`${apiUrl}/stocking_sites/`, () => {
-    return HttpResponse.json(mockStockingSites);
+  http.get(`${apiUrl}/stocking_sites/`, ({ request }) => {
+    const url = new URL(request.url);
+
+    const nameLike = url.searchParams.get("site_name__like");
+
+    if (nameLike) {
+      const { results } = mockStockingSites;
+      const filtered = results.filter(
+        (x) =>
+          x.stocking_site_name.toLowerCase().indexOf(nameLike.toLowerCase()) >=
+          0,
+      );
+      return HttpResponse.json({
+        ...mockStockingSites,
+        results: filtered,
+        count: filtered.length,
+      });
+    } else {
+      return HttpResponse.json(mockStockingSites);
+    }
   }),
-  http.get(`${apiUrl}/strains/`, () => {
+
+  http.get(`${apiUrl}/strains/`, ({ request }) => {
+    const url = new URL(request.url);
+
+    const spc = url.searchParams.get("spc");
+
+    if (spc) {
+      const { results } = mockStrains;
+      const filtered = results.filter((x) => x.spc === spc);
+      return HttpResponse.json({
+        ...mockStrains,
+        results: filtered,
+        count: filtered.length,
+      });
+    } else {
+      return HttpResponse.json(mockStrains);
+    }
+
     return HttpResponse.json(mockStrains);
   }),
   http.get(`${apiUrl}/tag_colours/`, () => {
@@ -77,11 +112,43 @@ export const handlers = [
     return HttpResponse.json(mockTransitMethods);
   }),
 
-  http.get(`${apiUrl}/stocked_waterbodies/`, () => {
-    return HttpResponse.json(mockWaterbodies);
+  http.get(`${apiUrl}/stocked_waterbodies/`, ({ request }) => {
+    const url = new URL(request.url);
+
+    const waterbodyLike = url.searchParams.get("waterbody__like");
+
+    if (waterbodyLike) {
+      const { results } = mockWaterbodies;
+      const filtered = results.filter(
+        (x) => x.label.toLowerCase().indexOf(waterbodyLike.toLowerCase()) >= 0,
+      );
+      return HttpResponse.json({
+        ...mockWaterbodies,
+        results: filtered,
+        count: filtered.length,
+      });
+    } else {
+      return HttpResponse.json(mockWaterbodies);
+    }
   }),
 
-  http.get(`${apiUrl}/destination_waterbodies/`, () => {
-    return HttpResponse.json(mockWaterbodies);
+  http.get(`${apiUrl}/destination_waterbodies/`, ({ request }) => {
+    const url = new URL(request.url);
+
+    const waterbodyLike = url.searchParams.get("waterbody__like");
+
+    if (waterbodyLike) {
+      const { results } = mockWaterbodies;
+      const filtered = results.filter(
+        (x) => x.label.toLowerCase().indexOf(waterbodyLike.toLowerCase()) >= 0,
+      );
+      return HttpResponse.json({
+        ...mockWaterbodies,
+        results: filtered,
+        count: filtered.length,
+      });
+    } else {
+      return HttpResponse.json(mockWaterbodies);
+    }
   }),
 ];
