@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { axiosInstance } from "../axiosInstance";
 import { OptionsTable, StockingSite } from "../types/types";
 import { queryKeys } from "../react-query/constants";
 
@@ -10,10 +11,10 @@ export const getStockingSites = async (
   // a sorted array of objects with attributes value and label;
   let url = "stocking/api/v1/stocking_sites/";
   if (site_name_like) url += "?site_name__like=" + site_name_like;
-  const payload = await fetch(url).then((res) => res.json());
+  const { data } = await axiosInstance.get(url);
   // the view is paginated
 
-  const { results } = payload;
+  const { results } = data;
   const results2 = results.map((d: StockingSite) => ({
     value: d.id,
     label: `${d.stocking_site_name} [site_id=${d.id}] (${d.waterbody_name} <${d.waterbody_wbylid}>)`,

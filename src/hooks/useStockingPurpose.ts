@@ -1,12 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { axiosInstance } from "../axiosInstance";
 import { CodeTable } from "../types/types";
 import { queryKeys } from "../react-query/constants";
 
 export const getStockingPurposes = async (): Promise<Array<CodeTable>> => {
   const url = "stocking/api/v1/stocking_purposes/";
-  const payload = await fetch(url).then((res) => res.json());
-  return payload;
+  const { data } = await axiosInstance.get(url);
+
+  data.sort((a: CodeTable, b: CodeTable) =>
+    a.description > b.description ? 1 : -1,
+  );
+
+  return data;
 };
 
 export function useStockingPurposes(): CodeTable[] {

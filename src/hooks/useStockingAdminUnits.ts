@@ -1,14 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { axiosInstance } from "../axiosInstance";
 import { StockingAdminUnit } from "../types/types";
 import { queryKeys } from "../react-query/constants";
 
 // TODO: parameterize to accept user id someday
 const getStockingAdminUnits = async (): Promise<Array<StockingAdminUnit>> => {
   const url = "stocking/api/v1/stocking_admin_units/";
-  const payload = await fetch(url).then((res) => res.json());
+  const { data } = await axiosInstance.get(url);
 
-  return payload;
+  data.sort((a: StockingAdminUnit, b: StockingAdminUnit) =>
+    a.admin_unit_name > b.admin_unit_name ? 1 : -1,
+  );
+
+  return data;
 };
 
 export function useStockingAdminUnits(): StockingAdminUnit[] {

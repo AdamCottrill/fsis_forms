@@ -1,20 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { axiosInstance } from "../axiosInstance";
 import { PreLot, Lot } from "../types/types";
 import { queryKeys } from "../react-query/constants";
 
 const getLots = async (): Promise<Array<Lot>> => {
   const url = "stocking/api/v1/lots/";
-  const payload = await fetch(url).then((res) => res.json());
+  const { data } = await axiosInstance.get(url);
 
-  const { results } = payload;
+  const { results } = data;
 
   const results2 = results.map((x: PreLot) => ({
     ...x,
     strain_slug: `${x.species_code}-${x.strain_code}`,
     lot_id: x.id,
   }));
-  //return { ...payload, results: results2 };
+
+  results2.sort((a: Lot, b: Lot) => (a.slug > b.slug ? 1 : -1));
+
   return results2;
 };
 

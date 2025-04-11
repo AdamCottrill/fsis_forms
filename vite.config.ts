@@ -6,6 +6,7 @@ import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 // https://vite.dev/config/
 //
 //target: "http://127.0.0.1:8000",
+//target: "http://142.143.160.113:8000",
 
 export default defineConfig({
   plugins: [
@@ -15,7 +16,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/stocking/api": {
-        target: "http://142.143.160.113:8000",
+        target: "http://127.0.0.1:8000",
         changeOrigin: true,
         secure: false,
       },

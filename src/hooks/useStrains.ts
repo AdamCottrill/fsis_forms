@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { axiosInstance } from "../axiosInstance";
 import { OptionsTable, Strain } from "../types/types";
 import { queryKeys } from "../react-query/constants";
 
@@ -10,18 +11,20 @@ const getStrains = async (spc?: string): Promise<Array<OptionsTable>> => {
     url += `?spc=${spc}`;
   }
 
-  const payload = await fetch(url).then((res) => res.json());
+  const { data } = await axiosInstance.get(url);
 
-  const data = payload.results.map((x: Strain) => {
+  const results = data.results.map((x: Strain) => {
     return {
       value: x.id,
       label: `${x.strain_name} (${x.strain_code})`,
     };
   });
 
-  data.sort((a: OptionsTable, b: OptionsTable) => (a.label > b.label ? 1 : -1));
+  results.sort((a: OptionsTable, b: OptionsTable) =>
+    a.label > b.label ? 1 : -1,
+  );
 
-  return data;
+  return results;
 };
 
 export function useStrains(species: string): OptionsTable[] {

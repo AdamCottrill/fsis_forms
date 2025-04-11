@@ -1,20 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { axiosInstance } from "../axiosInstance";
 import { RearingLocation, OptionsTable } from "../types/types";
 import { queryKeys } from "../react-query/constants";
 
 const getRearingLocations = async (): Promise<Array<OptionsTable>> => {
-  let url = "stocking/api/v1/rearing_locations/";
+  const url = "stocking/api/v1/rearing_locations/";
 
-  const payload = await fetch(url).then((res) => res.json());
+  const { data } = await axiosInstance.get(url);
 
-  const data = payload.results.map((x: RearingLocation) => {
+  const results = data.results.map((x: RearingLocation) => {
     return { value: x.id, label: `${x.name} (${x.abbrev})` };
   });
 
-  data.sort((a: OptionsTable, b: OptionsTable) => (a.label > b.label ? 1 : -1));
+  results.sort((a: OptionsTable, b: OptionsTable) =>
+    a.label > b.label ? 1 : -1,
+  );
 
-  return data;
+  return results;
 };
 
 export function useRearingLocations(): OptionsTable[] {

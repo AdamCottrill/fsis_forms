@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { axiosInstance } from "../axiosInstance";
 import { OptionsTable, Waterbody } from "../types/types";
 import { queryKeys } from "../react-query/constants";
 
@@ -8,10 +9,11 @@ export const getWaterbodies = async (
 ): Promise<Array<OptionsTable>> => {
   let url = "stocking/api/v1/stocked_waterbodies/";
   if (waterbody_like) url += "?waterbody__like=" + waterbody_like;
-  const payload = await fetch(url).then((res) => res.json());
-  // the view is paginate
 
-  const { results } = payload;
+  const { data } = await axiosInstance.get(url);
+
+  // the view is paginated
+  const { results } = data;
   const results2 = results.map((d: Waterbody) => ({
     value: d.waterbody_identifier,
     label: `${d.label} <${d.waterbody_identifier}>)`,

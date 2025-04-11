@@ -1,24 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { axiosInstance } from "../axiosInstance";
 import { Proponent, OptionsTable } from "../types/types";
 import { queryKeys } from "../react-query/constants";
-
 
 const getProponents = async (): Promise<Array<OptionsTable>> => {
   const url = "stocking/api/v1/proponents/";
 
-  const payload = await fetch(url).then((res) => res.json());
+  const { data } = await axiosInstance.get(url);
 
-  const data = payload.results.map((x: Proponent) => {
+  const results = data.results.map((x: Proponent) => {
     return {
       value: x.slug,
       label: `${x.proponent_name} (${x.proponent_abbrev})`,
     };
   });
 
-  data.sort((a: OptionsTable, b: OptionsTable) => (a.label > b.label ? 1 : -1));
+  results.sort((a: OptionsTable, b: OptionsTable) =>
+    a.label > b.label ? 1 : -1,
+  );
 
-  return data;
+  return results;
 };
 
 export function useProponents(): OptionsTable[] {
