@@ -25,12 +25,14 @@ import { LotLocator } from "../components/LotLocator";
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
 
 import { getStockingSites } from "../hooks/useStockingSites";
+
 import { getWaterbodies } from "../hooks/useWaterbody";
 import { useDevelopmentStages } from "../hooks/useDevelopmentStages";
 import { useFinClips } from "../hooks/useFinClips";
 import { useReleaseMethods } from "../hooks/useReleaseMethods";
 import { useTransitMethods } from "../hooks/useTransitMethods";
 import { useLots } from "../hooks/useLots";
+import { useProponents } from "../hooks/useProponents";
 import { useTagTypes } from "../hooks/useTagTypes";
 import { useTagColours } from "../hooks/useTagColours";
 import { useTagOrigins } from "../hooks/useTagOrigins";
@@ -82,6 +84,7 @@ export const StockingEventForm = () => {
 
   const developmentStages = useDevelopmentStages();
   const finClips = useFinClips();
+  const proponents = useProponents();
   const releaseMethods = useReleaseMethods();
   const transitMethods = useTransitMethods();
   const tagTypes = useTagTypes();
@@ -174,6 +177,8 @@ export const StockingEventForm = () => {
         label: x.admin_unit_name,
       }))
     : [];
+
+  const proponentOptions = proponents || [];
 
   return (
     <>
@@ -290,7 +295,22 @@ export const StockingEventForm = () => {
               </Card.Header>
               <Card.Body>
                 <Row>
-                  <Col md={2}>
+                  <Col>
+                    <RHFSelect
+                      control={control}
+                      name="proponent_id"
+                      label="Proponent"
+                      required={true}
+                      options={proponentOptions}
+                      rules={{
+                        required: "Proponent is required.",
+                      }}
+                      errors={errors}
+                      fgClass="mb-2"
+                    />
+                  </Col>
+
+                  <Col md={4}>
                     <RHFInput
                       control={control}
                       name="stocking_date"
@@ -319,8 +339,10 @@ export const StockingEventForm = () => {
                       fgClass="mb-2"
                     />
                   </Col>
+                </Row>
 
-                  <Col md={2}>
+                <Row>
+                  <Col>
                     <RHFInput
                       control={control}
                       name="transit_mortality"
@@ -331,15 +353,14 @@ export const StockingEventForm = () => {
                         min: { value: 0, message: "Must be greater than 0" },
                       }}
                       errors={errors}
-                      fgClass="mb-3"
                     />
                   </Col>
 
-                  <Col md={2}>
+                  <Col>
                     <RHFInput
                       control={control}
                       name="site_temperature"
-                      label="Site Temperature"
+                      label="Site Temperature (&deg;C)"
                       rules={{
                         max: { value: 30, message: "Must be less than 30" },
                         min: {
@@ -352,7 +373,7 @@ export const StockingEventForm = () => {
                     />
                   </Col>
 
-                  <Col md={2}>
+                  <Col>
                     <RHFInput
                       control={control}
                       name="water_depth"

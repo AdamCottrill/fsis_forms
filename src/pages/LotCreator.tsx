@@ -1,6 +1,7 @@
 // return an empty page that will have form with just lot related elements:
 import React, { useState } from "react";
 
+import { useRouter } from "@tanstack/react-router";
 import { useIsFetching } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
@@ -22,10 +23,12 @@ import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
 
 import { useSpecies } from "../hooks/useSpecies";
 import { useStrains } from "../hooks/useStrains";
-import { useProponents } from "../hooks/useProponents";
+
 import { useRearingLocations } from "../hooks/useRearingLocations";
 
 export const LotCreator = () => {
+  const router = useRouter();
+
   const isFetching = useIsFetching();
 
   const [newSlug, setNewSlug] = useState("");
@@ -43,20 +46,12 @@ export const LotCreator = () => {
     formState: { errors },
   } = useForm<CreateLotFormInputs>(default_values);
 
-  const [selectedSpecies, selectedProponent] = watch(["spc", "proponent_slug"]);
+  const [selectedSpecies] = watch(["spc"]);
 
   const species = useSpecies();
   const strains = useStrains(selectedSpecies);
-  const proponents = useProponents();
-  const rearingLocations = useRearingLocations(selectedProponent);
 
-  //TO DO - create as a lookup in backend with api:
-  const fundingTypeChoices = [
-    { value: "private", label: "Private" },
-    { value: "cfip", label: "CFIP" },
-    { value: "mnr", label: "MNR" },
-    { value: "unkn", label: "Unknown" },
-  ];
+  const rearingLocations = useRearingLocations();
 
   const onSubmit = (values: CreateLotFormInputs) => {
     console.log("Values:::", values);
@@ -80,6 +75,11 @@ export const LotCreator = () => {
 
   const onError = (error) => {
     console.log("ERROR:::", error);
+  };
+
+  const handleBackClick = (event) => {
+    event.preventDefault();
+    router.history.back();
   };
 
   return (
@@ -127,18 +127,6 @@ export const LotCreator = () => {
 
             <Card.Body>
               <Row className="my-2">
-                <Col>
-                  <RHFInput
-                    control={control}
-                    name="lot_num"
-                    label="FC Lot Number"
-                    inputType="text"
-                    required={false}
-                    errors={errors}
-                    fgClass="mb-3"
-                  />
-                </Col>
-
                 <Col>
                   <RHFSelect
                     control={control}
@@ -195,19 +183,17 @@ export const LotCreator = () => {
 
               <Row className="my-2">
                 <Col>
-                  <RHFSelect
+                  <RHFInput
                     control={control}
-                    name="proponent_slug"
-                    label="Proponent"
-                    required={true}
-                    options={proponents}
-                    rules={{
-                      required: "Proponent is required.",
-                    }}
+                    name="lot_num"
+                    label="FC Lot Number"
+                    inputType="text"
+                    required={false}
                     errors={errors}
-                    fgClass="mb-2"
+                    fgClass="mb-3"
                   />
                 </Col>
+
                 <Col>
                   <RHFSelect
                     control={control}
@@ -218,21 +204,6 @@ export const LotCreator = () => {
                     rules={{
                       required: "Rearing Location is required.",
                     }}
-                    isDisabled={!!!selectedProponent}
-                    errors={errors}
-                    fgClass="mb-2"
-                  />
-                </Col>
-                <Col>
-                  <RHFSelect
-                    control={control}
-                    name="funding_type"
-                    label="Funding Type"
-                    required={true}
-                    options={fundingTypeChoices}
-                    rules={{
-                      required: "Funding Type is required.",
-                    }}
                     errors={errors}
                     fgClass="mb-2"
                   />
@@ -241,9 +212,15 @@ export const LotCreator = () => {
 
               <RequiredFieldsMsg />
 
-              <Row className="my-4 justify-content-end">
-                <Col md={1}>
-                  <Button variant="primary" type="submit">
+              <Row className="my-4 justify-content-between">
+                <Col md={3}>
+                  <Button variant="primary" onClick={handleBackClick}>
+                    Back
+                  </Button>
+                </Col>
+
+                <Col md={3}>
+                  <Button className="float-end" variant="primary" type="submit">
                     Submit
                   </Button>
                 </Col>

@@ -27,9 +27,6 @@ const strains = (lots: Lot[]): SelectChoice[] =>
 const spawnYears = (lots: Lot[]): SelectChoice[] =>
   get_value_labels(lots, "spawn_year", "spawn_year", true, "---");
 
-const proponents = (lots: Lot[]): SelectChoice[] =>
-  get_value_labels(lots, "proponent_abbrev", "proponent_name", false, "---");
-
 const hatcheries = (lots: Lot[]): SelectChoice[] =>
   get_value_labels(
     lots,
@@ -38,9 +35,6 @@ const hatcheries = (lots: Lot[]): SelectChoice[] =>
     false,
     "---",
   );
-
-const funding_types = (lots: Lot[]): SelectChoice[] =>
-  get_value_labels(lots, "funding_type", "funding_type", false, "---");
 
 export const LotLocator = ({ selectedLot, setSelectedLot }) => {
   const [lotFilters, setLotFilters] = useState({});
@@ -87,6 +81,10 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
     // todo - add to context and return to main form...
   };
 
+  const handleChange2 = (event) => {
+    console.log(event.target.value);
+  };
+
   return (
     <Container>
       <Row className="justify-content-center">
@@ -113,25 +111,6 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
             </Row>
 
             <Row className="my-2">
-              <Col>
-                <Form.Group className="mb-3" controlId="select-lot-number">
-                  <Form.Label>Fish Culture Lot Number</Form.Label>
-
-                  <Form.Select
-                    aria-label="select-lot-number"
-                    name="lot_num"
-                    onChange={handleChange}
-                    value={lotFilters?.lot_num || ""}
-                  >
-                    {lot_nums(filteredLots).map((x) => (
-                      <option key={x.value} value={x.value}>
-                        {x.label}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-
               <Col>
                 <Form.Group className="mb-3" controlId="select-species">
                   <Form.Label>Species</Form.Label>
@@ -190,23 +169,24 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
 
             <Row className="my-2">
               <Col>
-                <Form.Group className="mb-3" controlId="select-proponent">
-                  <Form.Label>Proponent</Form.Label>
+                <Form.Group className="mb-3" controlId="select-lot-number">
+                  <Form.Label>Fish Culture Lot Number</Form.Label>
 
                   <Form.Select
-                    aria-label="select-proponent"
-                    name="proponent_abbrev"
+                    aria-label="select-lot-number"
+                    name="lot_num"
                     onChange={handleChange}
-                    value={lotFilters?.proponent_abbrev || ""}
+                    value={lotFilters?.lot_num || ""}
                   >
-                    {proponents(filteredLots).map((x) => (
-                      <option key={x.value} value={x.value}>
+                    {lot_nums(filteredLots).map((x, i) => (
+                      <option key={i} value={x.value}>
                         {x.label}
                       </option>
                     ))}
                   </Form.Select>
                 </Form.Group>
               </Col>
+
               <Col>
                 <Form.Group
                   className="mb-3"
@@ -218,27 +198,10 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
                     aria-label="select-hatchery"
                     name="rearing_location_abbrev"
                     onChange={handleChange}
+                    onKeyUp={handleChange2}
                     value={lotFilters?.rearing_location_abbrev || ""}
                   >
                     {hatcheries(filteredLots).map((x) => (
-                      <option key={x.value} value={x.value}>
-                        {x.label}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-              <Col>
-                <Form.Group className="mb-3" controlId="select-funding-type">
-                  <Form.Label>Funding Type</Form.Label>
-
-                  <Form.Select
-                    aria-label="select-funding_type"
-                    name="funding_type"
-                    onChange={handleChange}
-                    value={lotFilters?.funding_type || ""}
-                  >
-                    {funding_types(filteredLots).map((x) => (
                       <option key={x.value} value={x.value}>
                         {x.label}
                       </option>

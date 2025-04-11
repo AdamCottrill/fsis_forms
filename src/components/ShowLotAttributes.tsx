@@ -23,27 +23,15 @@ export const ShowLotAttributes = ({ lots, selectedLot }) => {
         <Col>
           <strong>Species:</strong> {attrs.species}
         </Col>
-
         <Col>
           <strong>Strain:</strong>
           {attrs.strain}
         </Col>
       </Row>
-
       <Row className="my-1">
-        <Col>
-          <strong>Proponent:</strong>
-          {attrs.proponent}
-        </Col>
         <Col>
           <strong>Rearing Location:</strong>
           {attrs.rearing_location}
-        </Col>
-      </Row>
-      <Row className="my-1">
-        <Col>
-          <strong>Funding Type:</strong>
-          {attrs.funding_type}
         </Col>
       </Row>
     </Card>

@@ -30,13 +30,8 @@ export const LotTable = ({ lots, selectedLot, rowClicked }) => {
         </td>
 
         <td>
-          {row.proponent_name} ({row.proponent_abbrev})
-        </td>
-
-        <td>
           {row.rearing_location_name} ({row.rearing_location_abbrev})
         </td>
-        <td>{row.funding_type}</td>
         <td>{row.is_active}</td>
       </tr>
     ));
@@ -60,9 +55,7 @@ export const LotTable = ({ lots, selectedLot, rowClicked }) => {
           <th scope="col">Spawn Year</th>
           <th scope="col">Species</th>
           <th scope="col">Strain Name</th>
-          <th scope="col">Proponent</th>
           <th scope="col">Rearing Location</th>
-          <th scope="col">Funding Type</th>
           <th scope="col">Is Active</th>
         </tr>
       </thead>

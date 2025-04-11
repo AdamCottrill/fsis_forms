@@ -39,8 +39,6 @@ interface ParsedLot {
   spawn_year: number;
   species: string;
   strain: string;
-  funding_type: string;
-  proponent: string;
   rearing_location: string;
 }
 

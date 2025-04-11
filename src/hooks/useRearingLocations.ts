@@ -3,13 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { RearingLocation, OptionsTable } from "../types/types";
 import { queryKeys } from "../react-query/constants";
 
-const getRearingLocations = async (
-  proponent_slug?: string,
-): Promise<Array<OptionsTable>> => {
+const getRearingLocations = async (): Promise<Array<OptionsTable>> => {
   let url = "stocking/api/v1/rearing_locations/";
-  if (typeof proponent_slug !== "undefined") {
-    url += `?proponent=${proponent_slug}`;
-  }
 
   const payload = await fetch(url).then((res) => res.json());
 
@@ -22,14 +17,12 @@ const getRearingLocations = async (
   return data;
 };
 
-export function useRearingLocations(proponent: string): OptionsTable[] {
+export function useRearingLocations(): OptionsTable[] {
   const fallback: OptionsTable[] = [];
 
   const { data = fallback } = useQuery({
-    queryKey: [queryKeys.rearingLocations, proponent],
-
-    queryFn: () => getRearingLocations(proponent),
-    enabled: !!proponent,
+    queryKey: [queryKeys.rearingLocations],
+    queryFn: () => getRearingLocations(),
   });
 
   return data;

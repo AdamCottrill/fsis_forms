@@ -25,7 +25,7 @@ const postLot = async (body: CreateLotFormInputs): Promise<CreatedLot> => {
   return data;
 };
 
-// we need to rework this - react query considerss success a promise
+// we need to rework this - react query considers success a promise
 // that has been resolved.  It doesn't check for errors from the server.
 
 const usePostLot = () => {

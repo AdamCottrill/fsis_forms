@@ -33,9 +33,6 @@ export interface PreLot {
   species_code: string;
   strain_name: string;
   strain_code: string;
-  funding_type: string;
-  proponent_name: string;
-  proponent_abbrev: string;
   rearing_location_name: string;
   rearing_location_abbrev: string;
   is_active: boolean;
@@ -49,22 +46,18 @@ export interface Lot extends PreLot {
 
 export interface CreatedLot {
   slug: string;
-  lot_num: string;
+  lot_num: ?string;
   spawn_year: number;
   species_strain_id: string;
-  proponent_id: string;
   rearing_location_id: string;
-  funding_type: string;
 }
 
 export interface CreateLotFormInputs {
-  lot_num: string;
+  lot_num: ?string;
   spc: string;
   species_strain_id: number;
-  proponent_slug: string;
   rearing_location_id: number;
   spawn_year: number;
-  funding_type: number;
 }
 
 export interface Species {
