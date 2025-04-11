@@ -1,0 +1,58 @@
+export const mockTagPositions = [
+  {
+    id: 1,
+    fn2_code: null,
+    code: "3",
+    description: "Posterior Dorsal Fins",
+    fill_color: "#FF0000",
+  },
+  {
+    id: 2,
+    fn2_code: null,
+    code: "1",
+    description: "Anterior Dorsal Fin",
+    fill_color: "#FF0000",
+  },
+  {
+    id: 3,
+    fn2_code: null,
+    code: "5",
+    description: "Flesh of Back",
+    fill_color: "#FF0000",
+  },
+  {
+    id: 4,
+    fn2_code: null,
+    code: "4",
+    description: "Abdominal Insertion",
+    fill_color: "#FF0000",
+  },
+  {
+    id: 5,
+    fn2_code: null,
+    code: "10",
+    description: "Operculum",
+    fill_color: "#FF0000",
+  },
+  {
+    id: 6,
+    fn2_code: null,
+    code: "9",
+    description: "Unknown",
+    fill_color: "#FF0000",
+  },
+  {
+    id: 7,
+    fn2_code: null,
+    code: "2",
+    description: "Between Dorsal Fins",
+    fill_color: "#FF0000",
+  },
+  {
+    id: 8,
+    fn2_code: null,
+    code: "7",
+    description: "Snout",
+    fill_color: "#FF0000",
+  },
+];
