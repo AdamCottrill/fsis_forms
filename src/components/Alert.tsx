@@ -9,12 +9,11 @@ interface AlertInterface {
 
 export const Alert = ({
   variant,
-  dismissible,
+  dismissible = true,
   headingText,
   message,
 }: AlertInterface) => {
   variant = variant || "info";
-  dismissible = dismissible || true;
   headingText = headingText || "Oh-oh!";
   message = message || "Something went wrong";
 

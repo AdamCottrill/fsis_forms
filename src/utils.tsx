@@ -43,7 +43,7 @@ interface ParsedLot {
 }
 
 export const parseLotSlug = (Lots: Lot[], slug: string): ParsedLot | {} => {
-  const lot = Lots.filter((x) => x.slug === slug);
+  const lot = Lots.filter((x) => x?.slug === slug);
 
   // extract the lot_number, species, strain, proponent, rearing location, funding_type, and spawn year
   // and return them in an object that can be used to present this information to our user:
@@ -52,10 +52,8 @@ export const parseLotSlug = (Lots: Lot[], slug: string): ParsedLot | {} => {
     let parsed: ParsedLot = {
       lot_num: lot[0].lot_num,
       spawn_year: lot[0].spawn_year,
-      funding_type: lot[0].funding_type,
       species: `${lot[0].species_name} (${lot[0].species_code})`,
       strain: `${lot[0].strain_name} (${lot[0].strain_code})`,
-      proponent: `${lot[0].proponent_name} (${lot[0].proponent_abbrev})`,
       rearing_location: `${lot[0].rearing_location_name} (${lot[0].rearing_location_abbrev})`,
     };
     return parsed;
