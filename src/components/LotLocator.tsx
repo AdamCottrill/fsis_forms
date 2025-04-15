@@ -1,7 +1,8 @@
 // return an empty page that will have form with just lot related elements:
 import React, { useState } from "react";
 
-import { Link } from "@tanstack/react-router";
+//import { Link } from "@tanstack/react-router";
+import { Link } from "react-router";
 
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -106,7 +107,7 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
               <p>
                 If you are still unable to find a Lot matching the attributes of
                 your stocking event you can create one here:
-                <Link to="/CreateLot">Lot Creator</Link>
+                <Link to="/create_lot">Lot Creator</Link>
               </p>
             </Row>
 

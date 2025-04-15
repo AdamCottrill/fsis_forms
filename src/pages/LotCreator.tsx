@@ -1,9 +1,10 @@
 // return an empty page that will have form with just lot related elements:
 import React, { useState } from "react";
 
-import { useRouter } from "@tanstack/react-router";
 import { useIsFetching } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+
+import { useNavigate } from "react-router-dom";
 
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
@@ -27,7 +28,7 @@ import { useStrains } from "../hooks/useStrains";
 import { useRearingLocations } from "../hooks/useRearingLocations";
 
 export const LotCreator = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const isFetching = useIsFetching();
 
@@ -79,7 +80,7 @@ export const LotCreator = () => {
 
   const handleBackClick = (event) => {
     event.preventDefault();
-    router.history.back();
+    navigate("../");
   };
 
   return (
