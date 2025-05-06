@@ -1,7 +1,6 @@
 // return an empty page that will have form with just lot related elements:
 import React, { useState } from "react";
 
-//import { Link } from "@tanstack/react-router";
 import { Link } from "react-router";
 
 import Button from "react-bootstrap/Button";

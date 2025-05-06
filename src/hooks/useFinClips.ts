@@ -10,13 +10,24 @@ const getFinClips = async (): Promise<Array<Fn2CodeTable>> => {
   return data;
 };
 
-export function useFinClips(): Fn2CodeTable[] {
-  const fallback: Fn2CodeTable[] = [];
-
-  const { data = fallback } = useQuery({
+//// queryInfo, no fallback
+export const useFinClips = () => {
+  const queryInfo = useQuery({
     queryKey: [queryKeys.finClips],
     queryFn: getFinClips,
   });
 
-  return data;
-}
+  return queryInfo;
+};
+
+//// just data with fallback:
+//export function useFinClips(): Fn2CodeTable[] {
+//  const fallback: Fn2CodeTable[] = [];
+//  const { data = fallback } = useQuery({
+//    queryKey: [queryKeys.finClips],
+//    queryFn: getFinClips,
+//  });
+//
+//  return data;
+//}
+//

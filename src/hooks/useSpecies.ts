@@ -22,12 +22,22 @@ const getSpecies = async (): Promise<Array<OptionsTable>> => {
 };
 
 export function useSpecies(): OptionsTable[] {
-  const fallback: OptionsTable[] = [];
-
-  const { data = fallback } = useQuery({
+  const queryInfo = useQuery({
     queryKey: [queryKeys.species],
     queryFn: getSpecies,
   });
 
-  return data;
+  return queryInfo;
 }
+
+//export function useSpecies(): OptionsTable[] {
+//  const fallback: OptionsTable[] = [];
+//
+//  const { data = fallback } = useQuery({
+//    queryKey: [queryKeys.species],
+//    queryFn: getSpecies,
+//  });
+//
+//  return data;
+//}
+//

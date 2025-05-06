@@ -49,7 +49,7 @@ export const LotCreator = () => {
 
   const [selectedSpecies] = watch(["spc"]);
 
-  const species = useSpecies();
+  const { data: species } = useSpecies();
   const strains = useStrains(selectedSpecies);
 
   const rearingLocations = useRearingLocations();

@@ -2,7 +2,7 @@ import React from "react";
 
 export const RequiredFieldsMsg = () => (
   <div className="row">
-    <p>
+    <p role="note">
       <em>Required fields are indicated by: </em>
       <span className="required-field">*</span>{" "}
     </p>

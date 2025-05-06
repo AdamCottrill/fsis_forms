@@ -44,7 +44,11 @@ export const RHFTextArea = ({
       )}
       {errors[name] && (
         <Form.Control.Feedback type="invalid">
-          <span className="text-danger" role="alert">
+          <span
+            className="text-danger"
+            role="alert"
+            data-testid={`${name}-error`}
+          >
             {errors[name].message}
           </span>
         </Form.Control.Feedback>

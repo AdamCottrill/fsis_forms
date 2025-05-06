@@ -83,7 +83,7 @@ export const StockingEventForm = () => {
   };
 
   const developmentStages = useDevelopmentStages();
-  const finClips = useFinClips();
+  const { data: finClips } = useFinClips();
   const proponents = useProponents();
   const releaseMethods = useReleaseMethods();
   const transitMethods = useTransitMethods();

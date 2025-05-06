@@ -31,7 +31,7 @@ export const RHFSelect = ({
             <Select
               {...field}
               value={options?.find((x) => x.value === value)}
-              onChange={(val) => onChange((val?.value||val))}
+              onChange={(val) => onChange(val?.value || val)}
               isClearable={true}
               inputId={`select-${name}`}
               placeholder={
@@ -50,7 +50,11 @@ export const RHFSelect = ({
         />
 
         {errors[name] && (
-          <span className="text-danger" role="alert">
+          <span
+            className="text-danger"
+            role="alert"
+            data-testid={`${name}-error`}
+          >
             {errors[name]?.message}
           </span>
         )}
