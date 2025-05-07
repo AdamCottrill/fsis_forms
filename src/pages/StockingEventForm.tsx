@@ -40,6 +40,8 @@ import { useTagPositions } from "../hooks/useTagPositions";
 import { useStockingPurposes } from "../hooks/useStockingPurpose";
 import { useStockingAdminUnits } from "../hooks/useStockingAdminUnits";
 
+import { DataDictOverlay } from "../components/DataDictOverlay";
+
 interface SiteOption {
   readonly value: string;
   readonly label: string;
@@ -213,7 +215,7 @@ export const StockingEventForm = () => {
                     <RHFSelect
                       control={control}
                       name="lot_slug"
-                      db_table_name="lot"
+                      db_table_name="stocking_lot"
                       popup_placement="left"
                       label="Lot Identifier"
                       required={true}
@@ -242,7 +244,7 @@ export const StockingEventForm = () => {
                     <RHFSelect
                       control={control}
                       name="stocking_admin_unit_id"
-                      db_table_name="stockingadminunit"
+                      db_table_name="stocking_stockingadminunit"
                       label="Stocking Admin Unit"
                       required={true}
                       options={stockingAdminUnitOptions}
@@ -270,7 +272,13 @@ export const StockingEventForm = () => {
 
                 <Card>
                   <Card.Body>
-                    <Card.Title>Stocking Purpose</Card.Title>
+                    <Card.Title>
+                      Stocking Purpose
+                      <DataDictOverlay
+                        db_table_name="stocking_stockingpurpose"
+                        popup_placement="right"
+                      />
+                    </Card.Title>
 
                     <p>Check all that apply:</p>
 
@@ -304,7 +312,7 @@ export const StockingEventForm = () => {
                     <RHFSelect
                       control={control}
                       name="proponent_id"
-                      db_table_name="proponent"
+                      db_table_name="stocking_proponent"
                       label="Proponent"
                       required={true}
                       options={proponentOptions}
@@ -336,7 +344,7 @@ export const StockingEventForm = () => {
                     <RHFSelect
                       control={control}
                       name="release_method"
-                      db_table_name="releasemethod"
+                      db_table_name="stocking_releasemethod"
                       label="Release Method"
                       required={true}
                       options={releaseMethods}
@@ -403,7 +411,13 @@ export const StockingEventForm = () => {
 
                 <Card>
                   <Card.Body>
-                    <Card.Title>Transit Methods</Card.Title>
+                    <Card.Title>
+                      Transit Methods
+                      <DataDictOverlay
+                        db_table_name="stocking_transitmethod"
+                        popup_placement="right"
+                      />
+                    </Card.Title>
 
                     <p>Check all that apply:</p>
 
@@ -439,6 +453,8 @@ export const StockingEventForm = () => {
                         control={control}
                         name="destination_waterbody"
                         label="Destination Waterbody"
+                        db_table_name="stocking_waterbody"
+                        popup_placement="right"
                         loadOptions={loadDestinationWaterbodyOptions}
                         onInputChange={selectDestinationWaterbodyChange}
                         required={true}
@@ -456,6 +472,8 @@ export const StockingEventForm = () => {
                         control={control}
                         name="stocked_waterbody"
                         label="Stocked Waterbody"
+                        db_table_name="stocking_waterbody"
+                        popup_placement="right"
                         loadOptions={loadStockedWaterbodyOptions}
                         onInputChange={selectStockedWaterbodyChange}
                         required={true}
@@ -473,6 +491,8 @@ export const StockingEventForm = () => {
                         control={control}
                         name="stocking_site"
                         label="Stocking Site"
+                        db_table_name="stocking_stockingsite"
+                        popup_placement="right"
                         loadOptions={loadStockingSiteOptions}
                         onInputChange={selectStockingSiteChange}
                         required={true}
@@ -633,7 +653,7 @@ export const StockingEventForm = () => {
                     <RHFSelect
                       control={control}
                       name="development_stage_id"
-                      db_table_name="developmentstage"
+                      db_table_name="stocking_developmentstage"
                       inputId="select-development-stage"
                       options={developmentStages}
                       label="Development Stage"
@@ -653,7 +673,13 @@ export const StockingEventForm = () => {
               <Card.Body>
                 <Card className="my-1">
                   <Card.Body>
-                    <Card.Title>Fin Clips</Card.Title>
+                    <Card.Title>
+                      Fin Clips
+                      <DataDictOverlay
+                        db_table_name="stocking_finclip"
+                        popup_placement="right"
+                      />
+                    </Card.Title>
 
                     <Row className="my-2">
                       <p>Check all that apply:</p>
@@ -800,7 +826,7 @@ export const StockingEventForm = () => {
                             <RHFSelect
                               control={control}
                               name="tag_type_1"
-                              db_table_name="tagtype"
+                              db_table_name="stocking_tagtype"
                               label="Tag Type"
                               options={tagTypes}
                               errors={errors}
@@ -811,7 +837,7 @@ export const StockingEventForm = () => {
                             <RHFSelect
                               control={control}
                               name="tag_colour_1"
-                              db_table_name="tagcolour"
+                              db_table_name="stocking_tagcolour"
                               label="Tag Colour"
                               options={tagColours}
                               errors={errors}
@@ -823,7 +849,7 @@ export const StockingEventForm = () => {
                             <RHFSelect
                               control={control}
                               name="tag_position_1"
-                              db_table_name="tagposition"
+                              db_table_name="stocking_tagposition"
                               label="Tag Position"
                               options={tagPositions}
                               errors={errors}
@@ -835,7 +861,7 @@ export const StockingEventForm = () => {
                             <RHFSelect
                               control={control}
                               name="tag_origin_1"
-                              db_table_name="tagorigin"
+                              db_table_name="stocking_tagorigin"
                               label="Tag Origin"
                               options={tagOrigins}
                               errors={errors}
@@ -933,6 +959,8 @@ export const StockingEventForm = () => {
                     <RHFTextArea
                       control={control}
                       name="inventory_comments"
+                      db_field_name="inventory_comments"
+                      popup_placement="left"
                       label="Inventory Comments"
                       errors={errors}
                       fgClass="mb-3"
@@ -942,6 +970,8 @@ export const StockingEventForm = () => {
                     <RHFTextArea
                       control={control}
                       name="marking_comments"
+                      db_field_name="marking_comments"
+                      popup_placement="left"
                       label="Marking Comments"
                       errors={errors}
                       fgClass="mb-3"
@@ -951,6 +981,8 @@ export const StockingEventForm = () => {
                     <RHFTextArea
                       control={control}
                       name="stocking_comments"
+                      db_field_name="stocking_comments"
+                      popup_placement="left"
                       label="Stocking Comments"
                       errors={errors}
                       fgClass="mb-3"

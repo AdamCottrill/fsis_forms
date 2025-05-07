@@ -15,6 +15,8 @@ import { Lot, SelectChoice } from "../types/types";
 import { get_value_labels } from "../utils";
 import { LotTable } from "../components/LotTable";
 
+import { DataDictOverlay } from "./DataDictOverlay";
+
 const species = (lots: Lot[]): SelectChoice[] =>
   get_value_labels(lots, "species_code", "species_name", false, "---");
 
@@ -113,7 +115,18 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
             <Row className="my-2">
               <Col>
                 <Form.Group className="mb-3" controlId="select-species">
-                  <Form.Label>Species</Form.Label>
+                  <Row>
+                    <Col>
+                      <Form.Label>Species</Form.Label>
+                    </Col>
+                    <Col align="end">
+                      <DataDictOverlay
+                        db_table_name="stocking_species"
+                        popup_placement="right"
+                      />
+                    </Col>
+                  </Row>
+
                   <Form.Select
                     aria-label="select-species"
                     name="species_code"
@@ -131,7 +144,18 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
 
               <Col>
                 <Form.Group className="mb-3" controlId="select-strain">
-                  <Form.Label>Strain</Form.Label>
+                  <Row>
+                    <Col>
+                      <Form.Label>Strain</Form.Label>
+                    </Col>
+                    <Col align="end">
+                      <DataDictOverlay
+                        db_table_name="stocking_strain"
+                        popup_placement="right"
+                      />
+                    </Col>
+                  </Row>
+
                   <Form.Select
                     aria-label="select-strain"
                     name="strain_slug"
@@ -149,7 +173,17 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
 
               <Col>
                 <Form.Group className="mb-3" controlId="select-spawn-year">
-                  <Form.Label>Spawn Year</Form.Label>
+                  <Row>
+                    <Col>
+                      <Form.Label>Spawn Year</Form.Label>
+                    </Col>
+                    <Col align="end">
+                      <DataDictOverlay
+                        db_field_name="spawn_year"
+                        popup_placement="left"
+                      />
+                    </Col>
+                  </Row>
 
                   <Form.Select
                     aria-label="select-spawn-year"
@@ -170,8 +204,17 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
             <Row className="my-2">
               <Col>
                 <Form.Group className="mb-3" controlId="select-lot-number">
-                  <Form.Label>Fish Culture Lot Number</Form.Label>
-
+                  <Row>
+                    <Col>
+                      <Form.Label>Fish Culture Lot Number</Form.Label>
+                    </Col>
+                    <Col align="end">
+                      <DataDictOverlay
+                        db_field_name="lot_num"
+                        popup_placement="right"
+                      />
+                    </Col>
+                  </Row>
                   <Form.Select
                     aria-label="select-lot-number"
                     name="lot_num"
@@ -192,7 +235,17 @@ export const LotLocator = ({ selectedLot, setSelectedLot }) => {
                   className="mb-3"
                   controlId="select-rearing-location"
                 >
-                  <Form.Label>Rearing Location</Form.Label>
+                  <Row>
+                    <Col>
+                      <Form.Label>Rearing Location</Form.Label>
+                    </Col>
+                    <Col align="end">
+                      <DataDictOverlay
+                        db_table_name="stocking_rearinglocation"
+                        popup_placement="right"
+                      />
+                    </Col>
+                  </Row>
 
                   <Form.Select
                     aria-label="select-hatchery"

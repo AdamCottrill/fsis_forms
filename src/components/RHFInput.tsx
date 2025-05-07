@@ -24,7 +24,7 @@ export const RHFInput = ({
 }) => {
   return (
     <Form.Group className={fgClass || ""} controlId={`select-${name}`}>
-      <Row>
+      <Row className="justify-content-between">
         <Col>
           <Form.Label>
             {label}

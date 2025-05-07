@@ -1,5 +1,9 @@
 import AsyncSelect from "react-select/async";
 import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+
+import { DataDictOverlay } from "./DataDictOverlay";
 
 import { Controller } from "react-hook-form";
 
@@ -7,6 +11,8 @@ export const RHFAsyncSelect = ({
   control,
   name,
   label,
+  db_table_name,
+  popup_placement,
   loadOptions,
   onInputChange,
   rules,
@@ -18,10 +24,23 @@ export const RHFAsyncSelect = ({
   return (
     <>
       <Form.Group className={fgClass || ""} controlId={`select-${name}`}>
-        <Form.Label>
-          {label}
-          {required && <span className="required-field">*</span>}
-        </Form.Label>
+        <Row>
+          <Col>
+            <Form.Label>
+              {label}
+              {required && <span className="required-field">*</span>}
+            </Form.Label>
+          </Col>
+
+          {db_table_name && (
+            <Col align="end">
+              <DataDictOverlay
+                db_table_name={db_table_name}
+                popup_placement={popup_placement}
+              />
+            </Col>
+          )}
+        </Row>
 
         <Controller
           control={control}

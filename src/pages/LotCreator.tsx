@@ -133,6 +133,8 @@ export const LotCreator = () => {
                     control={control}
                     name="spc"
                     label="Species"
+                    db_table_name="stocking_species"
+                    popup_placement="right"
                     required={true}
                     options={species}
                     rules={{
@@ -148,6 +150,8 @@ export const LotCreator = () => {
                     control={control}
                     name="species_strain_id"
                     label="Strain"
+                    db_table_name="stocking_strain"
+                    popup_placement="right"
                     required={true}
                     options={strains}
                     isDisabled={!!!selectedSpecies}
@@ -164,6 +168,8 @@ export const LotCreator = () => {
                     control={control}
                     name="spawn_year"
                     label="Spawn Year"
+                    db_field_name="spawn_year"
+                    popup_placement="left"
                     required={true}
                     rules={{
                       required: "Spawn Year is required.",
@@ -188,6 +194,8 @@ export const LotCreator = () => {
                     control={control}
                     name="lot_num"
                     label="FC Lot Number"
+                    db_field_name="lot_num"
+                    popup_placement="right"
                     inputType="text"
                     required={false}
                     errors={errors}
@@ -200,6 +208,8 @@ export const LotCreator = () => {
                     control={control}
                     name="rearing_location_id"
                     label="Rearing Location"
+                    db_table_name="stocking_rearinglocation"
+                    popup_placement="left"
                     required={true}
                     options={rearingLocations}
                     rules={{
