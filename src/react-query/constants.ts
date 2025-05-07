@@ -16,4 +16,6 @@ export const queryKeys = {
   tagTypes: "tag-types",
   transitMethods: "transit-methods",
   waterbodies: "waterbodies",
+  fieldDefinition: "field-definition",
+  tableDefinition: "table-definition",
 };

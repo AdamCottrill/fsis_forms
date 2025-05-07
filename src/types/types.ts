@@ -140,3 +140,21 @@ export interface StockingSite {
   dd_lat: number;
   dd_lon: number;
 }
+
+export interface FieldDefinition {
+  id: number;
+  name: string;
+  label: string;
+  short_description: ?string;
+  full_description: ?string;
+  validation: ?string;
+  slug: string;
+}
+
+export interface TableDefinition {
+  id: number;
+  name: string;
+  db_tablename: string;
+  description: ?string;
+  slug: string;
+}

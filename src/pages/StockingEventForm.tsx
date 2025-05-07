@@ -213,6 +213,8 @@ export const StockingEventForm = () => {
                     <RHFSelect
                       control={control}
                       name="lot_slug"
+                      db_table_name="lot"
+                      popup_placement="left"
                       label="Lot Identifier"
                       required={true}
                       options={selectLotOptions}
@@ -240,6 +242,7 @@ export const StockingEventForm = () => {
                     <RHFSelect
                       control={control}
                       name="stocking_admin_unit_id"
+                      db_table_name="stockingadminunit"
                       label="Stocking Admin Unit"
                       required={true}
                       options={stockingAdminUnitOptions}
@@ -254,6 +257,8 @@ export const StockingEventForm = () => {
                     <RHFInput
                       control={control}
                       name="publication_date"
+                      db_field_name="publication_date"
+                      popup_placement="left"
                       label="Publication Date"
                       inputType="date"
                       errors={errors}
@@ -299,6 +304,7 @@ export const StockingEventForm = () => {
                     <RHFSelect
                       control={control}
                       name="proponent_id"
+                      db_table_name="proponent"
                       label="Proponent"
                       required={true}
                       options={proponentOptions}
@@ -315,6 +321,7 @@ export const StockingEventForm = () => {
                       control={control}
                       name="stocking_date"
                       label="Stocking Date"
+                      db_field_name="stocking_event_datetime"
                       rules={{
                         required: "Stocking Date is required.",
                       }}
@@ -329,6 +336,7 @@ export const StockingEventForm = () => {
                     <RHFSelect
                       control={control}
                       name="release_method"
+                      db_table_name="releasemethod"
                       label="Release Method"
                       required={true}
                       options={releaseMethods}
@@ -346,10 +354,10 @@ export const StockingEventForm = () => {
                     <RHFInput
                       control={control}
                       name="transit_mortality"
+                      db_field_name="transit_mortality_count"
                       label="Transit Mortality"
                       rules={{
                         required: "Transit Mortality is required.",
-                        max: { value: 100, message: "Must be less than 100" },
                         min: { value: 0, message: "Must be greater than 0" },
                       }}
                       errors={errors}
@@ -360,6 +368,7 @@ export const StockingEventForm = () => {
                     <RHFInput
                       control={control}
                       name="site_temperature"
+                      db_field_name="site_temperature"
                       label="Site Temperature (&deg;C)"
                       rules={{
                         max: { value: 30, message: "Must be less than 30" },
@@ -377,6 +386,7 @@ export const StockingEventForm = () => {
                     <RHFInput
                       control={control}
                       name="water_depth"
+                      db_field_name="water_depth"
                       label="Water Depth (m)"
                       rules={{
                         max: { value: 300, message: "Must be less than 300 m" },
@@ -479,6 +489,7 @@ export const StockingEventForm = () => {
                         <RHFInput
                           control={control}
                           name="dd_lat"
+                          db_field_name="latitude_decimal_degrees"
                           label="Latitude"
                           inputType="number"
                           errors={errors}
@@ -501,6 +512,7 @@ export const StockingEventForm = () => {
                           control={control}
                           name="dd_lon"
                           label="Longitude"
+                          db_field_name="longitude_decimal_degrees"
                           inputType="number"
                           errors={errors}
                           fgClass="mb-3"
@@ -540,6 +552,7 @@ export const StockingEventForm = () => {
                     <RHFInput
                       control={control}
                       name="number_stocked"
+                      db_field_name="fish_stocked_count"
                       label="Number of Fish Stocked"
                       inputType="number"
                       errors={errors}
@@ -560,6 +573,7 @@ export const StockingEventForm = () => {
                     <RHFInput
                       control={control}
                       name="fish_weight"
+                      db_field_name="fish_weight"
                       label="Fish Weight (g)"
                       inputType="number"
                       errors={errors}
@@ -578,6 +592,7 @@ export const StockingEventForm = () => {
                     <RHFInput
                       control={control}
                       name="total_biomass"
+                      db_field_name="record_biomass_calc"
                       label="Total Biomass (kg)"
                       inputType="number"
                       errors={errors}
@@ -598,6 +613,7 @@ export const StockingEventForm = () => {
                     <RHFInput
                       control={control}
                       name="fish_age"
+                      db_field_name="fish_age"
                       label="Fish Age"
                       inputType="number"
                       errors={errors}
@@ -617,6 +633,7 @@ export const StockingEventForm = () => {
                     <RHFSelect
                       control={control}
                       name="development_stage_id"
+                      db_table_name="developmentstage"
                       inputId="select-development-stage"
                       options={developmentStages}
                       label="Development Stage"
@@ -663,6 +680,7 @@ export const StockingEventForm = () => {
                         <RHFInput
                           control={control}
                           name="clip_retention"
+                          db_field_name="clip_retention_pct"
                           label="Clip Retention (%)"
                           inputType="number"
                           errors={errors}
@@ -758,6 +776,7 @@ export const StockingEventForm = () => {
                             <RHFInput
                               control={control}
                               name="tag_series_start_1"
+                              db_field_name="series_start"
                               label="Tag Series Start"
                               errors={errors}
                               fgClass="mb-3"
@@ -768,6 +787,7 @@ export const StockingEventForm = () => {
                             <RHFInput
                               control={control}
                               name="tag_series_end_1"
+                              db_field_name="series_end"
                               label="Tag Series End"
                               errors={errors}
                               fgClass="mb-3"
@@ -780,6 +800,7 @@ export const StockingEventForm = () => {
                             <RHFSelect
                               control={control}
                               name="tag_type_1"
+                              db_table_name="tagtype"
                               label="Tag Type"
                               options={tagTypes}
                               errors={errors}
@@ -790,6 +811,7 @@ export const StockingEventForm = () => {
                             <RHFSelect
                               control={control}
                               name="tag_colour_1"
+                              db_table_name="tagcolour"
                               label="Tag Colour"
                               options={tagColours}
                               errors={errors}
@@ -801,6 +823,7 @@ export const StockingEventForm = () => {
                             <RHFSelect
                               control={control}
                               name="tag_position_1"
+                              db_table_name="tagposition"
                               label="Tag Position"
                               options={tagPositions}
                               errors={errors}
@@ -812,6 +835,7 @@ export const StockingEventForm = () => {
                             <RHFSelect
                               control={control}
                               name="tag_origin_1"
+                              db_table_name="tagorigin"
                               label="Tag Origin"
                               options={tagOrigins}
                               errors={errors}
@@ -826,6 +850,7 @@ export const StockingEventForm = () => {
                               control={control}
                               name="tag_retention_1"
                               label="Tag Retention (%)"
+                              db_field_name="retention_rate_pct"
                               inputType="number"
                               errors={errors}
                               fgClass="mb-3"
@@ -849,6 +874,7 @@ export const StockingEventForm = () => {
                               control={control}
                               name="tag_retention_sample_size_1"
                               label="Tag Retention Sample Size"
+                              db_field_name="retention_rate_sample_size"
                               inputType="number"
                               errors={errors}
                               fgClass="mb-3"
@@ -866,6 +892,7 @@ export const StockingEventForm = () => {
                             <RHFInput
                               control={control}
                               name="tag_retention_population_size_1"
+                              db_field_name="retention_rate_pop_size"
                               label="Tag Retention Population Size"
                               inputType="number"
                               errors={errors}

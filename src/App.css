@@ -33,3 +33,13 @@ color: 	dimgray;
   position: absolute;
   width: 1px;
 }
+
+
+.popover {
+    max-width: 500px;
+}
+
+
+.popover-arrow {
+    display: none !important;
+}
