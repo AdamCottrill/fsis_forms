@@ -14,7 +14,7 @@ export const DataDictOverlay = ({ db_field_name, db_table_name, ...props }) => {
   const [overlayOpen, setOverlayOpen] = useState(false);
 
   // allow us to customize some day:
-  const overlay_placement = props.popup_placement || "top";
+  const overlay_placement = props?.popup_placement || "top";
 
   return (
     <>
@@ -22,6 +22,7 @@ export const DataDictOverlay = ({ db_field_name, db_table_name, ...props }) => {
         variant="link"
         ref={target}
         onClick={() => setOverlayOpen(!overlayOpen)}
+        aria-label={`Click to see the data dictionary defintion for '${db_field_name || db_table_name}'`}
       >
         <BsInfoCircle />
       </Button>

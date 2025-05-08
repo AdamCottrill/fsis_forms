@@ -68,14 +68,14 @@ export const LotCreator = () => {
         window.location.href = "../";
       },
       onError: (error) => {
-        console.log("ERROR2:::", error);
+        console.log("SERVER_ERROR:::", error);
         setServerErrors(error.message);
       },
     });
   };
 
   const onError = (error) => {
-    console.log("ERROR:::", error);
+    console.log("FORM_ERROR:::", error);
   };
 
   const handleBackClick = (event) => {
@@ -98,6 +98,7 @@ export const LotCreator = () => {
                 <Alert
                   variant="danger"
                   dismissible={true}
+                  aria-label="server-error"
                   headingText="Server Response:"
                   message={
                     serverErrors

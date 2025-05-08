@@ -22,7 +22,7 @@ import {
 
 import { baseUrl } from "../axiosInstance/constants";
 
-const apiUrl = `${baseUrl}/stocking/api/v1`;
+export const apiUrl = `${baseUrl}/stocking/api/v1`;
 
 export const handlers = [
   http.get(`${apiUrl}/fin_clips/`, () => {
@@ -150,5 +150,9 @@ export const handlers = [
     } else {
       return HttpResponse.json(mockWaterbodies);
     }
+  }),
+
+  http.post(`${apiUrl}/lot/create/`, () => {
+    return new HttpResponse(null, { status: 201 });
   }),
 ];

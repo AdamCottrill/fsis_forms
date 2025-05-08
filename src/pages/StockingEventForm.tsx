@@ -119,7 +119,7 @@ export const StockingEventForm = () => {
   };
 
   const onError = (error) => {
-    console.log("ERROR:::", error);
+    console.log("DEV_MSG_ERROR:::", error);
   };
 
   //=============================================================

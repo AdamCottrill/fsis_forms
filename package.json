@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest watch",
     "coverage": "vitest run --coverage",
-    "test-file": "vitest run ./src/pages/LotCreator.test.tsx"
+    "test-file": "vitest watch ./src/pages/LotCreator.test.tsx"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.65.1",
@@ -25,9 +25,9 @@
     "bootstrap": "^5.3.3",
     "leaflet": "1.9.4",
     "msw": "^2.7.3",
-    "react": "^18.3.1",
+    "react": "^19.1.0",
     "react-bootstrap": "^2.10.8",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.1.0",
     "react-hook-form": "^7.54.2",
     "react-icons": "^5.4.0",
     "react-leaflet": "4.2.1",
@@ -40,7 +40,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
-    "@tanstack/react-router-devtools": "^1.114.25",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
