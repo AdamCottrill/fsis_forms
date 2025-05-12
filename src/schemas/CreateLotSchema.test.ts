@@ -3,7 +3,8 @@ import { ZodError } from "zod";
 import { CreateLotFormInputs } from "../types/types";
 
 import { CreateLotSchema } from "./CreateLotSchema";
-import { getAllByTestId } from "@testing-library/dom";
+
+import { pluck_first_issue } from "./test_utils";
 
 const good_data: CreateLotFormInputs = {
   lot_num: "",
@@ -11,14 +12,6 @@ const good_data: CreateLotFormInputs = {
   spawn_year: 2023,
   spc: "083",
   species_strain_id: 93,
-};
-
-const pluck_first_issue = (schema, data) => {
-  try {
-    schema.parse(data);
-  } catch (err) {
-    return err.issues[0];
-  }
 };
 
 test("good data should not throw an error", () => {

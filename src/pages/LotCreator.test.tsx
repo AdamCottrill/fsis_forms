@@ -68,7 +68,7 @@ test("should disable strain input when species is null", async () => {
   });
 });
 
-test.fails("should display error when lot number is invalid", async () => {
+test("should display error when lot number is invalid", async () => {
   // this test will fail unti our client side validation is implemented.
   const user = userEvent.setup();
 
@@ -91,11 +91,19 @@ test.fails("should display error when lot number is invalid", async () => {
 
   await user.click(screen.getByRole("button", { name: /submit/i }));
 
+  const errorMsg =
+    /lot number must start with 3 digits followed by an optional letter/i;
+
   await waitFor(() => {
-    expect(screen.getByTestId("lot-number-error")).toBeInTheDocument();
-    //expect(
-    //  screen.getByText(/lot number can only contain/i),
-    //).toBeInTheDocument();
+    expect(
+      screen.getByRole("alert", {
+        name: "lot_num-error",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  await waitFor(() => {
+    expect(screen.getByText(errorMsg)).toBeInTheDocument();
   });
 });
 

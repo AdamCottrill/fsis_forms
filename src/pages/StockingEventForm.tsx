@@ -376,7 +376,7 @@ export const StockingEventForm = () => {
                     <RHFInput
                       control={control}
                       name="site_temperature"
-                      db_field_name="site_temperature"
+                      db_field_name="stocking_site_temperature"
                       label="Site Temperature (&deg;C)"
                       rules={{
                         max: { value: 30, message: "Must be less than 30" },
@@ -394,7 +394,7 @@ export const StockingEventForm = () => {
                     <RHFInput
                       control={control}
                       name="water_depth"
-                      db_field_name="water_depth"
+                      db_field_name="stocking_water_depth"
                       label="Water Depth (m)"
                       rules={{
                         max: { value: 300, message: "Must be less than 300 m" },
@@ -917,7 +917,7 @@ export const StockingEventForm = () => {
                           <Col md={3}>
                             <RHFInput
                               control={control}
-                              name="tag_retention_population_size_1"
+                              name="tag_retention_rate_pop_size_1"
                               db_field_name="retention_rate_pop_size"
                               label="Tag Retention Population Size"
                               inputType="number"

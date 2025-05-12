@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest watch",
     "coverage": "vitest run --coverage",
-    "test-file": "vitest watch ./src/pages/LotCreator.test.ts"
+    "test-file": "vitest watch ./src/schemas/AppliedTagSchema.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

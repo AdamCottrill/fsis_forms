@@ -25,6 +25,48 @@ interface apiMeta {
   previous: string | null;
 }
 
+export interface AppliedTag {
+  series_start: string;
+  series_end: ?string;
+  tag_type_id: number;
+  tag_colour_id: number;
+  tag_placement_id: number;
+  tag_origin_id: number;
+  retention_rate_pct: ?number;
+  retention_rate_sample_size: ?number;
+  retention_rate_pop_size: ?number;
+}
+
+export interface StockingEventInputs {
+  lot_slug: string;
+  stocking_admin_unit_id: number;
+  publication_date: ?date;
+  stocking_purposes: number[];
+  proponent_id: number;
+  release_method_id: number;
+  stocking_date: date;
+  transit_mortality: ?number;
+  site_temperature: ?number;
+  rearing_temperatre: ?number;
+  water_depth: ?number;
+  transit_methods: number[];
+  destination_waterbody_id: number;
+  stocked_waterbody_id: number;
+  stocking_site_id: number;
+  latitude_decimal_degrees: ?number;
+  longitude_decimal_degrees: ?number;
+  fish_stocked_count: number;
+  fish_weight: number;
+  fish_age: number;
+  development_stage_id: number;
+  fin_clips: number[];
+  cip_retention_pct: ?number;
+  tags_applied: ?AppliedTag[];
+  inventory_comments: ?string;
+  marking_comments: ?string;
+  stocking_comments: ?string;
+}
+
 export interface PreLot {
   id: number;
   lot_num: string;
