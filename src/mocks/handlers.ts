@@ -3,6 +3,7 @@ import { http, HttpResponse } from "msw";
 import {
   mockDevelopmentStages,
   mockFinClips,
+  mockFieldDetail,
   mockLots,
   mockProponents,
   mockRearingLocations,
@@ -12,6 +13,7 @@ import {
   mockStockingPurposes,
   mockStockingSites,
   mockStrains,
+  mockTableDetail,
   mockTagColours,
   mockTagOrigins,
   mockTagPositions,
@@ -23,6 +25,7 @@ import {
 import { baseUrl } from "../axiosInstance/constants";
 
 export const apiUrl = `${baseUrl}/stocking/api/v1`;
+export const dataDictUrl = `${baseUrl}/data_dictionary/api/v1`;
 
 export const handlers = [
   http.get(`${apiUrl}/fin_clips/`, () => {
@@ -154,5 +157,13 @@ export const handlers = [
 
   http.post(`${apiUrl}/lot/create/`, () => {
     return new HttpResponse(null, { status: 201 });
+  }),
+
+  http.get(`${dataDictUrl}/field/*`, () => {
+    return HttpResponse.json(mockFieldDetail);
+  }),
+
+  http.get(`${dataDictUrl}/table/*`, () => {
+    return HttpResponse.json(mockTableDetail);
   }),
 ];

@@ -15,3 +15,5 @@ export * from "./mockTagPositions";
 export * from "./mockTagTypes";
 export * from "./mockTransitMethods";
 export * from "./mockWaterbodies";
+export * from "./mockFieldDetail";
+export * from "./mockTableDetail";
