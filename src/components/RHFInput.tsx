@@ -7,6 +7,29 @@ import { DataDictOverlay } from "./DataDictOverlay";
 
 import { Controller } from "react-hook-form";
 
+//type RHFInputProps = {
+//  //  type: string;
+//  //  placeholder: string;
+//  //  name: ValidFieldNames;
+//  //  register: UseFormRegister<FormData>;
+//  //  error: FieldError | undefined;
+//  //  valueAsNumber?: boolean;
+//  control,
+//  name,
+//  db_field_name,
+//  popup_placement,
+//  label,
+//  rules,
+//  placeholderText,
+//  fgClass,
+//  errors,
+//  required,
+//  inputType,
+//  defaultValue,
+//  helpText,
+//
+//};
+
 export const RHFInput = ({
   control,
   name,

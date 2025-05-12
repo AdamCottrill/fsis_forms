@@ -44,20 +44,22 @@ export interface Lot extends PreLot {
   strain_slug: string;
 }
 
-export interface CreatedLot {
-  slug: string;
+// most basic elemnts of a Lot
+interface PreCreatedLot {
   lot_num: ?string;
   spawn_year: number;
   species_strain_id: string;
   rearing_location_id: string;
 }
 
-export interface CreateLotFormInputs {
-  lot_num: ?string;
+// add a slug field (post response)
+export interface CreatedLot extends PreCreatedLot {
+  slug: string;
+}
+
+// add the species slug (post body)
+export interface CreateLotFormInputs extends PreCreatedLot {
   spc: string;
-  species_strain_id: number;
-  rearing_location_id: number;
-  spawn_year: number;
 }
 
 export interface Species {

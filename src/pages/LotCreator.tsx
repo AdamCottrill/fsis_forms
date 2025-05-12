@@ -14,6 +14,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 
 import { CreateLotFormInputs } from "../types/types";
+import { CreateLotSchema } from "../schemas/CreateLotSchema";
 
 import usePostLot from "../hooks/usePostLot";
 import { Alert } from "../components/Alert";
@@ -24,8 +25,16 @@ import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
 
 import { useSpecies } from "../hooks/useSpecies";
 import { useStrains } from "../hooks/useStrains";
-
 import { useRearingLocations } from "../hooks/useRearingLocations";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+
+export type ValidFieldNames =
+  | "spc"
+  | "species_strain_id"
+  | "rearing_location_id"
+  | "spawn_year"
+  | "lot_num";
 
 export const LotCreator = () => {
   const navigate = useNavigate();
@@ -44,8 +53,12 @@ export const LotCreator = () => {
     reset,
     handleSubmit,
     watch,
+    // setError, <- to display server errors
     formState: { errors },
-  } = useForm<CreateLotFormInputs>(default_values);
+  } = useForm<CreateLotFormInputs>({
+    default_values: default_values,
+    resolver: zodResolver(CreateLotSchema),
+  });
 
   const [selectedSpecies] = watch(["spc"]);
 
@@ -86,7 +99,11 @@ export const LotCreator = () => {
   return (
     <Container>
       <Loading isFetching={isFetching} />
-      <Form onSubmit={handleSubmit(onSubmit, onError)} onReset={reset}>
+      <Form
+        noValidate
+        onSubmit={handleSubmit(onSubmit, onError)}
+        onReset={reset}
+      >
         <Row className="justify-content-center">
           <Card className="my-4 px-0">
             <Card.Header as="h1">
@@ -138,9 +155,9 @@ export const LotCreator = () => {
                     popup_placement="right"
                     required={true}
                     options={species}
-                    rules={{
-                      required: "Species is required.",
-                    }}
+                    // rules={{
+                    //   required: "Species is required.",
+                    // }}
                     errors={errors}
                     fgClass="mb-2"
                   />
@@ -155,10 +172,10 @@ export const LotCreator = () => {
                     popup_placement="right"
                     required={true}
                     options={strains}
-                    isDisabled={!!!selectedSpecies}
-                    rules={{
-                      required: "Strain is required.",
-                    }}
+                    isDisabled={!selectedSpecies}
+                    // rules={{
+                    //   required: "Strain is required.",
+                    // }}
                     errors={errors}
                     fgClass="mb-2"
                   />
@@ -172,17 +189,17 @@ export const LotCreator = () => {
                     db_field_name="spawn_year"
                     popup_placement="left"
                     required={true}
-                    rules={{
-                      required: "Spawn Year is required.",
-                      min: {
-                        value: 1950,
-                        message: "Must be greater than 1950",
-                      },
-                      max: {
-                        value: new Date().getFullYear(),
-                        message: `Must be less than or equal to ${new Date().getFullYear()}`,
-                      },
-                    }}
+                    // rules={{
+                    //   required: "Spawn Year is required.",
+                    //   min: {
+                    //     value: 1950,
+                    //     message: "Must be greater than 1950",
+                    //   },
+                    //   max: {
+                    //     value: new Date().getFullYear(),
+                    //     message: `Must be less than or equal to ${new Date().getFullYear()}`,
+                    //   },
+                    // }}
                     errors={errors}
                     fgClass="mb-3"
                   />
@@ -213,9 +230,9 @@ export const LotCreator = () => {
                     popup_placement="left"
                     required={true}
                     options={rearingLocations}
-                    rules={{
-                      required: "Rearing Location is required.",
-                    }}
+                    // rules={{
+                    //   required: "Rearing Location is required.",
+                    // }}
                     errors={errors}
                     fgClass="mb-2"
                   />
