@@ -7,17 +7,17 @@ const latest = new Date().getFullYear();
 export const CreateLotSchema: ZodType<CreateLotFormInputs> = z.object({
   spc: z
     .string({
-      required_error: "zod: Species is a required field",
+      required_error: "Species is a required field",
     })
     .regex(/\d{3}/),
   species_strain_id: z
     .number({
-      required_error: "zod: Strain is a required field",
+      required_error: "Strain is a required field",
     })
     .positive(),
   rearing_location_id: z
     .number({
-      required_error: "zod: Rearing Location is a required field",
+      required_error: "Rearing Location is a required field",
     })
     .positive(),
 
@@ -37,10 +37,12 @@ export const CreateLotSchema: ZodType<CreateLotFormInputs> = z.object({
     },
     z
       .number({
-        required_error: "zod: Spawn Year is a required field",
-        invalid_type_error: `Spawn Year must be a number between ${earliest} and ${latest}`,
+        required_error: "Spawn Year is a required field",
+        invalid_type_error: `Spawn Year is required and must be a number between ${earliest} and ${latest}`,
       })
-      .min(earliest, { message: "Spawn Year must be greater than 1950" })
+      .min(earliest, {
+        message: `Spawn Year must be greater than or equal to ${earliest}`,
+      })
       .refine(
         (spawn_year) => {
           // message is returned if function is false

@@ -62,7 +62,10 @@ describe("spawn_year", () => {
     expect(() => CreateLotSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(CreateLotSchema, data_in);
-    expect(issue.message).toMatch(/spawn year must be greater than 1950/i);
+
+    const errmsg = /spawn year must be greater than or equal to /i;
+
+    expect(issue.message).toMatch(errmsg);
   });
 
   test("large spawn year should throw an error", () => {

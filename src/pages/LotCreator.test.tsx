@@ -18,17 +18,17 @@ import { HttpResponse, http } from "msw";
 // spawn_year to last year:
 
 //
-it.todo(
+test.todo(
   "create a new slug if the the form is successfully submitted",
   async () => {},
 );
 
-it.todo(
+test.todo(
   "it should re-direct to the previous page if the back button is clicked",
   async () => {},
 );
 
-it("should contain the expected input elements", async () => {
+test("should contain the expected input elements", async () => {
   render(<LotCreator />);
 
   // required input elements (with star):
@@ -45,7 +45,7 @@ it("should contain the expected input elements", async () => {
   );
 });
 
-it("should disable strain input when species is null", async () => {
+test("should disable strain input when species is null", async () => {
   render(<LotCreator />);
 
   const species_input = screen.getByLabelText("Species*");
@@ -68,7 +68,7 @@ it("should disable strain input when species is null", async () => {
   });
 });
 
-it.fails("should display error when lot number is invalid", async () => {
+test.fails("should display error when lot number is invalid", async () => {
   // this test will fail unti our client side validation is implemented.
   const user = userEvent.setup();
 
@@ -99,8 +99,10 @@ it.fails("should display error when lot number is invalid", async () => {
   });
 });
 
-it("should display error when spawn_year is too small", async () => {
-  const errorMsg = "Must be greater than 1950";
+test("should display error when spawn_year is too small", async () => {
+  // maximum brood stock age is 14:
+  const earliest = new Date().getFullYear() - 14;
+  const errorMsg = `Spawn Year must be greater than or equal to ${earliest}`;
 
   const user = userEvent.setup();
 
@@ -126,14 +128,12 @@ it("should display error when spawn_year is too small", async () => {
   expect(errorEl).toBeInTheDocument();
 });
 
-it("should display error when spawn_year is too big", async () => {
+test("should display error when spawn_year occurs in the future", async () => {
   const user = userEvent.setup();
 
   render(<LotCreator />);
 
-  const today = new Date();
-
-  const errorMsg = `Must be less than or equal to ${today.getFullYear()}`;
+  const errorMsg = /spawn year cannot be in the future/i;
 
   // make sure our error message isn't in the document now:
   expect(screen.queryByText(errorMsg)).not.toBeInTheDocument();
@@ -145,17 +145,26 @@ it("should display error when spawn_year is too big", async () => {
     /BJFSC/,
   ]);
 
-  const nextYear = today.getFullYear() + 1;
+  const nextYear = new Date().getFullYear() + 1;
   const element = screen.getByLabelText("Spawn Year*");
   await user.type(element, nextYear + "");
 
   fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
 
-  const errorE1 = await screen.findByText(errorMsg);
-  expect(errorE1).toBeInTheDocument();
+  await waitFor(() => {
+    expect(
+      screen.getByRole("alert", {
+        name: "spawn_year-error",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  await waitFor(() => {
+    expect(screen.getByText(errorMsg)).toBeInTheDocument();
+  });
 });
 
-it.fails("should display error when spawn_year is missing", async () => {
+test("should display error when spawn_year is missing", async () => {
   render(<LotCreator />);
 
   // make sure our error message isn't in the document before we start:
@@ -182,13 +191,13 @@ it.fails("should display error when spawn_year is missing", async () => {
     ).toBeInTheDocument();
   });
 
-  const errMsg = "Spawn Year is a required field.";
+  const errMsg = /spawn year is required and must be a number between/i;
   await waitFor(() => {
     expect(screen.getByText(errMsg)).toBeInTheDocument();
   });
 });
 
-it("should display error when species is missing", async () => {
+test("should display error when species is missing", async () => {
   const user = userEvent.setup();
   render(<LotCreator />);
 
@@ -221,7 +230,7 @@ it("should display error when species is missing", async () => {
   });
 });
 
-it("should display error when strain is missing", async () => {
+test("should display error when strain is missing", async () => {
   const user = userEvent.setup();
 
   render(<LotCreator />);
@@ -258,7 +267,7 @@ it("should display error when strain is missing", async () => {
   });
 });
 
-it("should display error when rearing location is missing", async () => {
+test("should display error when rearing location is missing", async () => {
   const user = userEvent.setup();
 
   render(<LotCreator />);
@@ -290,7 +299,7 @@ it("should display error when rearing location is missing", async () => {
   });
 });
 
-it("should display an error the server responds with an error", async () => {
+test("should display an error the server responds with an error", async () => {
   // we need to mock out our server response - currently it always
   // returns a 201 - object created. In this case we want it to tell
   // us that a lot with those criteria already exists and verify

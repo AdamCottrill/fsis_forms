@@ -5,38 +5,29 @@ import Col from "react-bootstrap/Col";
 
 import { DataDictOverlay } from "./DataDictOverlay";
 
-import { Controller } from "react-hook-form";
+import { Controller, Control, FieldValues, FieldError } from "react-hook-form";
 
-//type RHFInputProps = {
-//  //  type: string;
-//  //  placeholder: string;
-//  //  name: ValidFieldNames;
-//  //  register: UseFormRegister<FormData>;
-//  //  error: FieldError | undefined;
-//  //  valueAsNumber?: boolean;
-//  control,
-//  name,
-//  db_field_name,
-//  popup_placement,
-//  label,
-//  rules,
-//  placeholderText,
-//  fgClass,
-//  errors,
-//  required,
-//  inputType,
-//  defaultValue,
-//  helpText,
-//
-//};
+interface RHFInputProps<T> {
+  control: Control<FieldValues, T>;
+  name: string;
+  db_field_name: string;
+  popup_placement: string;
+  label: string;
+  placeholderText: string;
+  fgClass: string;
+  errors: FieldError | undefined;
+  required: string;
+  inputType: "string" | "date" | "number";
+  defaultValue: string;
+  helpText: string;
+}
 
-export const RHFInput = ({
+export const RHFInput: React.FC<RHFInputProps> = ({
   control,
   name,
   db_field_name,
   popup_placement,
   label,
-  rules,
   placeholderText,
   fgClass,
   errors,
@@ -68,7 +59,6 @@ export const RHFInput = ({
         control={control}
         name={name}
         defaultValue={defaultValue || ""}
-        rules={rules || {}}
         render={({ field }) => (
           <Form.Control
             {...field}
