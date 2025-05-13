@@ -45,6 +45,7 @@ export interface StockingEventInputs {
   proponent_id: number;
   release_method_id: number;
   stocking_date: date;
+  // stocking_time: time!!
   transit_mortality: ?number;
   site_temperature: ?number;
   rearing_temperatre: ?number;
