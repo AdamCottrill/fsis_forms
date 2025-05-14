@@ -1,3 +1,5 @@
+import { defineConfig as testConfig } from "vitest/config";
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -6,15 +8,17 @@ import react from "@vitejs/plugin-react";
 //target: "http://127.0.0.1:8000",
 //target: "http://142.143.160.113:8000",
 
-export default defineConfig({
-  plugins: [react()],
-
+const tstConfig = testConfig({
   test: {
     globals: true,
     environment: "jsdom",
     // this points to the setup file
     setupFiles: "./src/setupTests.js",
   },
+});
+
+const config = defineConfig({
+  plugins: [react()],
 
   server: {
     proxy: {
@@ -31,3 +35,8 @@ export default defineConfig({
     },
   },
 });
+
+export default {
+  ...config,
+  ...tstConfig,
+};
