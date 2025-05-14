@@ -41,24 +41,64 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
         required_error: "Stocking Date is a required field",
       })
       .date()
-      .refine(
-        (val) => {
-          const today = new Date();
-          const event_date = new Date(val);
-          return today >= event_date;
-        },
-        {
-          message: "Stocking Date cannot be in the future",
-        },
-      ),
+      .superRefine((val, ctx) => {
+        const today = new Date();
+        const event_date = new Date(val);
+
+        if (today < event_date) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Stocking Date cannot be in the future",
+          });
+        }
+
+        if (event_date.getFullYear() < 1900) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Stocking dates before 1900 are not allowed.",
+          });
+        }
+      }),
     //stocking_time!!
 
-    transit_mortality: z.number().positive().optional(),
+    transit_mortality: z.coerce
+      .number()
+      .int()
+      .min(0, {
+        message: "Transit Mortality must be greater than or equal to 0",
+      })
+      .optional(),
 
-    site_temperature: z.number().min(-10).max(30).optional(),
+    site_temperature: z.coerce
+      .number()
+      .min(-10, {
+        message: "Site Temperature must be greater than -10",
+      })
+      .max(30, {
+        message: "Site Temperature must be less than 30",
+      })
+      .optional(),
 
-    rearing_temperature: z.number().min(-10).max(30).optional(),
-    water_depth: z.number().positive().max(300).optional(),
+    rearing_temperature: z.coerce
+      .number()
+      .min(-10, {
+        message: "Rearing Temperature must be greater than -10",
+      })
+      .max(30, {
+        message: "Rearing Temperature must be less than 30",
+      })
+      .optional(),
+    water_depth: z
+      .literal("")
+      .transform(() => undefined)
+      .or(
+        z.coerce
+          .number()
+          .positive({ message: "Water Depth must be greater than 0 m" })
+          .max(400, { message: "Water Depth must be less than 400 m" }),
+      )
+      .optional(),
+
     transit_methods: z.number().positive().int().array().nonempty({
       message: "At least one Transit Method must be selected",
     }),
@@ -84,16 +124,72 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       .int()
       .positive(),
 
-    latitude_decimal_degrees: z.number().min(41.0).max(49.0).optional(),
-    longitude_decimal_degrees: z.number().max(-78.0).min(-88.0).optional(),
-    fish_stocked_count: z
-      .number({
-        required_error: "Fish Stocked is a required field",
+    //[41.67, -95.15],
+    //[55.86, -74.32],
+
+    latitude_decimal_degrees: z
+      .number()
+      .min(41.67, {
+        message: "Latiude must be greater than 41.67 degrees",
       })
-      .positive()
-      .int(),
-    fish_weight: z.number().positive().optional(),
-    fish_age: z.number().positive().int().max(180),
+      .max(55.86, {
+        message: "Latitude must be less than 55.86 degrees",
+      })
+      .optional(),
+    longitude_decimal_degrees: z
+      .number()
+      .max(-74.32, {
+        message: "Longitude must be less than -74.32 degrees",
+      })
+      .min(-95.15, {
+        message: "Longitude must be greater than -95.15 degrees",
+      })
+      .optional(),
+    fish_stocked_count: z.preprocess(
+      (val) => {
+        return val === "" ? undefined : val;
+      },
+      z
+        .number({
+          required_error: "Number of Fish Stocked is a required field",
+        })
+        .positive({
+          message: "Number of Fish Stocked must be greater than 0",
+        })
+        .int(),
+    ),
+
+    fish_weight: z
+      .literal("")
+      .transform(() => undefined)
+      .or(
+        z.coerce
+          .number()
+          .positive({
+            message: "Fish Weight must be greater than 0 g",
+          })
+          .max(20000, {
+            message: "Fish Weight must be less than 20000 g",
+          }),
+      )
+      .optional(),
+
+    fish_age: z
+      .literal("")
+      .transform(() => undefined)
+      .or(
+        z.coerce
+          .number()
+          .positive({
+            message: "Fish Age must be greater than 0",
+          })
+          .int()
+          .max(180, {
+            message: "Fish Age must be less than 180 months",
+          }),
+      )
+      .optional(),
+
     development_stage_id: z
       .number({
         required_error: "Development Stage is a required field",
@@ -153,20 +249,31 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
         }
       }),
 
-    cip_retention_pct: z.number().min(0).max(100).optional(),
+    clip_retention_pct: z
+      .number()
+      .min(0, { message: "Clip Retention must be greater than 0" })
+      .max(100, { message: "Clip Retention Rate cannot exceed 100%" })
+      .optional(),
     //tags_applied: ?AppliedTag[];
     inventory_comments: z.string().optional(),
     marking_comments: z.string().optional(),
     stocking_comments: z.string().optional(),
+
+    oxytetracycline: z.boolean().optional(),
+    brand: z.boolean().optional(),
+    fluorescent_dye: z.boolean().optional(),
+    other_mark: z.boolean().optional(),
   })
   .superRefine((data, ctx) => {
     const one_year = ((d) => d.setFullYear(d.getFullYear() + 1))(new Date());
     const next_year = new Date(one_year);
-    const pub_date = new Date(data.publication_date);
-    if (pub_date > next_year) {
+    const pub_date = data.publication_date
+      ? new Date(data.publication_date)
+      : undefined;
+    if (pub_date && pub_date > next_year) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: "publication_date",
+        path: ["publication_date"],
         message:
           "Publication Date more than a year in the future is not allowed.",
       });
@@ -179,8 +286,24 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        path: "publication_date",
+        path: ["publication_date"],
         message: "Publication Date cannot occur before Stocking Event Date",
+      });
+    }
+
+    if (data.latitude_decimal_degrees && !data.longitude_decimal_degrees) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["longitude_decimal_degrees"],
+        message: "longitude is required if latitude is provided",
+      });
+    }
+
+    if (!data.latitude_decimal_degrees && data.longitude_decimal_degrees) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["latitude_decimal_degrees"],
+        message: "latitude is required if longitude is provided",
       });
     }
   });

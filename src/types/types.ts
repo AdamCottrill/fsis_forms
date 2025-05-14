@@ -27,45 +27,53 @@ interface apiMeta {
 
 export interface AppliedTag {
   series_start: string;
-  series_end: ?string;
+  series_end?: string;
   tag_type_id: number;
   tag_colour_id: number;
   tag_placement_id: number;
   tag_origin_id: number;
-  retention_rate_pct: ?number;
-  retention_rate_sample_size: ?number;
-  retention_rate_pop_size: ?number;
+  retention_rate_pct?: number;
+  retention_rate_sample_size?: number;
+  retention_rate_pop_size?: number;
 }
 
 export interface StockingEventInputs {
   lot_slug: string;
   stocking_admin_unit_id: number;
-  publication_date: ?date;
+  //publication_date?: Date;
+  publication_date?: string;
   stocking_purposes: number[];
   proponent_id: number;
   release_method_id: number;
-  stocking_date: date;
+  //stocking_date: Date;
+  stocking_date: string;
   // stocking_time: time!!
-  transit_mortality: ?number;
-  site_temperature: ?number;
-  rearing_temperatre: ?number;
-  water_depth: ?number;
+  transit_mortality?: number;
+  site_temperature?: number;
+  rearing_temperature?: number;
+  water_depth?: number;
   transit_methods: number[];
   destination_waterbody_id: number;
   stocked_waterbody_id: number;
   stocking_site_id: number;
-  latitude_decimal_degrees: ?number;
-  longitude_decimal_degrees: ?number;
+  latitude_decimal_degrees?: number;
+  longitude_decimal_degrees?: number;
   fish_stocked_count: number;
   fish_weight: number;
   fish_age: number;
   development_stage_id: number;
-  fin_clips: number[];
-  cip_retention_pct: ?number;
-  tags_applied: ?AppliedTag[];
-  inventory_comments: ?string;
-  marking_comments: ?string;
-  stocking_comments: ?string;
+  fin_clips: string[];
+  clip_retention_pct?: number;
+  tags_applied?: AppliedTag[];
+  inventory_comments?: string;
+  marking_comments?: string;
+  stocking_comments?: string;
+
+  // these are some current fields that we may or may not need:
+  oxytetracycline?: boolean;
+  brand?: boolean;
+  fluorescent_dye?: boolean;
+  other_mark?: boolean;
 }
 
 export interface PreLot {
@@ -89,7 +97,7 @@ export interface Lot extends PreLot {
 
 // most basic elemnts of a Lot
 interface PreCreatedLot {
-  lot_num: ?string;
+  lot_num?: string;
   spawn_year: number;
   species_strain_id: string;
   rearing_location_id: string;
@@ -190,9 +198,9 @@ export interface FieldDefinition {
   id: number;
   name: string;
   label: string;
-  short_description: ?string;
-  full_description: ?string;
-  validation: ?string;
+  short_description?: string;
+  full_description?: string;
+  validation?: string;
   slug: string;
 }
 
@@ -200,6 +208,6 @@ export interface TableDefinition {
   id: number;
   name: string;
   db_tablename: string;
-  description: ?string;
+  description?: string;
   slug: string;
 }

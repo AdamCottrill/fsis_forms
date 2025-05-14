@@ -6,10 +6,10 @@ import { StockingEventSchema } from "./StockingEventSchema";
 
 import { pluck_first_issue } from "./test_utils";
 
-const format_date = (date: Date): string => {
+const dateToString = (date: Date): string => {
   const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, 0);
-  const dd = String(date.getDate()).padStart(2, 0);
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
 };
 
@@ -36,11 +36,16 @@ const good_data: StockingEventInputs = {
   fish_age: 6,
   development_stage_id: 4,
   fin_clips: ["1", "4"],
-  cip_retention_pct: 95.2,
+  clip_retention_pct: 95.2,
   //tags_applied: ?StockingEvent[],
   inventory_comments: "life was good in the hatchery",
   marking_comments: "that hurt",
   stocking_comments: "where am I?",
+
+  oxytetracycline: false,
+  brand: false,
+  fluorescent_dye: false,
+  other_mark: false,
 };
 
 test("good data should not throw an error", () => {
@@ -74,9 +79,9 @@ describe("publication date", () => {
   test("can't occur more than a year from now (say)", () => {
     const d = new Date();
     // two years from now:
-    d.setYear(d.getFullYear() + 2);
+    d.setFullYear(d.getFullYear() + 2);
 
-    const future_string = format_date(d);
+    const future_string = dateToString(d);
 
     const data_in = { ...good_data, publication_date: future_string };
 
@@ -90,13 +95,10 @@ describe("publication date", () => {
   test("can't occur before stocking date", () => {
     const stocking_date = new Date(Date.parse(good_data["stocking_date"]));
     const pub_date = new Date(
-      stocking_date.setMonth(stocking_date.getMonth() - 1),
+      stocking_date.setDate(stocking_date.getDate() - 2),
     );
 
-    const yyyy = pub_date.getFullYear();
-    const mm = String(pub_date.getMonth() + 1).padStart(2, 0);
-    const dd = String(pub_date.getDate()).padStart(2, 0);
-    const date_string = `${yyyy}-${mm}-${dd}`;
+    const date_string = dateToString(pub_date);
 
     const data_in = { ...good_data, publication_date: date_string };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
@@ -147,12 +149,12 @@ test("missing release method_id should throw an error", () => {
 });
 
 describe("stocking date", () => {
-  test("can't occur in the futureo", () => {
+  test("can't occur in the future", () => {
     const stocking_date = new Date();
 
     stocking_date.setDate(stocking_date.getDate() + 2);
 
-    const date_string = format_date(stocking_date);
+    const date_string = dateToString(stocking_date);
 
     const data_in = {
       ...good_data,
@@ -165,7 +167,19 @@ describe("stocking date", () => {
     expect(issue.message).toMatch(/stocking date cannot be in the future/i);
   });
 
-  test("can't occur too far in the past (more than a year ago)", () => {});
+  test("can't occur too far in the past", () => {
+    const data_in = {
+      ...good_data,
+      stocking_date: "1899-12-30",
+      publication_date: "",
+    };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /stocking dates before 1900 are not allowed/i,
+    );
+  });
 
   test("missing stocking event date should throw an error", () => {
     const data_in = { ...good_data, stocking_date: undefined };
@@ -177,26 +191,107 @@ describe("stocking date", () => {
 });
 
 describe("Transit Mortality", () => {
-  test("null is find", () => {});
-  test("negative values will throw an error", () => {});
+  test("null is fine", () => {
+    const data_in = { ...good_data, transit_mortality: undefined };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual(data_in);
+  });
+
+  test("zero is fine too", () => {
+    const data_in = { ...good_data, transit_mortality: 0 };
+    const data_out = StockingEventSchema.parse(data_in);
+
+    expect(data_out).toEqual(data_in);
+  });
+
+  test("negative values will throw an error", () => {
+    const data_in = { ...good_data, transit_mortality: -10 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /transit mortality must be greater than or equal to 0/i,
+    );
+  });
 });
 
 describe("Site Temperatures", () => {
-  test("null is find", () => {});
-  test("extremely cold values will throw an error", () => {});
-  test("extremely hot values will throw an error", () => {});
+  test("null is fine", () => {
+    const data_in = { ...good_data, site_temperature: undefined };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual(data_in);
+  });
+
+  test("extremely cold values will throw an error", () => {
+    const data_in = { ...good_data, site_temperature: -11 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/site temperature must be greater than -10/i);
+  });
+  test("extremely hot values will throw an error", () => {
+    const data_in = { ...good_data, site_temperature: 31 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/site temperature must be less than 30/i);
+  });
 });
 
 describe("Rearing Temperatures", () => {
-  test("null is find", () => {});
-  test("extremely cold values will throw an error", () => {});
-  test("extremely hot values will throw an error", () => {});
+  test("null is fine", () => {
+    const data_in = { ...good_data, rearing_temperature: undefined };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual(data_in);
+  });
+  test("extremely cold values will throw an error", () => {
+    const data_in = { ...good_data, rearing_temperature: -11 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /rearing temperature must be greater than -10/i,
+    );
+  });
+  test("extremely hot values will throw an error", () => {
+    const data_in = { ...good_data, rearing_temperature: 31 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/rearing temperature must be less than 30/i);
+  });
 });
 
 describe("Water Depth", () => {
-  test("null is find", () => {});
-  test("a value of 0 or less will throw an error", () => {});
-  test("extremely deep values will throw an error", () => {});
+  test("null is fine", () => {
+    const data_in = { ...good_data, water_depth: undefined };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual(data_in);
+  });
+
+  test("empty string is fine too", () => {
+    const data_in = { ...good_data, water_depth: "" };
+    const data_out = StockingEventSchema.parse(data_in);
+
+    //zod will transform "" to undefeined:
+    const expected_out = { ...good_data, water_depth: undefined };
+    expect(data_out).toEqual(expected_out);
+  });
+
+  test("a value of 0 or less will throw an error", () => {
+    const data_in = { ...good_data, water_depth: 0 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/water depth must be greater than 0 m/i);
+  });
+  test("extremely deep values will throw an error", () => {
+    const data_in = { ...good_data, water_depth: 401 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/water depth must be less than 400 m/i);
+  });
 });
 
 describe("Transit Method", () => {
@@ -246,19 +341,119 @@ test("missing stocking_site_id should throw an error", () => {
 });
 
 describe("latitude_decimal_degrees", () => {
-  test("null is find if lon it null too", () => {});
-  test("extremely small values will throw an error", () => {});
-  test("extremely large values will throw an error", () => {});
+  test("values too far south will throw an error", () => {
+    const data_in = {
+      ...good_data,
+      latitude_decimal_degrees: 41.6,
+      longitude_decimal_degrees: -81.5,
+    };
+
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /latiude must be greater than 41.67 degrees/i,
+    );
+  });
+  test("values too far north will throw an error", () => {
+    const data_in = {
+      ...good_data,
+      latitude_decimal_degrees: 55.9,
+      longitude_decimal_degrees: -81.5,
+    };
+
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/latitude must be less than 55.86 degrees/i);
+  });
 });
 
 describe("longitude_decimal_degrees", () => {
-  test("null is find as long as lat is null too", () => {});
-  test("extremely small values will throw an error", () => {});
-  test("extremely large values will throw an error", () => {});
+  test("values too far east will throw an error", () => {
+    const data_in = {
+      ...good_data,
+      latitude_decimal_degrees: 45.5,
+      longitude_decimal_degrees: -74.2,
+    };
+
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /longitude must be less than -74.32 degrees/i,
+    );
+  });
+  test("values too far west will throw an error", () => {
+    const data_in = {
+      ...good_data,
+      latitude_decimal_degrees: 45.5,
+      longitude_decimal_degrees: -95.2,
+    };
+
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /longitude must be greater than -95.15 degrees/i,
+    );
+  });
+});
+
+describe("lat and lon together", () => {
+  test("lat and lon can both be within their bounds", () => {
+    const data_in = {
+      ...good_data,
+      latitude_decimal_degrees: 45.5,
+      longitude_decimal_degrees: -81.5,
+    };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual(data_in);
+  });
+
+  test("lat and lon can both be null", () => {
+    const data_in = {
+      ...good_data,
+      latitude_decimal_degrees: undefined,
+      longitude_decimal_degrees: undefined,
+    };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual(data_in);
+  });
+
+  test("longitude is required if latitude is provided", () => {
+    const data_in = {
+      ...good_data,
+      latitude_decimal_degrees: 45.5,
+      longitude_decimal_degrees: undefined,
+    };
+
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /longitude is required if latitude is provided/i,
+    );
+  });
+
+  test("latitude is required if longitude is provided", () => {
+    const data_in = {
+      ...good_data,
+      latitude_decimal_degrees: undefined,
+      longitude_decimal_degrees: -81.5,
+    };
+
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /latitude is required if longitude is provided/i,
+    );
+  });
 });
 
 describe("fish_stocked_count", () => {
-  test("missing fish_stocked_count should throw an error", () => {
+  test("undefined fish_stocked_count should throw an error", () => {
     const data_in = { ...good_data, fish_stocked_count: undefined };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
@@ -266,19 +461,73 @@ describe("fish_stocked_count", () => {
     expect(issue.message).toMatch(/fish stocked is a required field/i);
   });
 
-  test("a value of 0 or less will throw an error", () => {});
+  test("empty string fish_stocked_count should throw an error", () => {
+    const data_in = { ...good_data, fish_stocked_count: "" };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/fish stocked is a required field/i);
+  });
+
+  test("a value of 0 or less will throw an error", () => {
+    const data_in = { ...good_data, fish_stocked_count: 0 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/fish stocked must be greater than 0/i);
+  });
 });
 
 describe("fish weight", () => {
-  test("null is find", () => {});
-  test("values <=0 will throw an error", () => {});
-  test("extremely large values will throw an error", () => {});
+  test("empty string is fine", () => {
+    const data_in = {
+      ...good_data,
+      fish_weight: "",
+    };
+    const data_out = StockingEventSchema.parse(data_in);
+
+    // fish_weight should be transformed by zod:
+    const expected_out = { ...data_in, fish_weight: undefined };
+
+    expect(data_out).toEqual(expected_out);
+  });
+  test("values <=0 will throw an error", () => {
+    const data_in = { ...good_data, fish_weight: 0 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/fish weight must be greater than 0 g/i);
+  });
+  test("extremely large values will throw an error", () => {
+    const data_in = { ...good_data, fish_weight: 20001 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/fish weight must be less than 20000 g/i);
+  });
 });
 
 describe("fish age", () => {
-  test("null is find", () => {});
-  test("values <=0 will throw an error", () => {});
-  test("values >180 will throw an error", () => {});
+  test("null is fine", () => {
+    const data_in = {
+      ...good_data,
+      fish_age: undefined,
+    };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual(data_in);
+  });
+  test("values <=0 will throw an error", () => {
+    const data_in = { ...good_data, fish_age: 0 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/fish age must be greater than 0/i);
+  });
+  test("values over 180 will throw an error", () => {
+    const data_in = { ...good_data, fish_age: 181 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/fish age must be less than 180 months/i);
+  });
 });
 
 test("missing development_stage_id should throw an error", () => {
@@ -315,7 +564,12 @@ describe("fin clip", () => {
     expect(data_out).toEqual(data_in);
   });
 
-  test("Unknown ('U') alone is fine", () => {});
+  test.todo(
+    "Unknown ('U') alone is fine",
+    // there is currently no code for 'unnkown' - there probably
+    // should be to differentiate it from No clips, I don't know, and
+    // I missed this field.
+  );
 
   test("0 cannot appear with any other clip code", () => {
     const data_in = { ...good_data, fin_clips: ["0", "3"] };
@@ -371,9 +625,27 @@ describe("fin clip", () => {
 });
 
 describe("clip_retention_pct", () => {
-  test("null is ok.", () => {});
-  test("values smaller than 0 will throw an error", () => {});
-  test("values larger than 100 will throw an error", () => {});
+  test("null is fine", () => {
+    const data_in = {
+      ...good_data,
+      clip_retention_pct: undefined,
+    };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual(data_in);
+  });
+  test("values <=0 will throw an error", () => {
+    const data_in = { ...good_data, clip_retention_pct: -0.01 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/clip retention must be greater than 0/i);
+  });
+  test("values over 100 will throw an error", () => {
+    const data_in = { ...good_data, clip_retention_pct: 100.1 };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/clip retention rate cannot exceed 100%/i);
+  });
 });
 
 //  //tags_applied: ?StockingEvent[];

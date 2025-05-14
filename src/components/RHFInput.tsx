@@ -46,7 +46,7 @@ export const RHFInput: React.FC<RHFInputProps> = ({
           </Form.Label>
         </Col>
         {db_field_name && (
-          <Col align="end">
+          <Col className="col-2" align="end">
             <DataDictOverlay
               db_field_name={db_field_name}
               popup_placement={popup_placement}

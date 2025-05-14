@@ -11,6 +11,8 @@ import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { DevTool } from "@hookform/devtools";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ClickableMap } from "../components/ClickableMap";
 import { AccordionToggle } from "../components/AccordionToggle";
@@ -42,21 +44,12 @@ import { useStockingAdminUnits } from "../hooks/useStockingAdminUnits";
 
 import { DataDictOverlay } from "../components/DataDictOverlay";
 
+import { StockingEventSchema } from "../schemas/StockingEventSchema";
+import { StockingEventInputs } from "../types/types";
+
 interface SiteOption {
   readonly value: string;
   readonly label: string;
-}
-
-interface StockingEventFormInputs {
-  lot_slug: string;
-  stocking_admin_unit_id: number;
-  release_method: number;
-  development_stage: number;
-  destination_waterbody: string;
-  stocked_waterbody: string;
-  stocking_site: string;
-  dd_lat: string;
-  dd_lon: string;
 }
 
 export const StockingEventForm = () => {
@@ -107,7 +100,10 @@ export const StockingEventForm = () => {
     watch,
     setValue,
     formState: { errors },
-  } = useForm<StockingEventFormInputs>(default_values);
+  } = useForm<StockingEventInputs>({
+    default_values: default_values,
+    resolver: zodResolver(StockingEventSchema),
+  });
 
   const [lot_slug] = watch(["lot_slug"]);
   const setSelectedLot = (slug) => setValue("lot_slug", slug);
@@ -157,7 +153,7 @@ export const StockingEventForm = () => {
     return getStockingSites(inputValue);
   };
 
-  const createPoint = (point_attrs) => {
+  const createPoint = (point_attrs: Pt) => {
     setPoint([...point_attrs]);
     reset({
       dd_lat: point_attrs[0],
@@ -280,6 +276,17 @@ export const StockingEventForm = () => {
                       />
                     </Card.Title>
 
+                    {errors["stocking-purposes"] && (
+                      <Form.Control.Feedback type="invalid">
+                        <span
+                          className="text-danger"
+                          role="alert"
+                          aria-label={`stocking-purposes-error`}
+                        >
+                          {errors["stocking-purposes"].message}
+                        </span>
+                      </Form.Control.Feedback>
+                    )}
                     <p>Check all that apply:</p>
 
                     <Row>
@@ -289,10 +296,10 @@ export const StockingEventForm = () => {
                             <Form.Check
                               inline
                               label={`${x.description} (${x.code})`}
-                              name="stocking-purpose"
+                              name="stocking-purposes"
                               type="checkbox"
                               value={x.code}
-                              {...register(`stocking_purpose_${x.code}`)}
+                              {...register(`stocking_purposes_${x.code}`)}
                             />
                           </Col>
                         ))}
@@ -571,7 +578,7 @@ export const StockingEventForm = () => {
                   <Col>
                     <RHFInput
                       control={control}
-                      name="number_stocked"
+                      name="fish_stocked_count"
                       db_field_name="fish_stocked_count"
                       label="Number of Fish Stocked"
                       inputType="number"
@@ -1002,7 +1009,6 @@ export const StockingEventForm = () => {
             </Row>
           </Form>
         </Row>
-
         <Modal show={show} onHide={handleModalClose} fullscreen={true}>
           <Modal.Header closeButton>
             <Modal.Title>Lot Locator</Modal.Title>
@@ -1022,6 +1028,7 @@ export const StockingEventForm = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+        <DevTool control={control} /> {/* set up the dev tool */}
       </Container>
     </>
   );
