@@ -279,7 +279,7 @@ describe("Transit Method", () => {
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
-          name: "transitmethod-error",
+          name: "transit_methods-error",
         }),
       ).toBeInTheDocument();
     });

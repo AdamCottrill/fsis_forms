@@ -76,6 +76,10 @@ export const StockingEventForm = (props) => {
   const default_values = {
     dd_lat: "",
     dd_lon: "",
+
+    stocking_purposes: [],
+    fin_clips: [],
+    transitMethods: [],
   };
 
   const developmentStages = useDevelopmentStages();
@@ -99,6 +103,7 @@ export const StockingEventForm = (props) => {
     trigger,
     reset,
     watch,
+    getValues,
     setValue,
     formState: { errors },
   } = useForm<StockingEventInputs>({
@@ -116,7 +121,9 @@ export const StockingEventForm = (props) => {
   };
 
   const onError = (error) => {
-    //console.log("DEV_MSG_ERROR:::", error);
+    const values = getValues();
+    console.log("FORM_VALUES:::", values);
+    console.log("DEV_MSG_ERROR:::", error);
   };
 
   //=============================================================

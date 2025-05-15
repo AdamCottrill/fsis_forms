@@ -130,6 +130,16 @@ describe("Stocking purpose", () => {
       /at least one stocking purpose must be selected/i,
     );
   });
+
+  test("undefined will throw an error like empty array", () => {
+    const data_in = { ...good_data, stocking_purposes: undefined };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /at least one stocking purpose must be selected/i,
+    );
+  });
 });
 
 describe("proponent", () => {
@@ -335,6 +345,16 @@ describe("Transit Method", () => {
   });
   test("missing selection will throw an error", () => {
     const data_in = { ...good_data, transit_methods: [] };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /at least one transit method must be selected/i,
+    );
+  });
+
+  test("undefined will throw an empty array error", () => {
+    const data_in = { ...good_data, transit_methods: undefined };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
@@ -573,6 +593,14 @@ test("empty string development_stage should throw an error", () => {
 describe("fin clip", () => {
   test("missing fin_clips should throw an error", () => {
     const data_in = { ...good_data, fin_clips: [] };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/at least one fin clip must be selected/i);
+  });
+
+  test("undefined fin_clips should throw an empty array error", () => {
+    const data_in = { ...good_data, fin_clips: undefined };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);

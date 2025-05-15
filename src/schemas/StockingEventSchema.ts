@@ -16,10 +16,14 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       .positive(),
 
     publication_date: z.string().date().optional().or(z.literal("")),
-    stocking_purposes: z
-      .string()
-      .array()
-      .nonempty({ message: "At least one Stocking Purpose must be selected" }),
+    stocking_purposes: z.preprocess(
+      (val) => {
+        return val === undefined ? [] : val;
+      },
+      z.string().array().nonempty({
+        message: "At least one Stocking Purpose must be selected",
+      }),
+    ),
     proponent_id: z.preprocess(
       (val) => {
         return val === "" || val == null ? undefined : val;
@@ -105,9 +109,15 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       )
       .optional(),
 
-    transit_methods: z.string().array().nonempty({
-      message: "At least one Transit Method must be selected",
-    }),
+    transit_methods: z.preprocess(
+      (val) => {
+        return val === undefined ? [] : val;
+      },
+
+      z.string().array().nonempty({
+        message: "At least one Transit Method must be selected",
+      }),
+    ),
 
     destination_waterbody: z
       .number({
@@ -216,55 +226,61 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
 
     // 'U' and '0' can only appear alone
     // 1&2, 3&4, 1&3, and 2&4 can not appear together
-    fin_clips: z
-      .string()
-      .array()
-      .nonempty({
-        message: "At least one Fin Clip must be selected",
-      })
-      .superRefine((val, ctx) => {
-        if (val.indexOf("0") >= 0 && val.length > 1) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "0 cannot be selected with any other Fin Clip",
-          });
-        }
+    fin_clips: z.preprocess(
+      (val) => {
+        return val === undefined ? [] : val;
+      },
 
-        if (val.indexOf("U") >= 0 && val.length > 1) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Unknown cannot be selected with any other Fin Clip",
-          });
-        }
+      z
+        .string()
+        .array()
+        .nonempty({
+          message: "At least one Fin Clip must be selected",
+        })
+        .superRefine((val, ctx) => {
+          if (val.indexOf("0") >= 0 && val.length > 1) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "0 cannot be selected with any other Fin Clip",
+            });
+          }
 
-        if (val.indexOf("1") >= 0 && val.indexOf("2") >= 0) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Clip 1 and 2 cannot be selected together",
-          });
-        }
+          if (val.indexOf("U") >= 0 && val.length > 1) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Unknown cannot be selected with any other Fin Clip",
+            });
+          }
 
-        if (val.indexOf("1") >= 0 && val.indexOf("3") >= 0) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Clip 1 and 3 cannot be selected together",
-          });
-        }
+          if (val.indexOf("1") >= 0 && val.indexOf("2") >= 0) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Clip 1 and 2 cannot be selected together",
+            });
+          }
 
-        if (val.indexOf("2") >= 0 && val.indexOf("4") >= 0) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Clip 2 and 4 cannot be selected together",
-          });
-        }
+          if (val.indexOf("1") >= 0 && val.indexOf("3") >= 0) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Clip 1 and 3 cannot be selected together",
+            });
+          }
 
-        if (val.indexOf("3") >= 0 && val.indexOf("4") >= 0) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Clip 3 and 4 cannot be selected together",
-          });
-        }
-      }),
+          if (val.indexOf("2") >= 0 && val.indexOf("4") >= 0) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Clip 2 and 4 cannot be selected together",
+            });
+          }
+
+          if (val.indexOf("3") >= 0 && val.indexOf("4") >= 0) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Clip 3 and 4 cannot be selected together",
+            });
+          }
+        }),
+    ),
 
     clip_retention_pct: z
       .number()
