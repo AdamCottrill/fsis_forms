@@ -42,9 +42,9 @@ export interface StockingEventInputs {
   stocking_admin_unit_id: number;
   //publication_date?: Date;
   publication_date?: string;
-  stocking_purposes: number[];
-  proponent_id: number;
-  release_method_id: number;
+  stocking_purposes: string[];
+  proponent_id: string;
+  release_method: string;
   //stocking_date: Date;
   stocking_date: string;
   // stocking_time: time!!
@@ -52,16 +52,16 @@ export interface StockingEventInputs {
   site_temperature?: number;
   rearing_temperature?: number;
   water_depth?: number;
-  transit_methods: number[];
-  destination_waterbody_id: number;
-  stocked_waterbody_id: number;
-  stocking_site_id: number;
+  transit_methods: string[];
+  destination_waterbody: number;
+  stocked_waterbody: number;
+  stocking_site: number;
   latitude_decimal_degrees?: number;
   longitude_decimal_degrees?: number;
   fish_stocked_count: number;
   fish_weight: number;
   fish_age: number;
-  development_stage_id: number;
+  development_stage_id: string;
   fin_clips: string[];
   clip_retention_pct?: number;
   tags_applied?: AppliedTag[];

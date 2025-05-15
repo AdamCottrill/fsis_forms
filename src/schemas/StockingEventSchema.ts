@@ -17,48 +17,54 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
 
     publication_date: z.string().date().optional().or(z.literal("")),
     stocking_purposes: z
-      .number()
-      .positive()
-      .int()
+      .string()
       .array()
       .nonempty({ message: "At least one Stocking Purpose must be selected" }),
-    proponent_id: z
-      .number({
+    proponent_id: z.preprocess(
+      (val) => {
+        return val === "" || val == null ? undefined : val;
+      },
+      z.string({
         required_error: "Proponent is a required field",
-      })
-      .int()
-      .positive(),
-
-    release_method_id: z
-      .number({
-        required_error: "Release Method is a required field",
-      })
-      .int()
-      .positive(),
-
-    stocking_date: z
-      .string({
-        required_error: "Stocking Date is a required field",
-      })
-      .date()
-      .superRefine((val, ctx) => {
-        const today = new Date();
-        const event_date = new Date(val);
-
-        if (today < event_date) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Stocking Date cannot be in the future",
-          });
-        }
-
-        if (event_date.getFullYear() < 1900) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Stocking dates before 1900 are not allowed.",
-          });
-        }
       }),
+    ),
+    release_method: z.preprocess(
+      (val) => {
+        return val === "" || val === null ? undefined : val;
+      },
+      z.string({
+        required_error: "Release Method is a required field",
+      }),
+    ),
+
+    stocking_date: z.preprocess(
+      (val) => {
+        return val === "" ? undefined : val;
+      },
+      z
+        .string({
+          required_error: "Stocking Date is a required field",
+        })
+        .date()
+        .superRefine((val, ctx) => {
+          const today = new Date();
+          const event_date = new Date(val);
+
+          if (today < event_date) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Stocking Date cannot be in the future",
+            });
+          }
+
+          if (event_date.getFullYear() < 1900) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Stocking dates before 1900 are not allowed.",
+            });
+          }
+        }),
+    ),
     //stocking_time!!
 
     transit_mortality: z.coerce
@@ -99,25 +105,25 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       )
       .optional(),
 
-    transit_methods: z.number().positive().int().array().nonempty({
+    transit_methods: z.string().array().nonempty({
       message: "At least one Transit Method must be selected",
     }),
 
-    destination_waterbody_id: z
+    destination_waterbody: z
       .number({
         required_error: "Destination Waterbody is a required field",
       })
       .int()
       .positive(),
 
-    stocked_waterbody_id: z
+    stocked_waterbody: z
       .number({
         required_error: "Stocked Waterbody is a required field",
       })
       .int()
       .positive(),
 
-    stocking_site_id: z
+    stocking_site: z
       .number({
         required_error: "Stocking Site is a required field",
       })
@@ -145,20 +151,29 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
         message: "Longitude must be greater than -95.15 degrees",
       })
       .optional(),
-    fish_stocked_count: z.preprocess(
-      (val) => {
-        return val === "" ? undefined : val;
-      },
-      z
-        .number({
-          required_error: "Number of Fish Stocked is a required field",
-        })
-        .positive({
-          message: "Number of Fish Stocked must be greater than 0",
+    //    fish_stocked_count: z.preprocess(
+    //      (val) => {
+    //        return val === "" || null ? undefined : val;
+    //      },
+    //      z.coerce
+    //        .number({
+    //          required_error: "Number of Fish Stocked is a required field",
+    //        })
+    //        .positive({
+    //          message: "Number of Fish Stocked must be greater than 0",
+    //        })
+    //        .int(),
+    //    ),
+
+    fish_stocked_count: z.union([
+      z.coerce
+        .number()
+        .min(1, {
+          message: "Number of Fish Stocked is required and must be positive.",
         })
         .int(),
-    ),
-
+      z.nan(),
+    ]),
     fish_weight: z
       .literal("")
       .transform(() => undefined)
@@ -190,12 +205,14 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       )
       .optional(),
 
-    development_stage_id: z
-      .number({
+    development_stage_id: z.preprocess(
+      (val) => {
+        return val === "" || val == null ? undefined : val;
+      },
+      z.string({
         required_error: "Development Stage is a required field",
-      })
-      .int()
-      .positive(),
+      }),
+    ),
 
     // 'U' and '0' can only appear alone
     // 1&2, 3&4, 1&3, and 2&4 can not appear together

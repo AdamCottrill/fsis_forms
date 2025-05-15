@@ -22,6 +22,7 @@ import { RHFAsyncSelect } from "../components/RHFAsyncSelect";
 import { RHFInput } from "../components/RHFInput";
 import { RHFSelect } from "../components/RHFSelect";
 import { RHFTextArea } from "../components/RHFTextArea";
+import { RHFCheckBoxArray } from "../components/RHFCheckBoxArray";
 import { ShowLotAttributes } from "../components/ShowLotAttributes";
 import { LotLocator } from "../components/LotLocator";
 import { RequiredFieldsMsg } from "../components/RequiredFieldsMsg";
@@ -52,7 +53,7 @@ interface SiteOption {
   readonly label: string;
 }
 
-export const StockingEventForm = () => {
+export const StockingEventForm = (props) => {
   const [show, setShow] = useState(false);
 
   const handleModalClose = () => setShow(false);
@@ -111,11 +112,11 @@ export const StockingEventForm = () => {
   //const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
   const onSubmit = (values) => {
-    console.log("Values:::", values);
+    //console.log("Values:::", values);
   };
 
   const onError = (error) => {
-    console.log("DEV_MSG_ERROR:::", error);
+    //console.log("DEV_MSG_ERROR:::", error);
   };
 
   //=============================================================
@@ -276,34 +277,16 @@ export const StockingEventForm = () => {
                       />
                     </Card.Title>
 
-                    {errors["stocking-purposes"] && (
-                      <Form.Control.Feedback type="invalid">
-                        <span
-                          className="text-danger"
-                          role="alert"
-                          aria-label={`stocking-purposes-error`}
-                        >
-                          {errors["stocking-purposes"].message}
-                        </span>
-                      </Form.Control.Feedback>
-                    )}
                     <p>Check all that apply:</p>
 
-                    <Row>
-                      {stockingPurposes &&
-                        stockingPurposes.map((x) => (
-                          <Col className="mb-1" md={4} key={x.code}>
-                            <Form.Check
-                              inline
-                              label={`${x.description} (${x.code})`}
-                              name="stocking-purposes"
-                              type="checkbox"
-                              value={x.code}
-                              {...register(`stocking_purposes_${x.code}`)}
-                            />
-                          </Col>
-                        ))}
-                    </Row>
+                    {stockingPurposes && (
+                      <RHFCheckBoxArray
+                        options={stockingPurposes}
+                        control={control}
+                        name="stocking_purposes"
+                        errors={errors}
+                      />
+                    )}
                   </Card.Body>
                 </Card>
               </Card.Body>
@@ -427,22 +410,14 @@ export const StockingEventForm = () => {
                     </Card.Title>
 
                     <p>Check all that apply:</p>
-
-                    <Row>
-                      {transitMethods &&
-                        transitMethods.map((x) => (
-                          <Col className="mb-1" md={4} key={x.code}>
-                            <Form.Check
-                              inline
-                              label={`${x.description} (${x.code})`}
-                              name="transit-method"
-                              type="checkbox"
-                              value={x.code}
-                              {...register(`transit_method_${x.code}`)}
-                            />
-                          </Col>
-                        ))}
-                    </Row>
+                    {transitMethods && (
+                      <RHFCheckBoxArray
+                        options={transitMethods}
+                        control={control}
+                        name="transit_methods"
+                        errors={errors}
+                      />
+                    )}
                   </Card.Body>
                 </Card>
               </Card.Body>
@@ -691,21 +666,14 @@ export const StockingEventForm = () => {
                     <Row className="my-2">
                       <p>Check all that apply:</p>
 
-                      <Row className="row-cols-4">
-                        {finClips &&
-                          finClips.map((x) => (
-                            <Col className="mb-2" key={x.code}>
-                              <Form.Check
-                                inline
-                                label={`${x.description} (${x.code}) [${x.fn2_code}]`}
-                                name="fin-clips"
-                                type="checkbox"
-                                value={x.code}
-                                {...register(`fin_clip_${x.code}`)}
-                              />
-                            </Col>
-                          ))}
-                      </Row>
+                      {finClips && (
+                        <RHFCheckBoxArray
+                          options={finClips}
+                          control={control}
+                          name="fin_clips"
+                          errors={errors}
+                        />
+                      )}
                     </Row>
 
                     <Row>

@@ -67,7 +67,7 @@ export const RHFAsyncSelect = ({
           <span
             className="text-danger"
             role="alert"
-            data-testid={`${name}-error`}
+            aria-label={`${name}-error`}
           >
             {errors[name]?.message}
           </span>

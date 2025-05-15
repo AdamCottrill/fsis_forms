@@ -17,24 +17,24 @@ const good_data: StockingEventInputs = {
   lot_slug: "foo-bar-baz",
   stocking_admin_unit_id: 9,
   publication_date: "2024-05-12",
-  stocking_purposes: [1],
-  proponent_id: 2,
-  release_method_id: 3,
+  stocking_purposes: ["1"],
+  proponent_id: "bjfcs",
+  release_method: "surface",
   stocking_date: "2024-05-10",
   transit_mortality: 15,
   site_temperature: 15.4,
   rearing_temperature: 10.5,
   water_depth: 12.6,
-  transit_methods: [1, 2, 3],
-  destination_waterbody_id: 5,
-  stocked_waterbody_id: 6,
-  stocking_site_id: 10,
+  transit_methods: ["1", "2", "3"],
+  destination_waterbody: 5,
+  stocked_waterbody: 6,
+  stocking_site: 10,
   latitude_decimal_degrees: 45.1,
   longitude_decimal_degrees: -81.2,
   fish_stocked_count: 10000,
   fish_weight: 0.15,
   fish_age: 6,
-  development_stage_id: 4,
+  development_stage_id: "4",
   fin_clips: ["1", "4"],
   clip_retention_pct: 95.2,
   //tags_applied: ?StockingEvent[],
@@ -112,12 +112,12 @@ describe("publication date", () => {
 
 describe("Stocking purpose", () => {
   test("one selection is fine", () => {
-    const data_in = { ...good_data, stocking_purposes: [3] };
+    const data_in = { ...good_data, stocking_purposes: ["3"] };
     const data_out = StockingEventSchema.parse(data_in);
     expect(data_out).toEqual(data_in);
   });
   test("more than one selection is also good.", () => {
-    const data_in = { ...good_data, stocking_purposes: [1, 2, 3] };
+    const data_in = { ...good_data, stocking_purposes: ["1", "2", "3"] };
     const data_out = StockingEventSchema.parse(data_in);
     expect(data_out).toEqual(data_in);
   });
@@ -132,20 +132,40 @@ describe("Stocking purpose", () => {
   });
 });
 
-test("missing proponent_id should throw an error", () => {
-  const data_in = { ...good_data, proponent_id: undefined };
-  expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+describe("proponent", () => {
+  test("undefined proponent should throw an error", () => {
+    const data_in = { ...good_data, proponent_id: undefined };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
-  const issue = pluck_first_issue(StockingEventSchema, data_in);
-  expect(issue.message).toMatch(/proponent is a required field/i);
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/proponent is a required field/i);
+  });
+
+  test("empty string proponent should throw an error", () => {
+    const data_in = { ...good_data, proponent_id: "" };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/proponent is a required field/i);
+  });
 });
 
-test("missing release method_id should throw an error", () => {
-  const data_in = { ...good_data, release_method_id: undefined };
-  expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+describe("release_method", () => {
+  test("undefined release method_id should throw an error", () => {
+    const data_in = { ...good_data, release_method: undefined };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
-  const issue = pluck_first_issue(StockingEventSchema, data_in);
-  expect(issue.message).toMatch(/release method is a required field/i);
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/release method is a required field/i);
+  });
+
+  test("empty string as release method should throw an error", () => {
+    const data_in = { ...good_data, release_method: "" };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/release method is a required field/i);
+  });
 });
 
 describe("stocking date", () => {
@@ -183,6 +203,14 @@ describe("stocking date", () => {
 
   test("missing stocking event date should throw an error", () => {
     const data_in = { ...good_data, stocking_date: undefined };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(/stocking date is a required field/i);
+  });
+
+  test("empty string for event date should throw an error", () => {
+    const data_in = { ...good_data, stocking_date: "" };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
@@ -296,12 +324,12 @@ describe("Water Depth", () => {
 
 describe("Transit Method", () => {
   test("one selection is fine", () => {
-    const data_in = { ...good_data, transit_methods: [3] };
+    const data_in = { ...good_data, transit_methods: ["3"] };
     const data_out = StockingEventSchema.parse(data_in);
     expect(data_out).toEqual(data_in);
   });
   test("more than one selection is also good.", () => {
-    const data_in = { ...good_data, transit_methods: [1, 2, 3] };
+    const data_in = { ...good_data, transit_methods: ["1", "2", "3"] };
     const data_out = StockingEventSchema.parse(data_in);
     expect(data_out).toEqual(data_in);
   });
@@ -316,24 +344,24 @@ describe("Transit Method", () => {
   });
 });
 
-test("missing destination_waterbody_id should throw an error", () => {
-  const data_in = { ...good_data, destination_waterbody_id: undefined };
+test("missing destination_waterbody should throw an error", () => {
+  const data_in = { ...good_data, destination_waterbody: undefined };
   expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
   const issue = pluck_first_issue(StockingEventSchema, data_in);
   expect(issue.message).toMatch(/destination waterbody is a required field/i);
 });
 
-test("missing stocked_waterbody_id should throw an error", () => {
-  const data_in = { ...good_data, stocked_waterbody_id: undefined };
+test("missing stocked_waterbody should throw an error", () => {
+  const data_in = { ...good_data, stocked_waterbody: undefined };
   expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
   const issue = pluck_first_issue(StockingEventSchema, data_in);
   expect(issue.message).toMatch(/stocked waterbody is a required field/i);
 });
 
-test("missing stocking_site_id should throw an error", () => {
-  const data_in = { ...good_data, stocking_site_id: undefined };
+test("missing stocking_site should throw an error", () => {
+  const data_in = { ...good_data, stocking_site: undefined };
   expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
   const issue = pluck_first_issue(StockingEventSchema, data_in);
@@ -453,20 +481,14 @@ describe("lat and lon together", () => {
 });
 
 describe("fish_stocked_count", () => {
-  test("undefined fish_stocked_count should throw an error", () => {
-    const data_in = { ...good_data, fish_stocked_count: undefined };
-    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
-
-    const issue = pluck_first_issue(StockingEventSchema, data_in);
-    expect(issue.message).toMatch(/fish stocked is a required field/i);
-  });
-
   test("empty string fish_stocked_count should throw an error", () => {
     const data_in = { ...good_data, fish_stocked_count: "" };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
-    expect(issue.message).toMatch(/fish stocked is a required field/i);
+    expect(issue.message).toMatch(
+      /number of fish stocked is required and must be positive/i,
+    );
   });
 
   test("a value of 0 or less will throw an error", () => {
@@ -474,7 +496,9 @@ describe("fish_stocked_count", () => {
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
-    expect(issue.message).toMatch(/fish stocked must be greater than 0/i);
+    expect(issue.message).toMatch(
+      /number of fish stocked is required and must be positive/i,
+    );
   });
 });
 
@@ -530,8 +554,16 @@ describe("fish age", () => {
   });
 });
 
-test("missing development_stage_id should throw an error", () => {
+test("undefined development_stage should throw an error", () => {
   const data_in = { ...good_data, development_stage_id: undefined };
+  expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+  const issue = pluck_first_issue(StockingEventSchema, data_in);
+  expect(issue.message).toMatch(/development stage is a required field/i);
+});
+
+test("empty string development_stage should throw an error", () => {
+  const data_in = { ...good_data, development_stage_id: "" };
   expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
   const issue = pluck_first_issue(StockingEventSchema, data_in);
