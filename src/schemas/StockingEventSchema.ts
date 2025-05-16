@@ -161,19 +161,6 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
         message: "Longitude must be greater than -95.15 degrees",
       })
       .optional(),
-    //    fish_stocked_count: z.preprocess(
-    //      (val) => {
-    //        return val === "" || null ? undefined : val;
-    //      },
-    //      z.coerce
-    //        .number({
-    //          required_error: "Number of Fish Stocked is a required field",
-    //        })
-    //        .positive({
-    //          message: "Number of Fish Stocked must be greater than 0",
-    //        })
-    //        .int(),
-    //    ),
 
     fish_stocked_count: z.union([
       z.coerce
@@ -226,6 +213,11 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
 
     // 'U' and '0' can only appear alone
     // 1&2, 3&4, 1&3, and 2&4 can not appear together
+    // 1 -> RPECT
+    // 2 -> LPECT
+    // 3 -> RVENT
+    // 4 -> LVENT
+
     fin_clips: z.preprocess(
       (val) => {
         return val === undefined ? [] : val;
@@ -238,45 +230,45 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
           message: "At least one Fin Clip must be selected",
         })
         .superRefine((val, ctx) => {
-          if (val.indexOf("0") >= 0 && val.length > 1) {
+          if (val.indexOf("NONE") >= 0 && val.length > 1) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "0 cannot be selected with any other Fin Clip",
+              message: "NONE cannot be selected with any other Fin Clip",
             });
           }
 
-          if (val.indexOf("U") >= 0 && val.length > 1) {
+          if (val.indexOf("UNKN") >= 0 && val.length > 1) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Unknown cannot be selected with any other Fin Clip",
+              message: "UNKN cannot be selected with any other Fin Clip",
             });
           }
 
-          if (val.indexOf("1") >= 0 && val.indexOf("2") >= 0) {
+          if (val.indexOf("RPECT") >= 0 && val.indexOf("LPECT") >= 0) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Clip 1 and 2 cannot be selected together",
+              message: "Clip RPECT and LPECT cannot be selected together",
             });
           }
 
-          if (val.indexOf("1") >= 0 && val.indexOf("3") >= 0) {
+          if (val.indexOf("RPECT") >= 0 && val.indexOf("RVENT") >= 0) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Clip 1 and 3 cannot be selected together",
+              message: "Clip RPECT and RVENT cannot be selected together",
             });
           }
 
-          if (val.indexOf("2") >= 0 && val.indexOf("4") >= 0) {
+          if (val.indexOf("LPECT") >= 0 && val.indexOf("LVENT") >= 0) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Clip 2 and 4 cannot be selected together",
+              message: "Clip LPECT and LVENT cannot be selected together",
             });
           }
 
-          if (val.indexOf("3") >= 0 && val.indexOf("4") >= 0) {
+          if (val.indexOf("RVENT") >= 0 && val.indexOf("LVENT") >= 0) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              message: "Clip 3 and 4 cannot be selected together",
+              message: "Clip RVENT and LVENT cannot be selected together",
             });
           }
         }),

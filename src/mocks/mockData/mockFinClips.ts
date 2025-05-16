@@ -44,7 +44,7 @@ export const mockFinClips = [
   {
     id: 7,
     fn2_code: "4",
-    code: "LPELV",
+    code: "LVENT",
     description: "Left  Ventral(LV)",
     fill_color: "#FF0000",
   },

@@ -26,7 +26,7 @@ const good_data: StockingEventInputs = {
   fish_weight: 0.15,
   fish_age: 6,
   development_stage_id: "4",
-  fin_clips: ["1", "4"],
+  fin_clips: ["LPECT", "RVENT"],
   clip_retention_pct: 95.2,
   //tags_applied: ?StockingEvent[],
   inventory_comments: "life was good in the hatchery",
@@ -601,79 +601,87 @@ describe("fin clip", () => {
   });
 
   test("one selection is fine", () => {
-    const data_in = { ...good_data, fin_clips: ["3"] };
+    const data_in = { ...good_data, fin_clips: ["RVENT"] };
     const data_out = StockingEventSchema.parse(data_in);
     expect(data_out).toEqual(data_in);
   });
   test("more than one selection is also good.", () => {
-    const data_in = { ...good_data, fin_clips: ["2", "3", "5"] };
+    const data_in = { ...good_data, fin_clips: ["LPECT", "RVENT", "AD"] };
     const data_out = StockingEventSchema.parse(data_in);
     expect(data_out).toEqual(data_in);
   });
 
-  test("clip 0 alone is fine", () => {
-    const data_in = { ...good_data, fin_clips: ["0"] };
+  test("clip NONE alone is fine", () => {
+    const data_in = { ...good_data, fin_clips: ["NONE"] };
     const data_out = StockingEventSchema.parse(data_in);
     expect(data_out).toEqual(data_in);
   });
 
   test.todo(
-    "Unknown ('U') alone is fine",
+    "Unknown ('UNKN') alone is fine",
     // there is currently no code for 'unnkown' - there probably
     // should be to differentiate it from No clips, I don't know, and
     // I missed this field.
   );
 
-  test("0 cannot appear with any other clip code", () => {
-    const data_in = { ...good_data, fin_clips: ["0", "3"] };
+  test("NONE cannot appear with any other clip code", () => {
+    const data_in = { ...good_data, fin_clips: ["NONE", "RVENT"] };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
     expect(issue.message).toMatch(
-      /0 cannot be selected with any other fin clip/i,
+      /none cannot be selected with any other fin clip/i,
     );
   });
 
-  test("Unknown cannot be selected with any other fin clip", () => {
-    const data_in = { ...good_data, fin_clips: ["U", "3"] };
+  test("UNKN cannot be selected with any other fin clip", () => {
+    const data_in = { ...good_data, fin_clips: ["UNKN", "RVENT"] };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
     expect(issue.message).toMatch(
-      /unknown cannot be selected with any other fin clip/i,
+      /unkn cannot be selected with any other fin clip/i,
     );
   });
 
-  test("clip 12 is not allowed", () => {
-    const data_in = { ...good_data, fin_clips: ["1", "2"] };
+  test("clip RPECT-LPECT is not allowed", () => {
+    const data_in = { ...good_data, fin_clips: ["RPECT", "LPECT"] };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
-    expect(issue.message).toMatch(/clip 1 and 2 cannot be selected together/i);
+    expect(issue.message).toMatch(
+      /clip rpect and lpect cannot be selected together/i,
+    );
   });
 
-  test("clip 13 is not allowed", () => {
-    const data_in = { ...good_data, fin_clips: ["1", "3"] };
+  test("clip RPECT-RVENT is not allowed", () => {
+    const data_in = { ...good_data, fin_clips: ["RPECT", "RVENT"] };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
-    expect(issue.message).toMatch(/clip 1 and 3 cannot be selected together/i);
+    expect(issue.message).toMatch(
+      /clip RPECT and RVENT cannot be selected together/i,
+    );
   });
 
-  test("clip 24 is not allowed", () => {
-    const data_in = { ...good_data, fin_clips: ["2", "4"] };
+  test("clip LPECT-LVENT is not allowed", () => {
+    const data_in = { ...good_data, fin_clips: ["LPECT", "LVENT"] };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
-    expect(issue.message).toMatch(/clip 2 and 4 cannot be selected together/i);
+    expect(issue.message).toMatch(
+      /clip LPECT and LVENT cannot be selected together/i,
+    );
   });
 
-  test("clip 34 is not allowed", () => {
-    const data_in = { ...good_data, fin_clips: ["3", "4"] };
+  test("clip RVENT-LVENT is not allowed", () => {
+    const data_in = { ...good_data, fin_clips: ["RVENT", "LVENT"] };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
-    expect(issue.message).toMatch(/clip 3 and 4 cannot be selected together/i);
+    expect(issue.message).toMatch(
+      /clip rvent and lvent cannot be selected together/i,
+    );
   });
 });
 

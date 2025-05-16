@@ -40,7 +40,7 @@ export const RHFCheckBoxArray = ({ options, control, name, errors }) => {
         </div>
       )}
 
-      <Card border={hasError ? "danger" : "light"}>
+      <Card border={hasError ? "danger" : "light"} data-testid="fin-clip-card">
         <Card.Body>
           <Row className="row-cols-4">
             {options.map((option, index) => (
@@ -51,6 +51,7 @@ export const RHFCheckBoxArray = ({ options, control, name, errors }) => {
                   inline
                   label={`${option.description} (${option.code})`}
                   name={name}
+                  id={`${name}-${option.code.toLowerCase()}`}
                   type="checkbox"
                   value={option.code}
                   checked={value.includes(option.code)}

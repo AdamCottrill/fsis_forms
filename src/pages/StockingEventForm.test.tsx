@@ -1,12 +1,12 @@
 import React from "react";
 
-import { render, screen, waitFor } from "../test-utils";
+import { render, screen, waitFor, logRoles } from "../test-utils";
 import userEvent from "@testing-library/user-event";
 
 import { StockingEventForm } from "./StockingEventForm";
 
 import { dateToString } from "../schemas/test_utils";
-import { log } from "console";
+import { TbDeviceIpadHorizontalQuestion } from "react-icons/tb";
 
 // required fields:
 //   + lot-identifier
@@ -593,12 +593,190 @@ describe("Fin Clip", () => {
     });
   });
 
-  test.todo("that fin clip 0 cannot be selected with any other value");
+  test("that fin clip NONE alone is fine", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
 
-  test.todo("that fin clip 12 is not allowed.");
-  test.todo("that fin clip 13 is not allowed.");
-  test.todo("that fin clip 24 is not allowed.");
-  test.todo("that fin clip 34 is not allowed.");
+    const checkbox = await screen.findByRole("checkbox", {
+      name: /no clip/i,
+    });
+
+    await userEvent.click(checkbox);
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("alert", {
+          name: "fin_clips-error",
+        }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  test("that fin clip 0 cannot be selected with any other value", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const checkbox0 = await screen.findByRole("checkbox", {
+      name: /no clip/i,
+    });
+
+    await userEvent.click(checkbox0);
+
+    // select and click on adipose too:
+    const checkbox5 = await screen.findByRole("checkbox", {
+      name: /adipose/i,
+    });
+
+    await userEvent.click(checkbox5);
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "fin_clips-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const errorMsg = /none cannot be selected with any other fin clip/i;
+    await waitFor(() => {
+      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+    });
+  });
+
+  test("that fin clip 12 is not allowed.", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const checkboxA = await screen.findByRole("checkbox", {
+      name: /rpect/i,
+    });
+
+    await userEvent.click(checkboxA);
+
+    // select and click on adipose too:
+    const checkboxB = await screen.findByRole("checkbox", {
+      name: /lpect/i,
+    });
+
+    await userEvent.click(checkboxB);
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "fin_clips-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const errorMsg = /clip rpect and lpect cannot be selected together/i;
+    await waitFor(() => {
+      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+    });
+  });
+
+  test("that fin clip 13 is not allowed.", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const checkboxA = await screen.findByRole("checkbox", {
+      name: /rpect/i,
+    });
+
+    await userEvent.click(checkboxA);
+
+    // select and click on adipose too:
+    const checkboxB = await screen.findByRole("checkbox", {
+      name: /rvent/i,
+    });
+
+    await userEvent.click(checkboxB);
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "fin_clips-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const errorMsg = /clip rpect and rvent cannot be selected together/i;
+    await waitFor(() => {
+      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+    });
+  });
+
+  test("that fin clip 24 is not allowed.", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const checkboxA = await screen.findByRole("checkbox", {
+      name: /lpect/i,
+    });
+
+    await userEvent.click(checkboxA);
+
+    // select and click on adipose too:
+    const checkboxB = await screen.findByRole("checkbox", {
+      name: /lvent/i,
+    });
+
+    await userEvent.click(checkboxB);
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "fin_clips-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const errorMsg = /clip lpect and lvent cannot be selected together/i;
+    await waitFor(() => {
+      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+    });
+  });
+  test("that fin clip 34 is not allowed.", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const checkboxA = await screen.findByRole("checkbox", {
+      name: /lvent/i,
+    });
+
+    await userEvent.click(checkboxA);
+
+    // select and click on adipose too:
+    const checkboxB = await screen.findByRole("checkbox", {
+      name: /rvent/i,
+    });
+
+    await userEvent.click(checkboxB);
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "fin_clips-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const errorMsg = /clip rvent and lvent cannot be selected/i;
+    await waitFor(() => {
+      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+    });
+  });
 });
 
 describe("Destination Waterbody", () => {

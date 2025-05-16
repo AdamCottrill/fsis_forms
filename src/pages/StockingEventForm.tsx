@@ -121,9 +121,9 @@ export const StockingEventForm = (props) => {
   };
 
   const onError = (error) => {
-    const values = getValues();
-    console.log("FORM_VALUES:::", values);
-    console.log("DEV_MSG_ERROR:::", error);
+    //const values = getValues();
+    //console.log("FORM_VALUES:::", values);
+    //console.log("DEV_MSG_ERROR:::", error);
   };
 
   //=============================================================
