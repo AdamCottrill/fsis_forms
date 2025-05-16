@@ -205,8 +205,8 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       .or(
         z.coerce
           .number()
-          .positive({
-            message: "Fish Age must be greater than 0",
+          .min(0, {
+            message: "Fish Age must be greater than or equal to 0",
           })
           .int()
           .max(180, {
@@ -283,10 +283,20 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
     ),
 
     clip_retention_pct: z
-      .number()
-      .min(0, { message: "Clip Retention must be greater than 0" })
-      .max(100, { message: "Clip Retention Rate cannot exceed 100%" })
+      .literal("")
+      .transform(() => undefined)
+      .or(
+        z.coerce
+          .number()
+          .positive({
+            message: "Clip Retention Rate must be greater than 0",
+          })
+          .max(100, {
+            message: "Clip Retention Rate cannot exceed 100%",
+          }),
+      )
       .optional(),
+
     //tags_applied: ?AppliedTag[];
     inventory_comments: z.string().optional(),
     marking_comments: z.string().optional(),

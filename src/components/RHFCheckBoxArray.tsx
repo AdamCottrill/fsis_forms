@@ -15,6 +15,19 @@ export const RHFCheckBoxArray = ({ options, control, name, errors }) => {
 
   const hasError = Object.hasOwn(errors, name);
 
+  const handleChange = (event) => {
+    let valueCopy = [];
+    //valueCopy[index] = e.target.checked ? e.target.value : null;
+    if (event.target.checked) {
+      valueCopy = [...value, event.target.value];
+    } else {
+      valueCopy = value.filter((x) => x != event.target.value);
+    }
+
+    field.onChange(valueCopy);
+    setValue(valueCopy);
+  };
+
   return (
     <>
       {hasError === true && (
@@ -33,18 +46,7 @@ export const RHFCheckBoxArray = ({ options, control, name, errors }) => {
             {options.map((option, index) => (
               <Col className="mb-1" key={option.code}>
                 <Form.Check
-                  onChange={(e) => {
-                    let valueCopy = [...value];
-                    //valueCopy[index] = e.target.checked ? e.target.value : null;
-                    if (e.target.checked) {
-                      valueCopy.push(e.target.value);
-                    } else {
-                      valueCopy = valueCopy.filter((x) => x != e.target.value);
-                    }
-
-                    field.onChange(valueCopy);
-                    setValue(valueCopy);
-                  }}
+                  onChange={handleChange}
                   key={option.code}
                   inline
                   label={`${option.description} (${option.code})`}

@@ -687,7 +687,7 @@ export const StockingEventForm = (props) => {
                       <Col md={3}>
                         <RHFInput
                           control={control}
-                          name="clip_retention"
+                          name="clip_retention_pct"
                           db_field_name="clip_retention_pct"
                           label="Clip Retention (%)"
                           inputType="number"

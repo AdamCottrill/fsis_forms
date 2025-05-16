@@ -1,17 +1,8 @@
 import { ZodError } from "zod";
 
 import { StockingEventInputs } from "../types/types";
-
 import { StockingEventSchema } from "./StockingEventSchema";
-
-import { pluck_first_issue } from "./test_utils";
-
-const dateToString = (date: Date): string => {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-};
+import { pluck_first_issue, dateToString } from "./test_utils";
 
 const good_data: StockingEventInputs = {
   lot_slug: "foo-bar-baz",
@@ -560,11 +551,13 @@ describe("fish age", () => {
     expect(data_out).toEqual(data_in);
   });
   test("values <=0 will throw an error", () => {
-    const data_in = { ...good_data, fish_age: 0 };
+    const data_in = { ...good_data, fish_age: -1 };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
-    expect(issue.message).toMatch(/fish age must be greater than 0/i);
+    expect(issue.message).toMatch(
+      /fish age must be greater than or equal to 0/i,
+    );
   });
   test("values over 180 will throw an error", () => {
     const data_in = { ...good_data, fish_age: 181 };
@@ -698,7 +691,9 @@ describe("clip_retention_pct", () => {
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
-    expect(issue.message).toMatch(/clip retention must be greater than 0/i);
+    expect(issue.message).toMatch(
+      /clip retention rate must be greater than 0/i,
+    );
   });
   test("values over 100 will throw an error", () => {
     const data_in = { ...good_data, clip_retention_pct: 100.1 };
