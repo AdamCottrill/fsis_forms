@@ -1,4 +1,4 @@
-import { useState } from "React";
+import { useState } from "react";
 import { useController } from "react-hook-form";
 
 import Card from "react-bootstrap/Card";

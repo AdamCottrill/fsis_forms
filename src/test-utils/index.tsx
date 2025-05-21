@@ -1,5 +1,5 @@
 import { render as RtRender } from "@testing-library/react";
-import React, { PropsWithChildren, ReactElement } from "react";
+import { ReactElement } from "react";
 
 import { MemoryRouter } from "react-router-dom";
 

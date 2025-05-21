@@ -1,5 +1,5 @@
 // return an empty page that will have form with just lot related elements:
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { Link } from "react-router";
 

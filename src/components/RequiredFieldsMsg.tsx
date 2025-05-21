@@ -1,5 +1,3 @@
-import React from "react";
-
 export const RequiredFieldsMsg = () => (
   <div className="row">
     <p role="note">

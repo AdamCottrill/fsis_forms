@@ -1,5 +1,5 @@
 // return an empty page that will have form with just lot related elements:
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { useIsFetching } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -68,7 +68,7 @@ export const LotCreator = () => {
   const rearingLocations = useRearingLocations();
 
   const onSubmit = (values: CreateLotFormInputs) => {
-    console.log("Values:::", values);
+    //console.log("Values:::", values);
     //TODO: add {onSuccess: (data) => history.push(<somewhere>)}
     addLot.mutate(values, {
       onSuccess: (data) => {
@@ -88,7 +88,7 @@ export const LotCreator = () => {
   };
 
   const onError = (error) => {
-    console.log("FORM_ERROR:::", error);
+    //console.log("FORM_ERROR:::", error);
   };
 
   const handleBackClick = (event) => {

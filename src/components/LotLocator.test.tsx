@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-import { render, screen } from "../test-utils";
+//import { render, screen } from "../test-utils";
 
 import { LotLocator } from "./LotLocator";
 

@@ -1,12 +1,9 @@
-import React from "react";
-
-import { render, screen, waitFor, logRoles } from "../test-utils";
+import { render, screen, waitFor } from "../test-utils";
 import userEvent from "@testing-library/user-event";
 
 import { StockingEventForm } from "./StockingEventForm";
 
 import { dateToString } from "../schemas/test_utils";
-import { TbDeviceIpadHorizontalQuestion } from "react-icons/tb";
 
 // required fields:
 //   + lot-identifier

@@ -1,7 +1,5 @@
-import React from "react";
-
 import { render, screen, fireEvent, waitFor } from "../test-utils";
-import { within, logRoles } from "@testing-library/dom";
+
 import userEvent from "@testing-library/user-event";
 import selectEvent from "react-select-event";
 import { LotCreator } from "./LotCreator";
