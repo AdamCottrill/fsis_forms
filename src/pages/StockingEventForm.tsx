@@ -73,25 +73,25 @@ export const StockingEventForm = (props) => {
     [55.86, -74.32],
   ]);
 
+  const applied_tags_defaults = {
+    series_start: "",
+    series_end: "",
+    tag_type_id: "",
+    tag_colour_id: "",
+    tag_placement_id: "",
+    tag_origin_id: "",
+    retention_rate_pct: "",
+    retention_rate_sample_size: "",
+    retention_rate_pop_size: "",
+  };
+
   const default_values = {
     latitude_decimal_degrees: "",
     longitude_decimal_degrees: "",
     stocking_purposes: [],
     fin_clips: [],
-    transitMethods: [],
-    tags_applied: [
-      {
-        series_start: "",
-        series_end: "",
-        tag_type_id: "",
-        tag_colour_id: "",
-        tag_placement_id: "",
-        tag_origin_id: "",
-        retention_rate_pct: "",
-        retention_rate_sample_size: "",
-        retention_rate_pop_size: "",
-      },
-    ],
+    transit_methods: [],
+    tags_applied: [{ ...applied_tags_defaults }],
   };
 
   const developmentStages = useDevelopmentStages();
@@ -119,11 +119,11 @@ export const StockingEventForm = (props) => {
     setValue,
     formState: { errors },
   } = useForm<StockingEventInputs>({
-    default_values: default_values,
+    defaultValues: default_values,
     resolver: zodResolver(StockingEventSchema),
   });
 
-  const { fields, remove } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "tags_applied",
   });
@@ -134,7 +134,7 @@ export const StockingEventForm = (props) => {
   //const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
   const onSubmit = (values) => {
-    //console.log("Values:::", values);
+    console.log("Values:::", values);
   };
 
   const onError = (error) => {
@@ -202,8 +202,6 @@ export const StockingEventForm = (props) => {
     : [];
 
   const proponentOptions = proponents || [];
-
-  console.log("fields=", fields);
 
   return (
     <>
@@ -701,18 +699,28 @@ export const StockingEventForm = (props) => {
                 <Accordion.Collapse eventKey="tags-applied-card">
                   <Card.Body>
                     {fields.map((item, index) => (
-                      <Card className="my-1" key={index}>
-                        <Card.Header>Applied Tag {index}</Card.Header>
+                      <Card className="my-1" key={item.id}>
+                        <Card.Header>
+                          <Row className="justify-end">
+                            <Col>Applied Tag {index + 1}</Col>
+                            <Col md={1}>
+                              <Button
+                                variant="danger"
+                                type="button"
+                                size="sm"
+                                onClick={() => remove(index)}
+                              >
+                                Delete
+                              </Button>
+                            </Col>
+                          </Row>
+                        </Card.Header>
                         <Card.Body>
-                          <button type="button" onClick={() => remove(index)}>
-                            Delete
-                          </button>
-
                           <Row>
                             <Col md={3}>
                               <RHFInput
                                 control={control}
-                                name={`tag_series_start_${index}`}
+                                name={`tags_applied.${index}.series_start`}
                                 db_field_name="series_start"
                                 label="Tag Series Start"
                                 errors={errors}
@@ -723,7 +731,7 @@ export const StockingEventForm = (props) => {
                             <Col md={3}>
                               <RHFInput
                                 control={control}
-                                name={`tag_series_end_${index}`}
+                                name={`tags_applied.${index}.series_end`}
                                 db_field_name="series_end"
                                 label="Tag Series End"
                                 errors={errors}
@@ -736,7 +744,7 @@ export const StockingEventForm = (props) => {
                             <Col>
                               <RHFSelect
                                 control={control}
-                                name={`tag_type_${index}`}
+                                name={`tags_applied.${index}.tag_type_id`}
                                 db_table_name="stocking_tagtype"
                                 label="Tag Type"
                                 options={tagTypes}
@@ -747,7 +755,7 @@ export const StockingEventForm = (props) => {
                             <Col>
                               <RHFSelect
                                 control={control}
-                                name={`tag_colour_${index}`}
+                                name={`tags_applied.${index}.tag_colour_id`}
                                 db_table_name="stocking_tagcolour"
                                 label="Tag Colour"
                                 options={tagColours}
@@ -759,7 +767,7 @@ export const StockingEventForm = (props) => {
                             <Col>
                               <RHFSelect
                                 control={control}
-                                name={`tag_position_${index}`}
+                                name={`tags_applied.${index}.tag_placement_id`}
                                 db_table_name="stocking_tagposition"
                                 label="Tag Position"
                                 options={tagPositions}
@@ -771,7 +779,7 @@ export const StockingEventForm = (props) => {
                             <Col>
                               <RHFSelect
                                 control={control}
-                                name={`tag_origin_${index}`}
+                                name={`tags_applied.${index}.tag_origin_id`}
                                 db_table_name="stocking_tagorigin"
                                 label="Tag Origin"
                                 options={tagOrigins}
@@ -785,7 +793,7 @@ export const StockingEventForm = (props) => {
                             <Col md={3}>
                               <RHFInput
                                 control={control}
-                                name={`tag_retention_${index}`}
+                                name={`tags_applied.${index}.retention_rate_pct`}
                                 label="Tag Retention (%)"
                                 db_field_name="retention_rate_pct"
                                 inputType="number"
@@ -797,7 +805,7 @@ export const StockingEventForm = (props) => {
                             <Col md={3}>
                               <RHFInput
                                 control={control}
-                                name={`tag_retention_sample_size_${index}`}
+                                name={`tags_applied.${index}.retention_rate_sample_size`}
                                 label="Tag Retention Sample Size"
                                 db_field_name="retention_rate_sample_size"
                                 inputType="number"
@@ -809,7 +817,7 @@ export const StockingEventForm = (props) => {
                             <Col md={3}>
                               <RHFInput
                                 control={control}
-                                name={`tag_retention_rate_pop_size_${index}`}
+                                name={`tags_applied.${index}.retention_rate_pop_size`}
                                 db_field_name="retention_rate_pop_size"
                                 label="Tag Retention Population Size"
                                 inputType="number"
@@ -823,9 +831,10 @@ export const StockingEventForm = (props) => {
                     ))}
 
                     <Row className="mt-2">
-                      <Col md={2}>
-                        {" "}
-                        <Button>Add Another Tag</Button>{" "}
+                      <Col md={3}>
+                        <Button onClick={() => append(applied_tags_defaults)}>
+                          Add Another Tag
+                        </Button>
                       </Col>
                     </Row>
                   </Card.Body>
