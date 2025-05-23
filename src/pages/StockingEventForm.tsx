@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useIsFetching } from "@tanstack/react-query";
 
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { DevTool } from "@hookform/devtools";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -9,10 +13,6 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
-
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import { DevTool } from "@hookform/devtools";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ClickableMap } from "../components/ClickableMap";
 import { AccordionToggle } from "../components/AccordionToggle";
@@ -79,6 +79,19 @@ export const StockingEventForm = (props) => {
     stocking_purposes: [],
     fin_clips: [],
     transitMethods: [],
+    tags_applied: [
+      {
+        series_start: "",
+        series_end: "",
+        tag_type_id: "",
+        tag_colour_id: "",
+        tag_placement_id: "",
+        tag_origin_id: "",
+        retention_rate_pct: "",
+        retention_rate_sample_size: "",
+        retention_rate_pop_size: "",
+      },
+    ],
   };
 
   const developmentStages = useDevelopmentStages();
@@ -102,12 +115,17 @@ export const StockingEventForm = (props) => {
     trigger,
     reset,
     watch,
-    getValues,
+    //getValues,
     setValue,
     formState: { errors },
   } = useForm<StockingEventInputs>({
     default_values: default_values,
     resolver: zodResolver(StockingEventSchema),
+  });
+
+  const { fields, remove } = useFieldArray({
+    control,
+    name: "tags_applied",
   });
 
   const [lot_slug] = watch(["lot_slug"]);
@@ -184,6 +202,8 @@ export const StockingEventForm = (props) => {
     : [];
 
   const proponentOptions = proponents || [];
+
+  console.log("fields=", fields);
 
   return (
     <>
@@ -680,121 +700,127 @@ export const StockingEventForm = (props) => {
                 </Card.Header>
                 <Accordion.Collapse eventKey="tags-applied-card">
                   <Card.Body>
-                    <Card className="my-1">
-                      <Card.Header>Applied Tag 1</Card.Header>
-                      <Card.Body>
-                        <Row>
-                          <Col md={3}>
-                            <RHFInput
-                              control={control}
-                              name="tag_series_start_1"
-                              db_field_name="series_start"
-                              label="Tag Series Start"
-                              errors={errors}
-                              fgClass="mb-3"
-                            />
-                          </Col>
+                    {fields.map((item, index) => (
+                      <Card className="my-1" key={index}>
+                        <Card.Header>Applied Tag {index}</Card.Header>
+                        <Card.Body>
+                          <button type="button" onClick={() => remove(index)}>
+                            Delete
+                          </button>
 
-                          <Col md={3}>
-                            <RHFInput
-                              control={control}
-                              name="tag_series_end_1"
-                              db_field_name="series_end"
-                              label="Tag Series End"
-                              errors={errors}
-                              fgClass="mb-3"
-                            />
-                          </Col>
-                        </Row>
+                          <Row>
+                            <Col md={3}>
+                              <RHFInput
+                                control={control}
+                                name={`tag_series_start_${index}`}
+                                db_field_name="series_start"
+                                label="Tag Series Start"
+                                errors={errors}
+                                fgClass="mb-3"
+                              />
+                            </Col>
 
-                        <Row>
-                          <Col>
-                            <RHFSelect
-                              control={control}
-                              name="tag_type_1"
-                              db_table_name="stocking_tagtype"
-                              label="Tag Type"
-                              options={tagTypes}
-                              errors={errors}
-                              fgClass="mb-3"
-                            />
-                          </Col>
-                          <Col>
-                            <RHFSelect
-                              control={control}
-                              name="tag_colour_1"
-                              db_table_name="stocking_tagcolour"
-                              label="Tag Colour"
-                              options={tagColours}
-                              errors={errors}
-                              fgClass="mb-3"
-                            />
-                          </Col>
+                            <Col md={3}>
+                              <RHFInput
+                                control={control}
+                                name={`tag_series_end_${index}`}
+                                db_field_name="series_end"
+                                label="Tag Series End"
+                                errors={errors}
+                                fgClass="mb-3"
+                              />
+                            </Col>
+                          </Row>
 
-                          <Col>
-                            <RHFSelect
-                              control={control}
-                              name="tag_position_1"
-                              db_table_name="stocking_tagposition"
-                              label="Tag Position"
-                              options={tagPositions}
-                              errors={errors}
-                              fgClass="mb-3"
-                            />
-                          </Col>
+                          <Row>
+                            <Col>
+                              <RHFSelect
+                                control={control}
+                                name={`tag_type_${index}`}
+                                db_table_name="stocking_tagtype"
+                                label="Tag Type"
+                                options={tagTypes}
+                                errors={errors}
+                                fgClass="mb-3"
+                              />
+                            </Col>
+                            <Col>
+                              <RHFSelect
+                                control={control}
+                                name={`tag_colour_${index}`}
+                                db_table_name="stocking_tagcolour"
+                                label="Tag Colour"
+                                options={tagColours}
+                                errors={errors}
+                                fgClass="mb-3"
+                              />
+                            </Col>
 
-                          <Col>
-                            <RHFSelect
-                              control={control}
-                              name="tag_origin_1"
-                              db_table_name="stocking_tagorigin"
-                              label="Tag Origin"
-                              options={tagOrigins}
-                              errors={errors}
-                              fgClass="mb-3"
-                            />
-                          </Col>
-                        </Row>
+                            <Col>
+                              <RHFSelect
+                                control={control}
+                                name={`tag_position_${index}`}
+                                db_table_name="stocking_tagposition"
+                                label="Tag Position"
+                                options={tagPositions}
+                                errors={errors}
+                                fgClass="mb-3"
+                              />
+                            </Col>
 
-                        <Row>
-                          <Col md={3}>
-                            <RHFInput
-                              control={control}
-                              name="tag_retention_1"
-                              label="Tag Retention (%)"
-                              db_field_name="retention_rate_pct"
-                              inputType="number"
-                              errors={errors}
-                              fgClass="mb-3"
-                            />
-                          </Col>
+                            <Col>
+                              <RHFSelect
+                                control={control}
+                                name={`tag_origin_${index}`}
+                                db_table_name="stocking_tagorigin"
+                                label="Tag Origin"
+                                options={tagOrigins}
+                                errors={errors}
+                                fgClass="mb-3"
+                              />
+                            </Col>
+                          </Row>
 
-                          <Col md={3}>
-                            <RHFInput
-                              control={control}
-                              name="tag_retention_sample_size_1"
-                              label="Tag Retention Sample Size"
-                              db_field_name="retention_rate_sample_size"
-                              inputType="number"
-                              errors={errors}
-                              fgClass="mb-3"
-                            />
-                          </Col>
+                          <Row>
+                            <Col md={3}>
+                              <RHFInput
+                                control={control}
+                                name={`tag_retention_${index}`}
+                                label="Tag Retention (%)"
+                                db_field_name="retention_rate_pct"
+                                inputType="number"
+                                errors={errors}
+                                fgClass="mb-3"
+                              />
+                            </Col>
 
-                          <Col md={3}>
-                            <RHFInput
-                              control={control}
-                              name="tag_retention_rate_pop_size_1"
-                              db_field_name="retention_rate_pop_size"
-                              label="Tag Retention Population Size"
-                              inputType="number"
-                              errors={errors}
-                              fgClass="mb-3"
-                            />
-                          </Col>
-                        </Row>
-                      </Card.Body>
-                    </Card>
+                            <Col md={3}>
+                              <RHFInput
+                                control={control}
+                                name={`tag_retention_sample_size_${index}`}
+                                label="Tag Retention Sample Size"
+                                db_field_name="retention_rate_sample_size"
+                                inputType="number"
+                                errors={errors}
+                                fgClass="mb-3"
+                              />
+                            </Col>
+
+                            <Col md={3}>
+                              <RHFInput
+                                control={control}
+                                name={`tag_retention_rate_pop_size_${index}`}
+                                db_field_name="retention_rate_pop_size"
+                                label="Tag Retention Population Size"
+                                inputType="number"
+                                errors={errors}
+                                fgClass="mb-3"
+                              />
+                            </Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    ))}
 
                     <Row className="mt-2">
                       <Col md={2}>

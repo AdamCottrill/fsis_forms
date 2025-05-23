@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useController } from "react-hook-form";
 
 import Card from "react-bootstrap/Card";
@@ -11,13 +10,13 @@ export const RHFCheckBoxArray = ({ options, control, name, errors }) => {
     control,
     name,
   });
-  const [value, setValue] = useState(field.value || []);
+
+  let value = field.value || [];
 
   const hasError = Object.hasOwn(errors, name);
 
   const handleChange = (event) => {
     let valueCopy = [];
-    //valueCopy[index] = e.target.checked ? e.target.value : null;
     if (event.target.checked) {
       valueCopy = [...value, event.target.value];
     } else {
@@ -25,7 +24,7 @@ export const RHFCheckBoxArray = ({ options, control, name, errors }) => {
     }
 
     field.onChange(valueCopy);
-    setValue(valueCopy);
+    value = valueCopy;
   };
 
   return (
