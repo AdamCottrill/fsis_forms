@@ -30,10 +30,18 @@ test("should contain the expected input elements", async () => {
   render(<LotCreator />);
 
   // required input elements (with star):
-  expect(screen.getByLabelText("Species*")).toBeInTheDocument();
-  expect(screen.getByLabelText("Strain*")).toBeInTheDocument();
-  expect(screen.getByLabelText("Spawn Year*")).toBeInTheDocument();
-  expect(screen.getByLabelText("Rearing Location*")).toBeInTheDocument();
+  expect(
+    screen.getByLabelText(/species/i, { selector: "input" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByLabelText(/strain/i, { selector: "input" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByLabelText(/spawn year/i, { selector: "input" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByLabelText(/rearing location/i, { selector: "input" }),
+  ).toBeInTheDocument();
   expect(screen.getByLabelText("FC Lot Number")).toBeInTheDocument();
 
   const required_field_msg = screen.getByRole("note");
@@ -46,8 +54,10 @@ test("should contain the expected input elements", async () => {
 test("should disable strain input when species is null", async () => {
   render(<LotCreator />);
 
-  const species_input = screen.getByLabelText("Species*");
-  let strain_input = screen.getByLabelText("Strain*");
+  const species_input = screen.getByLabelText(/species/i, {
+    selector: "input",
+  });
+  let strain_input = screen.getByLabelText(/strain/i, { selector: "input" });
 
   expect(strain_input).toBeDisabled();
 
@@ -55,14 +65,18 @@ test("should disable strain input when species is null", async () => {
   await selectEvent.select(species_input, [/076/]);
   // expect select-strain to be enabled
   await waitFor(() => {
-    expect(screen.getByLabelText("Strain*")).not.toBeDisabled();
+    expect(
+      screen.getByLabelText(/strain/i, { selector: "input" }),
+    ).not.toBeDisabled();
   });
   // clear selected species:
   //await selectEvent.clearFirst(species_input);
   await selectEvent.clearAll(species_input);
   // expect select-strain to be disabled again
   await waitFor(() => {
-    expect(screen.getByLabelText("Strain*")).toBeDisabled();
+    expect(
+      screen.getByLabelText(/strain/i, { selector: "input" }),
+    ).toBeDisabled();
   });
 });
 
@@ -73,13 +87,22 @@ test("should display error when lot number is invalid", async () => {
   render(<LotCreator />);
 
   // select the first element in each select widget:
-  await selectEvent.select(screen.getByLabelText("Species*"), [/076/]);
-  await selectEvent.select(screen.getByLabelText("Strain*"), [/UNKN/]);
-  await selectEvent.select(screen.getByLabelText("Rearing Location*"), [
-    /BJFSC/,
-  ]);
+  await selectEvent.select(
+    screen.getByLabelText(/species/i, {
+      selector: "input",
+    }),
+    [/076/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/strain/i, { selector: "input" }),
+    [/UNKN/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/rearing location/i, { selector: "input" }),
+    [/BJFSC/],
+  );
 
-  const element = screen.getByLabelText("Spawn Year*");
+  const element = screen.getByLabelText(/spawn year/i, { selector: "input" });
   await user.type(element, new Date().getFullYear() + "");
 
   await user.type(
@@ -118,13 +141,22 @@ test("should display error when spawn_year is too small", async () => {
   expect(screen.queryByText(errorMsg)).not.toBeInTheDocument();
 
   // select the first element in each select widget:
-  await selectEvent.select(screen.getByLabelText("Species*"), [/076/]);
-  await selectEvent.select(screen.getByLabelText("Strain*"), [/UNKN/]);
-  await selectEvent.select(screen.getByLabelText("Rearing Location*"), [
-    /BJFSC/,
-  ]);
+  await selectEvent.select(
+    screen.getByLabelText(/species/i, {
+      selector: "input",
+    }),
+    [/076/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/strain/i, { selector: "input" }),
+    [/UNKN/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/rearing location/i, { selector: "input" }),
+    [/BJFSC/],
+  );
 
-  let element = screen.getByLabelText("Spawn Year*");
+  let element = screen.getByLabelText(/spawn year/i, { selector: "input" });
   await user.type(element, "24");
 
   fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
@@ -145,14 +177,23 @@ test("should display error when spawn_year occurs in the future", async () => {
   expect(screen.queryByText(errorMsg)).not.toBeInTheDocument();
 
   // select the first element in each select widget:
-  await selectEvent.select(screen.getByLabelText("Species*"), [/076/]);
-  await selectEvent.select(screen.getByLabelText("Strain*"), [/UNKN/]);
-  await selectEvent.select(screen.getByLabelText("Rearing Location*"), [
-    /BJFSC/,
-  ]);
+  await selectEvent.select(
+    screen.getByLabelText(/species/i, {
+      selector: "input",
+    }),
+    [/076/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/strain/i, { selector: "input" }),
+    [/UNKN/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/rearing location/i, { selector: "input" }),
+    [/BJFSC/],
+  );
 
   const nextYear = new Date().getFullYear() + 1;
-  const element = screen.getByLabelText("Spawn Year*");
+  const element = screen.getByLabelText(/spawn year/i, { selector: "input" });
   await user.type(element, nextYear + "");
 
   fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
@@ -181,11 +222,20 @@ test("should display error when spawn_year is missing", async () => {
   ).not.toBeInTheDocument();
 
   // select the first element in each select widget:
-  await selectEvent.select(screen.getByLabelText("Species*"), [/076/]);
-  await selectEvent.select(screen.getByLabelText("Strain*"), [/UNKN/]);
-  await selectEvent.select(screen.getByLabelText("Rearing Location*"), [
-    /BJFSC/,
-  ]);
+  await selectEvent.select(
+    screen.getByLabelText(/species/i, {
+      selector: "input",
+    }),
+    [/076/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/strain/i, { selector: "input" }),
+    [/UNKN/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/rearing location/i, { selector: "input" }),
+    [/BJFSC/],
+  );
 
   fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
 
@@ -215,14 +265,15 @@ test("should display error when species is missing", async () => {
   ).not.toBeInTheDocument();
 
   // select the first element in each select widget:
-  //await selectEvent.select(screen.getByLabelText("Strain*"), [/UNKN/]);
-  await selectEvent.select(screen.getByLabelText("Rearing Location*"), [
-    /BJFSC/,
-  ]);
+  //await selectEvent.select(screen.getByLabelText(/strain/i, {selector: "input"}), [/UNKN/]);
+  await selectEvent.select(
+    screen.getByLabelText(/rearing location/i, { selector: "input" }),
+    [/BJFSC/],
+  );
 
   const today = new Date();
   const thisYear = today.getFullYear() + "";
-  const element = screen.getByLabelText("Spawn Year*");
+  const element = screen.getByLabelText(/spawn year/i, { selector: "input" });
   await user.type(element, thisYear);
 
   fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
@@ -250,16 +301,19 @@ test("should display error when strain is missing", async () => {
 
   // select the first element in each select widget:
 
-  const species_input = screen.getByLabelText("Species*");
+  const species_input = screen.getByLabelText(/species/i, {
+    selector: "input",
+  });
   await selectEvent.select(species_input, [/076/]);
 
-  await selectEvent.select(screen.getByLabelText("Rearing Location*"), [
-    /BJFSC/,
-  ]);
+  await selectEvent.select(
+    screen.getByLabelText(/rearing location/i, { selector: "input" }),
+    [/BJFSC/],
+  );
 
   const today = new Date();
   const thisYear = today.getFullYear() + "";
-  const element = screen.getByLabelText("Spawn Year*");
+  const element = screen.getByLabelText(/spawn year/i, { selector: "input" });
   await user.type(element, thisYear);
 
   fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
@@ -286,12 +340,20 @@ test("should display error when rearing location is missing", async () => {
   ).not.toBeInTheDocument();
 
   // select the first element in each select widget:
-  await selectEvent.select(screen.getByLabelText("Species*"), [/076/]);
-  await selectEvent.select(screen.getByLabelText("Strain*"), [/UNKN/]);
+  await selectEvent.select(
+    screen.getByLabelText(/species/i, {
+      selector: "input",
+    }),
+    [/076/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/strain/i, { selector: "input" }),
+    [/UNKN/],
+  );
 
   const today = new Date();
   const thisYear = today.getFullYear() + "";
-  const element = screen.getByLabelText("Spawn Year*");
+  const element = screen.getByLabelText(/spawn year/i, { selector: "input" });
   await user.type(element, thisYear);
 
   fireEvent.submit(screen.getByRole("button", { name: /submit/i }));
@@ -334,15 +396,24 @@ test("should display an error the server responds with an error", async () => {
   ).not.toBeInTheDocument();
 
   // select the first element in each select widget:
-  await selectEvent.select(screen.getByLabelText("Species*"), [/076/]);
-  await selectEvent.select(screen.getByLabelText("Strain*"), [/UNKN/]);
-  await selectEvent.select(screen.getByLabelText("Rearing Location*"), [
-    /BJFSC/,
-  ]);
+  await selectEvent.select(
+    screen.getByLabelText(/species/i, {
+      selector: "input",
+    }),
+    [/076/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/strain/i, { selector: "input" }),
+    [/UNKN/],
+  );
+  await selectEvent.select(
+    screen.getByLabelText(/rearing location/i, { selector: "input" }),
+    [/BJFSC/],
+  );
 
   const today = new Date();
   const thisYear = today.getFullYear() + "";
-  const element = screen.getByLabelText("Spawn Year*");
+  const element = screen.getByLabelText(/spawn year/i, { selector: "input" });
   await user.type(element, thisYear);
 
   fireEvent.submit(screen.getByRole("button", { name: /submit/i }));

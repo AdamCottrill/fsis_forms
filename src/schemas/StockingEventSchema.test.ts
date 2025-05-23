@@ -17,9 +17,9 @@ const good_data: StockingEventInputs = {
   rearing_temperature: 10.5,
   water_depth: 12.6,
   transit_methods: ["1", "2", "3"],
-  destination_waterbody: 5,
-  stocked_waterbody: 6,
-  stocking_site: 10,
+  destination_waterbody: { value: "15-4185-55443", label: "The Lake" },
+  stocked_waterbody: { value: "15-4185-55443", label: "The Lake" },
+  stocking_site: { value: 10, label: "The Dock" },
   latitude_decimal_degrees: 45.1,
   longitude_decimal_degrees: -81.2,
   fish_stocked_count: 10000,
@@ -39,9 +39,18 @@ const good_data: StockingEventInputs = {
   other_mark: false,
 };
 
+// we expect some of our inputs to be transformed if everything works
+// as it should:
+const expected_out = {
+  ...good_data,
+  stocking_site: 10,
+  destination_waterbody: "15-4185-55443",
+  stocked_waterbody: "15-4185-55443",
+};
+
 test("good data should not throw an error", () => {
   const data = StockingEventSchema.parse(good_data);
-  expect(data).toEqual(good_data);
+  expect(data).toEqual(expected_out);
 });
 
 test("missing lot_num should throw an error", () => {
@@ -62,9 +71,11 @@ test("missing stocking_admin_id should throw an error", () => {
 
 describe("publication date", () => {
   test("can be empty", () => {
-    const data_in = { ...good_data, publication_date: "" };
+    const patch = { publication_date: "" };
+
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
 
   test("can't occur more than a year from now (say)", () => {
@@ -103,14 +114,16 @@ describe("publication date", () => {
 
 describe("Stocking purpose", () => {
   test("one selection is fine", () => {
-    const data_in = { ...good_data, stocking_purposes: ["3"] };
+    const patch = { stocking_purposes: ["3"] };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
   test("more than one selection is also good.", () => {
-    const data_in = { ...good_data, stocking_purposes: ["1", "2", "3"] };
+    const patch = { stocking_purposes: ["1", "2", "3"] };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
   test("missing selection will throw an error", () => {
     const data_in = { ...good_data, stocking_purposes: [] };
@@ -221,16 +234,17 @@ describe("stocking date", () => {
 
 describe("Transit Mortality", () => {
   test("null is fine", () => {
-    const data_in = { ...good_data, transit_mortality: undefined };
+    const patch = { transit_mortality: undefined };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
 
   test("zero is fine too", () => {
-    const data_in = { ...good_data, transit_mortality: 0 };
+    const patch = { transit_mortality: 0 };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
 
   test("negative values will throw an error", () => {
@@ -246,9 +260,10 @@ describe("Transit Mortality", () => {
 
 describe("Site Temperatures", () => {
   test("null is fine", () => {
-    const data_in = { ...good_data, site_temperature: undefined };
+    const patch = { site_temperature: undefined };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
 
   test("extremely cold values will throw an error", () => {
@@ -269,9 +284,10 @@ describe("Site Temperatures", () => {
 
 describe("Rearing Temperatures", () => {
   test("null is fine", () => {
-    const data_in = { ...good_data, rearing_temperature: undefined };
+    const patch = { rearing_temperature: undefined };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
   test("extremely cold values will throw an error", () => {
     const data_in = { ...good_data, rearing_temperature: -11 };
@@ -293,9 +309,10 @@ describe("Rearing Temperatures", () => {
 
 describe("Water Depth", () => {
   test("null is fine", () => {
-    const data_in = { ...good_data, water_depth: undefined };
+    const patch = { water_depth: undefined };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
 
   test("empty string is fine too", () => {
@@ -303,8 +320,7 @@ describe("Water Depth", () => {
     const data_out = StockingEventSchema.parse(data_in);
 
     //zod will transform "" to undefeined:
-    const expected_out = { ...good_data, water_depth: undefined };
-    expect(data_out).toEqual(expected_out);
+    expect(data_out).toEqual({ ...expected_out, water_depth: undefined });
   });
 
   test("a value of 0 or less will throw an error", () => {
@@ -325,17 +341,20 @@ describe("Water Depth", () => {
 
 describe("Transit Method", () => {
   test("one selection is fine", () => {
-    const data_in = { ...good_data, transit_methods: ["3"] };
+    const patch = { transit_methods: ["3"] };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
   test("more than one selection is also good.", () => {
-    const data_in = { ...good_data, transit_methods: ["1", "2", "3"] };
+    const patch = { transit_methods: ["1", "2", "3"] };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
   test("missing selection will throw an error", () => {
-    const data_in = { ...good_data, transit_methods: [] };
+    const patch = { transit_methods: [] };
+    const data_in = { ...good_data, ...patch };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
@@ -373,6 +392,14 @@ test("missing stocked_waterbody should throw an error", () => {
 
 test("missing stocking_site should throw an error", () => {
   const data_in = { ...good_data, stocking_site: undefined };
+  expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+  const issue = pluck_first_issue(StockingEventSchema, data_in);
+  expect(issue.message).toMatch(/stocking site is a required field/i);
+});
+
+test("empty string as stocking_site should throw an error", () => {
+  const data_in = { ...good_data, stocking_site: "" };
   expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
   const issue = pluck_first_issue(StockingEventSchema, data_in);
@@ -441,23 +468,30 @@ describe("longitude_decimal_degrees", () => {
 
 describe("lat and lon together", () => {
   test("lat and lon can both be within their bounds", () => {
-    const data_in = {
-      ...good_data,
+    const patch = {
       latitude_decimal_degrees: 45.5,
       longitude_decimal_degrees: -81.5,
     };
+
+    const data_in = {
+      ...good_data,
+      ...patch,
+    };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
 
   test("lat and lon can both be null", () => {
-    const data_in = {
-      ...good_data,
+    const patch = {
       latitude_decimal_degrees: undefined,
       longitude_decimal_degrees: undefined,
     };
+    const data_in = {
+      ...good_data,
+      ...patch,
+    };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
 
   test("longitude is required if latitude is provided", () => {
@@ -522,9 +556,8 @@ describe("fish weight", () => {
     const data_out = StockingEventSchema.parse(data_in);
 
     // fish_weight should be transformed by zod:
-    const expected_out = { ...data_in, fish_weight: undefined };
 
-    expect(data_out).toEqual(expected_out);
+    expect(data_out).toEqual({ ...expected_out, fish_weight: undefined });
   });
   test("values <=0 will throw an error", () => {
     const data_in = { ...good_data, fish_weight: 0 };
@@ -543,15 +576,18 @@ describe("fish weight", () => {
 
 describe("fish age", () => {
   test("null is fine", () => {
+    const patch = { fish_age: undefined };
+
     const data_in = {
       ...good_data,
-      fish_age: undefined,
+      ...patch,
     };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
   test("values <=0 will throw an error", () => {
-    const data_in = { ...good_data, fish_age: -1 };
+    const patch = { fish_age: -1 };
+    const data_in = { ...good_data, ...patch };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
@@ -601,20 +637,25 @@ describe("fin clip", () => {
   });
 
   test("one selection is fine", () => {
-    const data_in = { ...good_data, fin_clips: ["RVENT"] };
+    const patch = { fin_clips: ["RVENT"] };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
   test("more than one selection is also good.", () => {
     const data_in = { ...good_data, fin_clips: ["LPECT", "RVENT", "AD"] };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({
+      ...expected_out,
+      fin_clips: ["LPECT", "RVENT", "AD"],
+    });
   });
 
   test("clip NONE alone is fine", () => {
-    const data_in = { ...good_data, fin_clips: ["NONE"] };
+    const patch = { fin_clips: ["NONE"] };
+    const data_in = { ...good_data, ...patch };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
 
   test.todo(
@@ -625,7 +666,8 @@ describe("fin clip", () => {
   );
 
   test("NONE cannot appear with any other clip code", () => {
-    const data_in = { ...good_data, fin_clips: ["NONE", "RVENT"] };
+    const patch = { fin_clips: ["NONE", "RVENT"] };
+    const data_in = { ...good_data, ...patch };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
 
     const issue = pluck_first_issue(StockingEventSchema, data_in);
@@ -687,12 +729,13 @@ describe("fin clip", () => {
 
 describe("clip_retention_pct", () => {
   test("null is fine", () => {
+    const patch = { clip_retention_pct: undefined };
     const data_in = {
       ...good_data,
-      clip_retention_pct: undefined,
+      ...patch,
     };
     const data_out = StockingEventSchema.parse(data_in);
-    expect(data_out).toEqual(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
   });
   test("values <=0 will throw an error", () => {
     const data_in = { ...good_data, clip_retention_pct: -0.01 };

@@ -65,13 +65,13 @@ export const RHFInput: React.FC<RHFInputProps> = ({
             isInvalid={errors[name]}
             type={inputType || "number"}
             placeholder={placeholderText || "---"}
-            {...(helpText ? { ariadescribedby: `${name}HelpBlock` } : {})}
+            {...(helpText ? { "aria-describedby": `${name}-help-block` } : {})}
           />
         )}
       />
 
       {helpText && (
-        <Form.Text id="`${name}HelpBlock`" muted>
+        <Form.Text id="`${name}-help-block`" muted>
           {helpText}
         </Form.Text>
       )}

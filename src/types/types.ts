@@ -53,9 +53,10 @@ export interface StockingEventInputs {
   rearing_temperature?: number;
   water_depth?: number;
   transit_methods: string[];
-  destination_waterbody: number;
-  stocked_waterbody: number;
-  stocking_site: number;
+  destination_waterbody: { value: string; label: string };
+  stocked_waterbody: { value: string; label: string };
+  //stocking_site: number;
+  stocking_site: { value: number; label: string };
   latitude_decimal_degrees?: number;
   longitude_decimal_degrees?: number;
   fish_stocked_count: number;

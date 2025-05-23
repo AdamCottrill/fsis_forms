@@ -1,5 +1,6 @@
-import { render, screen, waitFor } from "../test-utils";
+import { render, screen, waitFor, fireEvent } from "../test-utils";
 import userEvent from "@testing-library/user-event";
+import selectEvent, { openMenu, select } from "react-select-event";
 
 import { StockingEventForm } from "./StockingEventForm";
 
@@ -20,6 +21,14 @@ import { dateToString } from "../schemas/test_utils";
 //   + delvelopment-stage
 //   + fin clips
 
+async function selectFirstAsyncOption(selectElement, nameToMatch) {
+  await openMenu(selectElement);
+  // type a letter:
+  fireEvent.change(selectElement, { target: { value: "lake" } });
+  // select the first option:
+  await select(selectElement, [nameToMatch]);
+}
+
 describe("Stocking Lot", () => {
   test("should display error when lot is missing", async () => {
     const user = userEvent.setup();
@@ -27,8 +36,6 @@ describe("Stocking Lot", () => {
     render(<StockingEventForm />);
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
-
-    const errorMsg = /lot identifier is a required field/i;
 
     await waitFor(() => {
       expect(
@@ -38,6 +45,7 @@ describe("Stocking Lot", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /lot identifier is a required field/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -52,8 +60,6 @@ describe("Stocking Admin Unit", () => {
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
-    const errorMsg = /stocking admin unit is a required field/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -62,6 +68,7 @@ describe("Stocking Admin Unit", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /stocking admin unit is a required field/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -80,8 +87,6 @@ describe("Publication Date", () => {
   test("Publication Date is optional", async () => {
     const user = userEvent.setup();
     render(<StockingEventForm />);
-    // if the user submits the form withouth filling in publication date,
-    //the 'publication_date-error' should not be in the document
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
@@ -98,43 +103,6 @@ describe("Publication Date", () => {
   //  //const user = userEvent.setup();
   //  //render(<StockingEventForm />);
   //});
-
-  //test("Publication Date cannot occur before stocking date", async () => {
-  //  //const user = userEvent.setup();
-  //  //render(<StockingEventForm />);
-  //});
-
-  test.skip("Publication Date cannot be more than X years in the future", async () => {
-    const user = userEvent.setup();
-    render(<StockingEventForm />);
-
-    const d = new Date();
-    // two years from now:
-    d.setFullYear(d.getFullYear() + 2);
-
-    const future_string = dateToString(d);
-
-    const element = screen.getByLabelText("Publication Date");
-
-    console.log("future_string=", future_string);
-    await user.type(element, future_string);
-
-    await user.click(screen.getByRole("button", { name: /submit/i }));
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole("alert", {
-          name: "publication_date-error",
-        }),
-      ).toBeInTheDocument();
-    });
-
-    const errorMsg =
-      /publication date more than a year in the future is not allowed/i;
-    await waitFor(() => {
-      expect(screen.getByText(errorMsg)).toBeInTheDocument();
-    });
-  });
 });
 
 describe("Stocking Purpose", () => {
@@ -145,8 +113,6 @@ describe("Stocking Purpose", () => {
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
-    const errorMsg = /at least one stocking purpose must be selected/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -155,6 +121,7 @@ describe("Stocking Purpose", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /at least one stocking purpose must be selected/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -169,8 +136,6 @@ describe("Stocking Proponent", () => {
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
-    const errorMsg = /proponent is a required field/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -179,6 +144,7 @@ describe("Stocking Proponent", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /proponent is a required field/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -193,8 +159,6 @@ describe("Stocking Date", () => {
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
-    const errorMsg = /stocking date is a required field/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -203,6 +167,7 @@ describe("Stocking Date", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /stocking date is a required field/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -217,11 +182,8 @@ describe("Stocking Date", () => {
     d.setFullYear(d.getFullYear() + 1);
 
     const future_string = dateToString(d);
-
     const element = screen.getByLabelText(/stocking date/i);
-
     await user.type(element, future_string);
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
@@ -271,8 +233,6 @@ describe("Release Method", () => {
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
-    const errorMsg = /release method is a required field/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -281,6 +241,7 @@ describe("Release Method", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /release method is a required field/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -291,8 +252,6 @@ describe("Transit Mortality", () => {
   test("transit mortality is optional", async () => {
     const user = userEvent.setup();
     render(<StockingEventForm />);
-    // if the user submits the form withouth filling in publication date,
-    //the 'publication_date-error' should not be in the document
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
@@ -306,9 +265,6 @@ describe("Transit Mortality", () => {
   });
 
   test("transit mortality less than zero is invalid", async () => {
-    // const user = userEvent.setup();
-    //render(<StockingEventForm />);
-
     const user = userEvent.setup();
     render(<StockingEventForm />);
 
@@ -335,13 +291,8 @@ describe("Transit Mortality", () => {
 
 describe("Site Temperature", () => {
   test("site temperature is optional", async () => {
-    // const user = userEvent.setup();
-    //render(<StockingEventForm />);
-
     const user = userEvent.setup();
     render(<StockingEventForm />);
-    // if the user submits the form withouth filling in publication date,
-    //the 'publication_date-error' should not be in the document
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
@@ -403,85 +354,77 @@ describe("Site Temperature", () => {
   });
 });
 
-describe.skip("Rearing Temperature", () => {
-  test("rearing temperature is optional", async () => {
-    // const user = userEvent.setup();
-    //render(<StockingEventForm />);
-
-    const user = userEvent.setup();
-    render(<StockingEventForm />);
-    // if the user submits the form withouth filling in publication date,
-    //the 'publication_date-error' should not be in the document
-
-    await user.click(screen.getByRole("button", { name: /submit/i }));
-
-    await waitFor(() => {
-      expect(
-        screen.queryByRole("alert", {
-          name: "rearing_temperature-error",
-        }),
-      ).not.toBeInTheDocument();
-    });
-  });
-
-  test("rearing temperature less than the min temp is invalid", async () => {
-    const user = userEvent.setup();
-    render(<StockingEventForm />);
-
-    const element = screen.getByLabelText(/rearing temperature/i);
-
-    await user.type(element, "-15");
-
-    await user.click(screen.getByRole("button", { name: /submit/i }));
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole("alert", {
-          name: "rearing_temperature-error",
-        }),
-      ).toBeInTheDocument();
-    });
-
-    const errorMsg = /rearing temperature must be greater than -10/i;
-    await waitFor(() => {
-      expect(screen.getByText(errorMsg)).toBeInTheDocument();
-    });
-  });
-
-  test("rearing temperature more than the max temp is invalid", async () => {
-    const user = userEvent.setup();
-    render(<StockingEventForm />);
-
-    const element = screen.getByLabelText(/rearing temperature/i);
-
-    await user.type(element, "45");
-
-    await user.click(screen.getByRole("button", { name: /submit/i }));
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole("alert", {
-          name: "rearing_temperature-error",
-        }),
-      ).toBeInTheDocument();
-    });
-
-    const errorMsg = /rearing temperature must be less than 30/i;
-    await waitFor(() => {
-      expect(screen.getByText(errorMsg)).toBeInTheDocument();
-    });
-  });
-});
+// rearing temperature needs to be added t the form:
+//
+//describe("Rearing Temperature", () => {
+//  test("rearing temperature is optional", async () => {
+//    const user = userEvent.setup();
+//    render(<StockingEventForm />);
+//
+//    await user.click(screen.getByRole("button", { name: /submit/i }));
+//
+//    await waitFor(() => {
+//      expect(
+//        screen.queryByRole("alert", {
+//          name: "rearing_temperature-error",
+//        }),
+//      ).not.toBeInTheDocument();
+//    });
+//  });
+//
+//  test("rearing temperature less than the min temp is invalid", async () => {
+//    const user = userEvent.setup();
+//    render(<StockingEventForm />);
+//
+//    const element = screen.getByLabelText(/rearing temperature/i);
+//
+//    await user.type(element, "-15");
+//
+//    await user.click(screen.getByRole("button", { name: /submit/i }));
+//
+//    await waitFor(() => {
+//      expect(
+//        screen.getByRole("alert", {
+//          name: "rearing_temperature-error",
+//        }),
+//      ).toBeInTheDocument();
+//    });
+//
+//    const errorMsg = /rearing temperature must be greater than -10/i;
+//    await waitFor(() => {
+//      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+//    });
+//  });
+//
+//  test("rearing temperature more than the max temp is invalid", async () => {
+//    const user = userEvent.setup();
+//    render(<StockingEventForm />);
+//
+//    const element = screen.getByLabelText(/rearing temperature/i);
+//
+//    await user.type(element, "45");
+//
+//    await user.click(screen.getByRole("button", { name: /submit/i }));
+//
+//    await waitFor(() => {
+//      expect(
+//        screen.getByRole("alert", {
+//          name: "rearing_temperature-error",
+//        }),
+//      ).toBeInTheDocument();
+//    });
+//
+//    const errorMsg = /rearing temperature must be less than 30/i;
+//    await waitFor(() => {
+//      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+//    });
+//  });
+//});
 
 describe("Water Depth", () => {
   test("water depth is optional", async () => {
-    // const user = userEvent.setup();
-    //render(<StockingEventForm />);
-
     const user = userEvent.setup();
     render(<StockingEventForm />);
-    // if the user submits the form withouth filling in publication date,
-    //the 'publication_date-error' should not be in the document
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
@@ -499,9 +442,7 @@ describe("Water Depth", () => {
     render(<StockingEventForm />);
 
     const element = screen.getByLabelText(/water depth/i);
-
     await user.type(element, "0");
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
@@ -523,9 +464,7 @@ describe("Water Depth", () => {
     render(<StockingEventForm />);
 
     const element = screen.getByLabelText(/water depth/i);
-
     await user.type(element, "450");
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
@@ -551,8 +490,6 @@ describe("Transit Method", () => {
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
-    const errorMsg = /at least one transit method must be selected/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -561,6 +498,7 @@ describe("Transit Method", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /at least one transit method must be selected/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -575,8 +513,6 @@ describe("Fin Clip", () => {
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
-    const errorMsg = /at least one fin clip must be selected/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -585,6 +521,7 @@ describe("Fin Clip", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /at least one fin clip must be selected/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -599,7 +536,6 @@ describe("Fin Clip", () => {
     });
 
     await userEvent.click(checkbox);
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
@@ -627,7 +563,6 @@ describe("Fin Clip", () => {
     });
 
     await userEvent.click(checkbox5);
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
@@ -653,14 +588,12 @@ describe("Fin Clip", () => {
     });
 
     await userEvent.click(checkboxA);
-
     // select and click on adipose too:
     const checkboxB = await screen.findByRole("checkbox", {
       name: /lpect/i,
     });
 
     await userEvent.click(checkboxB);
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
@@ -693,7 +626,6 @@ describe("Fin Clip", () => {
     });
 
     await userEvent.click(checkboxB);
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
@@ -726,7 +658,6 @@ describe("Fin Clip", () => {
     });
 
     await userEvent.click(checkboxB);
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
@@ -758,7 +689,6 @@ describe("Fin Clip", () => {
     });
 
     await userEvent.click(checkboxB);
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
     await waitFor(() => {
@@ -791,8 +721,6 @@ describe("Stocked Waterbody", () => {
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
-    const errorMsg = /stocked waterbody is a required field/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -801,6 +729,7 @@ describe("Stocked Waterbody", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /stocked waterbody is a required field/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -815,8 +744,6 @@ describe("Stocking Site", () => {
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
-    const errorMsg = /stocking site is a required field/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -825,6 +752,7 @@ describe("Stocking Site", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /stocking site is a required field/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -837,56 +765,127 @@ describe("Stocking Site", () => {
   //});
 });
 
-//describe("Latitude and Longitude", () => {
-//  test("that dd_lat and dd_lon are optional", async () => {
-//    // becomes stocking site if it is null.
-//    // const user = userEvent.setup();
-//    //render(<StockingEventForm />);
-//  });
-//
-//  test("that dd_lat is required if dd_lon is provided", async () => {
-//    // becomes stocking site if it is null.
-//    // const user = userEvent.setup();
-//    //render(<StockingEventForm />);
-//  });
-//
-//  test("that dd_lon is required if dd_lat is provided", async () => {
-//    // becomes stocking site if it is null.
-//    // const user = userEvent.setup();
-//    //render(<StockingEventForm />);
-//  });
-//
-//  test("that dd_lat is less than max latitude", async () => {
-//    // becomes stocking site if it is null.
-//    // const user = userEvent.setup();
-//    //render(<StockingEventForm />);
-//  });
-//
-//  test("that dd_lat is more than min latitude", async () => {
-//    // becomes stocking site if it is null.
-//    // const user = userEvent.setup();
-//    //render(<StockingEventForm />);
-//  });
-//
-//  test("that dd_lon is less than max longitude", async () => {
-//    // becomes stocking site if it is null.
-//    // const user = userEvent.setup();
-//    //render(<StockingEventForm />);
-//  });
-//
-//  test("that dd_lon is more than min longitude", async () => {
-//    // becomes stocking site if it is null.
-//    // const user = userEvent.setup();
-//    //render(<StockingEventForm />);
-//  });
-//
-//  test("that dd_lat and dd_lon are consistent with stocked watebody", async () => {
-//    // becomes stocking site if it is null.
-//    // const user = userEvent.setup();
-//    //render(<StockingEventForm />);
-//  });
-//});
-//
+describe("Latitude and Longitude", () => {
+  test("that dd_lat and dd_lon are optional", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("alert", {
+          name: "latitude_decimal_degrees-error",
+        }),
+      ).not.toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("alert", {
+          name: "longitude_decimal_degrees-error",
+        }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  test("that dd_lat is less than min latitude", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const element = screen.getByLabelText(/latitude/i, { selector: "input" });
+
+    await user.type(element, "40.0");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "latitude_decimal_degrees-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const errorMsg = /latiude must be greater than \d{2}\.\d+ degrees/i;
+    await waitFor(() => {
+      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+    });
+  });
+
+  test("that dd_lat is more than max latitude", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const element = screen.getByLabelText(/latitude/i, { selector: "input" });
+
+    await user.type(element, "56.0");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "latitude_decimal_degrees-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const errorMsg = /latitude must be less than \d{2}\.\d+ degrees/i;
+    await waitFor(() => {
+      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+    });
+  });
+
+  test("that dd_lon is less than min longitude", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const element = screen.getByLabelText(/longitude/i, { selector: "input" });
+
+    await user.type(element, "-96.0");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "longitude_decimal_degrees-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const errorMsg = /longitude must be greater than -\d{2}\.\d+ degrees/i;
+    await waitFor(() => {
+      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+    });
+  });
+
+  test("that dd_lon is more than max longitude", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const element = screen.getByLabelText(/longitude/i, { selector: "input" });
+
+    await user.type(element, "-70.0");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "longitude_decimal_degrees-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const errorMsg = /longitude must be less than -\d{2}\.\d+ degrees/i;
+    await waitFor(() => {
+      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+    });
+  });
+
+  test.todo(
+    "that dd_lat and dd_lon are consistent with stocked watebody",
+    // becomes stocking site if it is null.
+    // const user = userEvent.setup();
+    //render(<StockingEventForm />);
+  );
+});
+
 describe("Number of Fish Stocked", () => {
   test("that the number of fish stocked is required", async () => {
     // const user = userEvent.setup();
@@ -898,8 +897,6 @@ describe("Number of Fish Stocked", () => {
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
 
-    const errorMsg = /number of fish stocked is required and must be positive/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -908,6 +905,7 @@ describe("Number of Fish Stocked", () => {
       ).toBeInTheDocument();
     });
 
+    const errorMsg = /number of fish stocked is required and must be positive/i;
     await waitFor(() => {
       expect(screen.getByText(errorMsg)).toBeInTheDocument();
     });
@@ -918,11 +916,8 @@ describe("Number of Fish Stocked", () => {
     render(<StockingEventForm />);
 
     const element = screen.getByLabelText(/number of fish stocked/i);
-
     await user.type(element, "0");
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -961,9 +956,7 @@ describe("Fish Weight", () => {
     const element = screen.getByLabelText(/fish weight/i);
 
     await user.type(element, "0");
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -985,9 +978,7 @@ describe("Fish Weight", () => {
     const element = screen.getByLabelText(/fish weight/i);
 
     await user.type(element, "20001");
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -1026,11 +1017,8 @@ describe("Fish Age", () => {
     render(<StockingEventForm />);
 
     const element = screen.getByLabelText(/fish age/i);
-
     await user.type(element, "-1");
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -1050,11 +1038,8 @@ describe("Fish Age", () => {
     render(<StockingEventForm />);
 
     const element = screen.getByLabelText(/fish age/i);
-
     await user.type(element, "181");
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -1077,9 +1062,7 @@ describe("Development Stage", () => {
     render(<StockingEventForm />);
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
-
     const errorMsg = /development stage is a required field/i;
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -1102,7 +1085,6 @@ describe("Clip Retention", () => {
     render(<StockingEventForm />);
 
     await user.click(screen.getByRole("button", { name: /submit/i }));
-
     await waitFor(() => {
       expect(
         screen.queryByRole("alert", {
@@ -1117,11 +1099,8 @@ describe("Clip Retention", () => {
     render(<StockingEventForm />);
 
     const element = screen.getByLabelText(/clip retention/i);
-
     await user.type(element, "0");
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -1141,11 +1120,8 @@ describe("Clip Retention", () => {
     render(<StockingEventForm />);
 
     const element = screen.getByLabelText(/clip retention/i);
-
     await user.type(element, "101");
-
     await user.click(screen.getByRole("button", { name: /submit/i }));
-
     await waitFor(() => {
       expect(
         screen.getByRole("alert", {
@@ -1268,3 +1244,194 @@ describe("Comments", () => {
   });
 });
 //
+
+describe("Superrefine validations", () => {
+  // the superrefine validation methods are used to validate fields
+  // against other fields - these are only run after all of the
+  // individual validations pass, which means that we need to populate
+  // all of our required fields before we submit the form.  This is a
+  // very time consuming process. All super-refine validations are
+  // rolled up in this test, including:
+  //
+  // + lat is required if long is provided
+  // + lon is required if lat is provided
+  // + publication date cannot occur before stocking date
+
+  test("superrefine validation works as expected", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    // in order to trigger zodSuperRefine() validation, all of the
+    // other validation must pass first.  That mean we have to
+    // populate all of the required fields with good data:
+
+    // regular selects. Pick the first:
+    //   + lot-identifier
+    //   + stocking-admin-unit
+    //   + proponent
+    //   + delvelopment-stage
+
+    // checkboxes
+    //   + stocking-purpose
+    //   + fin clips
+    //   + transit-methods
+
+    const transit = await screen.findByRole("checkbox", {
+      name: /truck/i,
+    });
+
+    await userEvent.click(transit);
+
+    const purpose = await screen.findByRole("checkbox", {
+      name: /assessment/i,
+    });
+
+    await userEvent.click(purpose);
+
+    const finclip = await screen.findByRole("checkbox", {
+      name: /no clip/i,
+    });
+
+    await userEvent.click(finclip);
+
+    // regular inputs:
+    //   + stocking-date
+    //   + number of fish stocked
+
+    const stockingDate = screen.getByLabelText(/stocking date/i, {
+      selector: "input",
+    });
+
+    await user.type(stockingDate, "2025-04-12");
+
+    const numberStocked = screen.getByLabelText(/fish stocked/i, {
+      selector: "input",
+    });
+
+    await user.type(numberStocked, "12");
+
+    const lotsElement = screen.getByLabelText(/lot identifier/i);
+
+    await selectEvent.select(lotsElement, [/240-2024-334-lm-bjfsc/i]);
+
+    const adminUnitsElement = screen.getByLabelText(/stocking admin unit/i);
+
+    await selectEvent.select(adminUnitsElement, [/1/]);
+
+    const proponentsElement = screen.getByLabelText(/proponent/i, {
+      selector: "input",
+    });
+
+    await selectEvent.select(proponentsElement, [/bjfcs/i]);
+
+    const devStagesElement = screen.getByLabelText(/development stage/i, {
+      selector: "input",
+    });
+
+    await selectEvent.select(devStagesElement, [/fingerling/i]);
+
+    const releaseMethodsElement = screen.getByLabelText(/release method/i, {
+      selector: "input",
+    });
+
+    await selectEvent.select(releaseMethodsElement, [/surface/i]);
+
+    // react-select - select the first
+    //   + destination-waterbody
+    //   + stocked-waterbody
+    //   + stocking-site
+
+    const destWaterbody = screen.getByLabelText(/destination waterbody/i);
+
+    await selectFirstAsyncOption(destWaterbody, /wreck lake/i);
+
+    const stockedWaterbody = screen.getByLabelText(/stocked waterbody/i);
+
+    await selectFirstAsyncOption(stockedWaterbody, /wreck lake/i);
+
+    const stockingSite = screen.getByLabelText(/stocking site/i);
+
+    await selectFirstAsyncOption(stockingSite, /snowfall lake/i);
+
+    const longitudeElement = screen.getByLabelText(/longitude/i, {
+      selector: "input",
+    });
+
+    await user.type(longitudeElement, "-81.5");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "latitude_decimal_degrees-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const latitudeErrorMsg = /latitude is required if longitude is provided/i;
+    await waitFor(() => {
+      expect(screen.getByText(latitudeErrorMsg)).toBeInTheDocument();
+    });
+
+    // clear out longitude and enter a lat and resubmit - we should
+    // get at longitude is requred error message:
+
+    await user.clear(longitudeElement);
+
+    const latitudeElement = screen.getByLabelText(/latitude/i, {
+      selector: "input",
+    });
+
+    await user.type(latitudeElement, "45.5");
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("alert", {
+          name: "latitude_decimal_degrees-error",
+        }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("alert", {
+          name: "longitude_decimal_degrees-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const longitudeErrorMsg = /longitude is required if latitude is provided/i;
+    await waitFor(() => {
+      expect(screen.getByText(longitudeErrorMsg)).toBeInTheDocument();
+    });
+
+    // clear out latitude and add a publication date that occurs
+    // before our stocking date and re-submit
+    await user.clear(latitudeElement);
+
+    const publicationDate = screen.getByLabelText(/publication date/i, {
+      selector: "input",
+    });
+
+    // stocking date is 2025-04-10
+    await user.type(publicationDate, "2025-04-10");
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "publication_date-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const publicationDateErrorMsg =
+      /publication date cannot occur before stocking event date/i;
+    await waitFor(() => {
+      expect(screen.getByText(publicationDateErrorMsg)).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText(longitudeErrorMsg)).not.toBeInTheDocument();
+    expect(screen.queryByText(latitudeErrorMsg)).not.toBeInTheDocument();
+  }, 60000); // <- timeout, this is a very long running test!
+});

@@ -3,6 +3,8 @@ import { z, ZodType } from "zod"; // Add new import
 
 //import { AppliedTagSchema } from "./AppliedTagSchema";
 
+const choice = z.object({ label: z.string(), value: z.string() });
+
 export const StockingEventSchema: ZodType<StockingEventInputs> = z
   .object({
     lot_slug: z.string({
@@ -119,47 +121,59 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       }),
     ),
 
-    destination_waterbody: z
-      .number({
+    destination_waterbody: z.preprocess(
+      (x) => x?.value || undefined,
+      z.string({
         required_error: "Destination Waterbody is a required field",
-      })
-      .int()
-      .positive(),
+      }),
+    ),
 
-    stocked_waterbody: z
-      .number({
+    stocked_waterbody: z.preprocess(
+      (x) => x?.value || undefined,
+      z.string({
         required_error: "Stocked Waterbody is a required field",
-      })
-      .int()
-      .positive(),
+      }),
+    ),
 
-    stocking_site: z
-      .number({
-        required_error: "Stocking Site is a required field",
-      })
-      .int()
-      .positive(),
+    stocking_site: z.preprocess(
+      (x) => x?.value || undefined,
+      z
+        .number({ required_error: "Stocking Site is a required field" })
+        .positive()
+        .int(),
+    ),
 
     //[41.67, -95.15],
     //[55.86, -74.32],
 
     latitude_decimal_degrees: z
-      .number()
-      .min(41.67, {
-        message: "Latiude must be greater than 41.67 degrees",
-      })
-      .max(55.86, {
-        message: "Latitude must be less than 55.86 degrees",
-      })
+      .literal("")
+      .transform(() => undefined)
+      .or(
+        z.coerce
+          .number()
+          .min(41.67, {
+            message: "Latiude must be greater than 41.67 degrees",
+          })
+          .max(55.86, {
+            message: "Latitude must be less than 55.86 degrees",
+          }),
+      )
       .optional(),
+
     longitude_decimal_degrees: z
-      .number()
-      .max(-74.32, {
-        message: "Longitude must be less than -74.32 degrees",
-      })
-      .min(-95.15, {
-        message: "Longitude must be greater than -95.15 degrees",
-      })
+      .literal("")
+      .transform(() => undefined)
+      .or(
+        z.coerce
+          .number()
+          .max(-74.32, {
+            message: "Longitude must be less than -74.32 degrees",
+          })
+          .min(-95.15, {
+            message: "Longitude must be greater than -95.15 degrees",
+          }),
+      )
       .optional(),
 
     fish_stocked_count: z.union([
@@ -302,9 +316,11 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
   .superRefine((data, ctx) => {
     const one_year = ((d) => d.setFullYear(d.getFullYear() + 1))(new Date());
     const next_year = new Date(one_year);
+
     const pub_date = data.publication_date
       ? new Date(data.publication_date)
       : undefined;
+
     if (pub_date && pub_date > next_year) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -330,7 +346,7 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["longitude_decimal_degrees"],
-        message: "longitude is required if latitude is provided",
+        message: "Longitude is required if Latitude is provided",
       });
     }
 
@@ -338,7 +354,7 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["latitude_decimal_degrees"],
-        message: "latitude is required if longitude is provided",
+        message: "Latitude is required if Longitude is provided",
       });
     }
   });

@@ -74,9 +74,8 @@ export const StockingEventForm = (props) => {
   ]);
 
   const default_values = {
-    dd_lat: "",
-    dd_lon: "",
-
+    latitude_decimal_degrees: "",
+    longitude_decimal_degrees: "",
     stocking_purposes: [],
     fin_clips: [],
     transitMethods: [],
@@ -121,9 +120,9 @@ export const StockingEventForm = (props) => {
   };
 
   const onError = (error) => {
-    //const values = getValues();
-    //console.log("FORM_VALUES:::", values);
-    //console.log("DEV_MSG_ERROR:::", error);
+    // const values = getValues();
+    // console.log("FORM_VALUES:::", values);
+    // console.log("DEV_MSG_ERROR:::", error);
   };
 
   //=============================================================
@@ -167,7 +166,7 @@ export const StockingEventForm = (props) => {
       dd_lat: point_attrs[0],
       dd_lon: point_attrs[1],
     });
-    trigger(["dd_lat", "dd_lon"]);
+    trigger(["latitude_decimal_degrees", "longitude_decimal_degrees"]);
   };
 
   const selectLotOptions = lotData
@@ -225,7 +224,6 @@ export const StockingEventForm = (props) => {
                       required={true}
                       options={selectLotOptions}
                       placeholderText="Select Lot Identifier..."
-                      rules={{ required: "Lot identifier is required." }}
                       errors={errors}
                       fgClass="mb-3"
                     />
@@ -252,9 +250,6 @@ export const StockingEventForm = (props) => {
                       label="Stocking Admin Unit"
                       required={true}
                       options={stockingAdminUnitOptions}
-                      rules={{
-                        required: "Stocking Admin Unit ID is required.",
-                      }}
                       errors={errors}
                       fgClass="mb-2"
                     />
@@ -270,6 +265,7 @@ export const StockingEventForm = (props) => {
                       errors={errors}
                       fgClass="mb-3"
                       helpText="The date that this event can be made publicly available."
+                      rules={{ deps: ["stocking_date"] }}
                     />
                   </Col>
                 </Row>
@@ -313,9 +309,6 @@ export const StockingEventForm = (props) => {
                       label="Proponent"
                       required={true}
                       options={proponentOptions}
-                      rules={{
-                        required: "Proponent is required.",
-                      }}
                       errors={errors}
                       fgClass="mb-2"
                     />
@@ -327,9 +320,6 @@ export const StockingEventForm = (props) => {
                       name="stocking_date"
                       label="Stocking Date"
                       db_field_name="stocking_event_datetime"
-                      rules={{
-                        required: "Stocking Date is required.",
-                      }}
                       required={true}
                       inputType="date"
                       errors={errors}
@@ -345,9 +335,6 @@ export const StockingEventForm = (props) => {
                       label="Release Method"
                       required={true}
                       options={releaseMethods}
-                      rules={{
-                        required: "Release Method is required.",
-                      }}
                       errors={errors}
                       fgClass="mb-2"
                     />
@@ -361,10 +348,6 @@ export const StockingEventForm = (props) => {
                       name="transit_mortality"
                       db_field_name="transit_mortality_count"
                       label="Transit Mortality"
-                      rules={{
-                        required: "Transit Mortality is required.",
-                        min: { value: 0, message: "Must be greater than 0" },
-                      }}
                       errors={errors}
                     />
                   </Col>
@@ -375,13 +358,6 @@ export const StockingEventForm = (props) => {
                       name="site_temperature"
                       db_field_name="stocking_site_temperature"
                       label="Site Temperature (&deg;C)"
-                      rules={{
-                        max: { value: 30, message: "Must be less than 30" },
-                        min: {
-                          value: -10,
-                          message: "Must be greater than -10",
-                        },
-                      }}
                       errors={errors}
                       fgClass="mb-3"
                     />
@@ -393,13 +369,6 @@ export const StockingEventForm = (props) => {
                       name="water_depth"
                       db_field_name="stocking_water_depth"
                       label="Water Depth (m)"
-                      rules={{
-                        max: { value: 300, message: "Must be less than 300 m" },
-                        min: {
-                          value: 0,
-                          message: "Must be at least 0 m",
-                        },
-                      }}
                       errors={errors}
                       fgClass="mb-3"
                     />
@@ -448,9 +417,6 @@ export const StockingEventForm = (props) => {
                         onInputChange={selectDestinationWaterbodyChange}
                         required={true}
                         placeholderText="Start typing to see waterbodies"
-                        rules={{
-                          required: "Destination Waterbody is required.",
-                        }}
                         errors={errors}
                         fgClass="mb-3"
                       />
@@ -467,9 +433,6 @@ export const StockingEventForm = (props) => {
                         onInputChange={selectStockedWaterbodyChange}
                         required={true}
                         placeholderText="Start typing to see waterbodies"
-                        rules={{
-                          required: "Stocked Waterbody is required.",
-                        }}
                         errors={errors}
                         fgClass="mb-3"
                       />
@@ -486,9 +449,6 @@ export const StockingEventForm = (props) => {
                         onInputChange={selectStockingSiteChange}
                         required={true}
                         placeholderText="Start typing to see stocking sites"
-                        rules={{
-                          required: "Stocking Site is required.",
-                        }}
                         errors={errors}
                         fgClass="mb-3"
                       />
@@ -497,45 +457,29 @@ export const StockingEventForm = (props) => {
                       <Col>
                         <RHFInput
                           control={control}
-                          name="dd_lat"
+                          name="latitude_decimal_degrees"
                           db_field_name="latitude_decimal_degrees"
                           label="Latitude"
                           inputType="number"
                           errors={errors}
                           fgClass="mb-3"
                           helpText="Dec. Degrees North"
-                          rules={{
-                            max: {
-                              value: bounds[1][0],
-                              message: `dd_lat must but less than or equal to ${bounds[1][0]}`,
-                            },
-                            min: {
-                              value: bounds[0][0],
-                              message: `dd_lat must but greater than or equal to ${bounds[0][0]}`,
-                            },
-                          }}
+                          placeholderText=""
+                          rules={{ deps: ["longitude_decimal_degrees"] }}
                         />
                       </Col>
                       <Col>
                         <RHFInput
                           control={control}
-                          name="dd_lon"
+                          name="longitude_decimal_degrees"
                           label="Longitude"
                           db_field_name="longitude_decimal_degrees"
                           inputType="number"
                           errors={errors}
                           fgClass="mb-3"
                           helpText="Dec. Degrees West"
-                          rules={{
-                            max: {
-                              value: bounds[1][1],
-                              message: `dd_lon must but less than or equal to ${bounds[1][1]}`,
-                            },
-                            min: {
-                              value: bounds[0][1],
-                              message: `dd_lon must but greater than or equal to ${bounds[0][1]}`,
-                            },
-                          }}
+                          placeholderText=""
+                          rules={{ deps: ["latitude_decimal_degrees"] }}
                         />
                       </Col>
                     </Row>
@@ -567,14 +511,6 @@ export const StockingEventForm = (props) => {
                       errors={errors}
                       fgClass="mb-3"
                       required={true}
-                      rules={{
-                        required: "Number Stocked is required.",
-                        min: {
-                          value: 1,
-                          message:
-                            "Number of fish stocked must be greater than 0.",
-                        },
-                      }}
                     />
                   </Col>
 
@@ -588,12 +524,6 @@ export const StockingEventForm = (props) => {
                       errors={errors}
                       fgClass="mb-3"
                       helpText="Average weight in grams of an individual fish."
-                      rules={{
-                        min: {
-                          value: 0,
-                          message: "Fish Weight must be greater than 0.",
-                        },
-                      }}
                     />
                   </Col>
 
@@ -607,12 +537,6 @@ export const StockingEventForm = (props) => {
                       errors={errors}
                       fgClass="mb-3"
                       helpText="Total biomass in kilograms of all stocked fish."
-                      rules={{
-                        min: {
-                          value: 0,
-                          message: "Total Biomass must be greater than 0.",
-                        },
-                      }}
                     />
                   </Col>
                 </Row>
@@ -628,13 +552,6 @@ export const StockingEventForm = (props) => {
                       errors={errors}
                       fgClass="mb-3"
                       helpText="The age of the fish (in months) at time of stocking."
-                      rules={{
-                        min: {
-                          value: 0,
-                          message:
-                            "Fish Age must be greater or equal to than 0.",
-                        },
-                      }}
                     />
                   </Col>
 
@@ -642,11 +559,10 @@ export const StockingEventForm = (props) => {
                     <RHFSelect
                       control={control}
                       name="development_stage_id"
-                      db_table_name="stocking_developmentstage"
-                      inputId="select-development-stage"
-                      options={developmentStages}
                       label="Development Stage"
-                      rules={{ required: "Development Stage is required." }}
+                      db_table_name="stocking_developmentstage"
+                      options={developmentStages}
+                      required={true}
                       errors={errors}
                       fgClass="mb-3"
                     />
@@ -693,18 +609,6 @@ export const StockingEventForm = (props) => {
                           inputType="number"
                           errors={errors}
                           fgClass="mb-3"
-                          rules={{
-                            min: {
-                              value: 0,
-                              message:
-                                "Clip Retention must greater or equal to 0.",
-                            },
-                            max: {
-                              value: 100,
-                              message:
-                                "Clip Retention must less than or equal to 100.",
-                            },
-                          }}
                         />
                       </Col>
                     </Row>
@@ -862,18 +766,6 @@ export const StockingEventForm = (props) => {
                               inputType="number"
                               errors={errors}
                               fgClass="mb-3"
-                              rules={{
-                                min: {
-                                  value: 0,
-                                  message:
-                                    "Tag Retention must greater or equal to 0.",
-                                },
-                                max: {
-                                  value: 100,
-                                  message:
-                                    "Tag Retention must less than or equal to 100.",
-                                },
-                              }}
                             />
                           </Col>
 
@@ -886,13 +778,6 @@ export const StockingEventForm = (props) => {
                               inputType="number"
                               errors={errors}
                               fgClass="mb-3"
-                              rules={{
-                                min: {
-                                  value: 0,
-                                  message:
-                                    "Tag Retention Sample Size  must greater or equal to 0.",
-                                },
-                              }}
                             />
                           </Col>
 
@@ -905,13 +790,6 @@ export const StockingEventForm = (props) => {
                               inputType="number"
                               errors={errors}
                               fgClass="mb-3"
-                              rules={{
-                                min: {
-                                  value: 0,
-                                  message:
-                                    "Tag Retention Population Size  must greater or equal to 0.",
-                                },
-                              }}
                             />
                           </Col>
                         </Row>
