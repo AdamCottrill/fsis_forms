@@ -158,7 +158,7 @@ export const LotCreator = () => {
                     // rules={{
                     //   required: "Species is required.",
                     // }}
-                    errors={errors}
+                    error_message={errors?.spc?.message}
                     fgClass="mb-2"
                   />
                 </Col>
@@ -176,7 +176,7 @@ export const LotCreator = () => {
                     // rules={{
                     //   required: "Strain is required.",
                     // }}
-                    errors={errors}
+                    error_message={errors?.species_strain_id?.message}
                     fgClass="mb-2"
                   />
                 </Col>
@@ -219,10 +219,7 @@ export const LotCreator = () => {
                     popup_placement="left"
                     required={true}
                     options={rearingLocations}
-                    // rules={{
-                    //   required: "Rearing Location is required.",
-                    // }}
-                    errors={errors}
+                    error_message={errors?.rearing_location_id?.message}
                     fgClass="mb-2"
                   />
                 </Col>

@@ -76,7 +76,7 @@ export const StockingEventForm = (props) => {
   const applied_tags_defaults = {
     series_start: "",
     series_end: "",
-    tag_type_id: "",
+    tag_type: "",
     tag_colour: "",
     tag_placement: "",
     tag_origin: "",
@@ -240,7 +240,7 @@ export const StockingEventForm = (props) => {
                       required={true}
                       options={selectLotOptions}
                       placeholderText="Select Lot Identifier..."
-                      errors={errors}
+                      error_message={errors?.lot_slug?.message}
                       fgClass="mb-3"
                     />
                   </Col>
@@ -266,7 +266,7 @@ export const StockingEventForm = (props) => {
                       label="Stocking Admin Unit"
                       required={true}
                       options={stockingAdminUnitOptions}
-                      errors={errors}
+                      error_message={errors?.stocking_admin_unit_id?.message}
                       fgClass="mb-2"
                     />
                   </Col>
@@ -325,7 +325,7 @@ export const StockingEventForm = (props) => {
                       label="Proponent"
                       required={true}
                       options={proponentOptions}
-                      errors={errors}
+                      error_message={errors?.proponent_id?.message}
                       fgClass="mb-2"
                     />
                   </Col>
@@ -351,7 +351,7 @@ export const StockingEventForm = (props) => {
                       label="Release Method"
                       required={true}
                       options={releaseMethods}
-                      errors={errors}
+                      error_message={errors?.release_method?.message}
                       fgClass="mb-2"
                     />
                   </Col>
@@ -433,7 +433,7 @@ export const StockingEventForm = (props) => {
                         onInputChange={selectDestinationWaterbodyChange}
                         required={true}
                         placeholderText="Start typing to see waterbodies"
-                        errors={errors}
+                        error_message={errors?.destination_waterbody?.message}
                         fgClass="mb-3"
                       />
                     </Row>
@@ -449,7 +449,7 @@ export const StockingEventForm = (props) => {
                         onInputChange={selectStockedWaterbodyChange}
                         required={true}
                         placeholderText="Start typing to see waterbodies"
-                        errors={errors}
+                        error_message={errors?.stocked_waterbody?.message}
                         fgClass="mb-3"
                       />
                     </Row>
@@ -465,7 +465,7 @@ export const StockingEventForm = (props) => {
                         onInputChange={selectStockingSiteChange}
                         required={true}
                         placeholderText="Start typing to see stocking sites"
-                        errors={errors}
+                        error_message={errors?.stocking_site?.message}
                         fgClass="mb-3"
                       />
                     </Row>
@@ -583,7 +583,7 @@ export const StockingEventForm = (props) => {
                       db_table_name="stocking_developmentstage"
                       options={developmentStages}
                       required={true}
-                      errors={errors}
+                      error_message={errors?.development_stage_id?.message}
                       fgClass="mb-3"
                     />
                   </Col>
@@ -753,11 +753,14 @@ export const StockingEventForm = (props) => {
                             <Col>
                               <RHFSelect
                                 control={control}
-                                name={`tags_applied.${index}.tag_type_id`}
+                                name={`tags_applied.${index}.tag_type`}
                                 db_table_name="stocking_tagtype"
                                 label="Tag Type"
                                 options={tagTypes}
-                                errors={errors}
+                                error_message={
+                                  errors?.tags_applied?.[index]?.tag_type
+                                    ?.message
+                                }
                                 fgClass="mb-3"
                               />
                             </Col>
@@ -768,7 +771,10 @@ export const StockingEventForm = (props) => {
                                 db_table_name="stocking_tagcolour"
                                 label="Tag Colour"
                                 options={tagColours}
-                                errors={errors}
+                                error_message={
+                                  errors?.tags_applied?.[index]?.tag_colour
+                                    ?.message
+                                }
                                 fgClass="mb-3"
                               />
                             </Col>
@@ -780,7 +786,10 @@ export const StockingEventForm = (props) => {
                                 db_table_name="stocking_tagposition"
                                 label="Tag Position"
                                 options={tagPositions}
-                                errors={errors}
+                                error_message={
+                                  errors?.tags_applied?.[index]?.tag_placement
+                                    ?.message
+                                }
                                 fgClass="mb-3"
                               />
                             </Col>
@@ -792,7 +801,10 @@ export const StockingEventForm = (props) => {
                                 db_table_name="stocking_tagorigin"
                                 label="Tag Origin"
                                 options={tagOrigins}
-                                errors={errors}
+                                error_message={
+                                  errors?.tags_applied?.[index]?.tag_origin
+                                    ?.message
+                                }
                                 fgClass="mb-3"
                               />
                             </Col>
@@ -875,7 +887,7 @@ export const StockingEventForm = (props) => {
                       db_field_name="inventory_comments"
                       popup_placement="left"
                       label="Inventory Comments"
-                      errors={errors}
+                      error_message={errors?.inventory_comments?.message}
                       fgClass="mb-3"
                       style={{ height: "100px" }}
                     />
@@ -886,7 +898,7 @@ export const StockingEventForm = (props) => {
                       db_field_name="marking_comments"
                       popup_placement="left"
                       label="Marking Comments"
-                      errors={errors}
+                      error_message={errors?.marking_comments?.message}
                       fgClass="mb-3"
                       style={{ height: "100px" }}
                     />
@@ -897,7 +909,7 @@ export const StockingEventForm = (props) => {
                       db_field_name="stocking_comments"
                       popup_placement="left"
                       label="Stocking Comments"
-                      errors={errors}
+                      error_message={errors?.stocking_comments?.message}
                       fgClass="mb-3"
                       style={{ height: "100px" }}
                     />

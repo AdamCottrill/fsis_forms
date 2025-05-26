@@ -17,7 +17,7 @@ export const RHFSelect = ({
   rules,
   placeholderText,
   fgClass,
-  errors,
+  error_message,
   required,
   ...rest
 }) => {
@@ -60,20 +60,20 @@ export const RHFSelect = ({
               options={options}
               isLoading={!options}
               closeMenuOnSelect={true}
-              className={errors[name] ? "react-select-error" : ""}
+              className={!!error_message ? "react-select-error" : ""}
               {...rest}
             />
           )}
           rules={rules}
         />
 
-        {errors[name] && (
+        {error_message && (
           <span
             className="text-danger"
             role="alert"
             aria-label={`${name}-error`}
           >
-            {errors[name]?.message}
+            {error_message}
           </span>
         )}
       </Form.Group>

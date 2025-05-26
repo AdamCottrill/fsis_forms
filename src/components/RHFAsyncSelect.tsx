@@ -3,11 +3,31 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
+import Select, { ActionMeta, ValueType } from "react-select";
+import { Controller, Control, FieldValues } from "react-hook-form";
+
 import { DataDictOverlay } from "./DataDictOverlay";
 
-import { Controller } from "react-hook-form";
+import { SelectChoice } from "../types/types";
 
-export const RHFAsyncSelect = ({
+interface RHFAsyncSelectProps<T> {
+  control: Control<FieldValues, T>;
+  name: string;
+  label: string;
+  db_field_name: string;
+  popup_placement: string;
+  loadOptions: SelectChoice[];
+  onInputChange: (
+    newValue: ValueType<SelectChoice>,
+    actionMeta: ActionMeta<SelectChoice>,
+  ) => void;
+  placeholderText: string;
+  fgClass: string;
+  error_message?: string;
+  required: string;
+}
+
+export const RHFAsyncSelect: React.FC<RHFAsyncSelectProps> = ({
   control,
   name,
   label,
@@ -15,11 +35,11 @@ export const RHFAsyncSelect = ({
   popup_placement,
   loadOptions,
   onInputChange,
-  rules,
   placeholderText,
   fgClass,
-  errors,
+  error_message,
   required,
+  rules,
 }) => {
   return (
     <>
@@ -58,18 +78,18 @@ export const RHFAsyncSelect = ({
                   {placeholderText || "---"}
                 </div>
               }
-              className={errors[name] ? "react-select-error" : ""}
+              className={!!error_message ? "react-select-error" : ""}
             />
           )}
         />
 
-        {errors[name] && (
+        {error_message && (
           <span
             className="text-danger"
             role="alert"
             aria-label={`${name}-error`}
           >
-            {errors[name]?.message}
+            {error_message}
           </span>
         )}
       </Form.Group>

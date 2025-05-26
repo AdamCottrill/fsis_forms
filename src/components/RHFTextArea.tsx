@@ -4,9 +4,24 @@ import Col from "react-bootstrap/Col";
 
 import { DataDictOverlay } from "./DataDictOverlay";
 
-import { Controller } from "react-hook-form";
+import { Controller, Control, FieldValues } from "react-hook-form";
 
-export const RHFTextArea = ({
+interface RHFTextAreaProps<T> {
+  control: Control<FieldValues, T>;
+  name: string;
+  db_field_name: string;
+  popup_placement: string;
+  label: string;
+  placeholderText: string;
+  fgClass: string;
+  error_message?: string;
+  required: string;
+  inputType: "string" | "date" | "number";
+  defaultValue: string;
+  helpText: string;
+}
+
+export const RHFTextArea: React.FC<RHFTextAreaProps> = ({
   control,
   name,
   label,
@@ -14,7 +29,7 @@ export const RHFTextArea = ({
   popup_placement,
   rules,
   fgClass,
-  errors,
+  error_message,
   required,
   style,
   defaultValue,
@@ -49,25 +64,25 @@ export const RHFTextArea = ({
             as="textarea"
             style={{ ...style }}
             {...field}
-            isInvalid={errors[name]}
-            {...(helpText ? { ariadescribedby: `${name}HelpBlock` } : {})}
+            isInvalid={!!error_message}
+            {...(helpText ? { ariadescribedby: `${name}-help-block` } : {})}
           />
         )}
       />
 
       {helpText && (
-        <Form.Text id="`${name}HelpBlock`" muted>
+        <Form.Text id="`${name}-help-block`" muted>
           {helpText}
         </Form.Text>
       )}
-      {errors[name] && (
+      {error_message && (
         <Form.Control.Feedback type="invalid">
           <span
             className="text-danger"
             role="alert"
             data-testid={`${name}-error`}
           >
-            {errors[name].message}
+            {error_message}
           </span>
         </Form.Control.Feedback>
       )}
