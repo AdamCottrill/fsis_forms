@@ -116,9 +116,20 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
         return val === undefined ? [] : val;
       },
 
-      z.string().array().nonempty({
-        message: "At least one Transit Method must be selected",
-      }),
+      z
+        .string()
+        .array()
+        .nonempty({
+          message: "At least one Transit Method must be selected",
+        })
+        .superRefine((val, ctx) => {
+          if (val.indexOf("UNKN") >= 0 && val.length > 1) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "UNKN cannot be selected with any other Transit method",
+            });
+          }
+        }),
     ),
 
     destination_waterbody: z.preprocess(

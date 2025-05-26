@@ -363,6 +363,24 @@ describe("Transit Method", () => {
     );
   });
 
+  test("UNKN alone is ok.", () => {
+    const patch = { transit_methods: ["UNKN"] };
+    const data_in = { ...good_data, ...patch };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
+  });
+
+  test("UNKN with any other value will throw an error", () => {
+    const patch = { transit_methods: ["1", "UNKN"] };
+    const data_in = { ...good_data, ...patch };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /unkn cannot be selected with any other transit method/i,
+    );
+  });
+
   test("undefined will throw an empty array error", () => {
     const data_in = { ...good_data, transit_methods: undefined };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
