@@ -77,9 +77,9 @@ export const StockingEventForm = (props) => {
     series_start: "",
     series_end: "",
     tag_type_id: "",
-    tag_colour_id: "",
-    tag_placement_id: "",
-    tag_origin_id: "",
+    tag_colour: "",
+    tag_placement: "",
+    tag_origin: "",
     retention_rate_pct: "",
     retention_rate_sample_size: "",
     retention_rate_pop_size: "",
@@ -755,7 +755,7 @@ export const StockingEventForm = (props) => {
                             <Col>
                               <RHFSelect
                                 control={control}
-                                name={`tags_applied.${index}.tag_colour_id`}
+                                name={`tags_applied.${index}.tag_colour`}
                                 db_table_name="stocking_tagcolour"
                                 label="Tag Colour"
                                 options={tagColours}
@@ -767,7 +767,7 @@ export const StockingEventForm = (props) => {
                             <Col>
                               <RHFSelect
                                 control={control}
-                                name={`tags_applied.${index}.tag_placement_id`}
+                                name={`tags_applied.${index}.tag_placement`}
                                 db_table_name="stocking_tagposition"
                                 label="Tag Position"
                                 options={tagPositions}
@@ -779,7 +779,7 @@ export const StockingEventForm = (props) => {
                             <Col>
                               <RHFSelect
                                 control={control}
-                                name={`tags_applied.${index}.tag_origin_id`}
+                                name={`tags_applied.${index}.tag_origin`}
                                 db_table_name="stocking_tagorigin"
                                 label="Tag Origin"
                                 options={tagOrigins}

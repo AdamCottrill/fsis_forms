@@ -1,7 +1,7 @@
 import { StockingEventInputs } from "../types/types";
 import { z, ZodType } from "zod"; // Add new import
 
-//import { AppliedTagSchema } from "./AppliedTagSchema";
+import { AppliedTagSchema } from "./AppliedTagSchema";
 
 const choice = z.object({ label: z.string(), value: z.string() });
 
@@ -304,6 +304,9 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       .optional(),
 
     //tags_applied: ?AppliedTag[];
+
+    tags_applied: z.array(AppliedTagSchema).optional(),
+
     inventory_comments: z.string().optional(),
     marking_comments: z.string().optional(),
     stocking_comments: z.string().optional(),

@@ -28,13 +28,13 @@ interface apiMeta {
 export interface AppliedTag {
   series_start: string;
   series_end?: string;
-  tag_type_id: number;
-  tag_colour_id: number;
-  tag_placement_id: number;
-  tag_origin_id: number;
-  retention_rate_pct?: number;
-  retention_rate_sample_size?: number;
-  retention_rate_pop_size?: number;
+  tag_type: string;
+  tag_colour: string;
+  tag_placement: string;
+  tag_origin: string;
+  retention_rate_pct?: number | string;
+  retention_rate_sample_size?: number | string;
+  retention_rate_pop_size?: number | string;
 }
 
 export interface StockingEventInputs {

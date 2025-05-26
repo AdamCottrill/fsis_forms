@@ -6,6 +6,14 @@ export const pluck_first_issue = (schema, data) => {
   }
 };
 
+export const pluck_all_issue = (schema, data) => {
+  try {
+    schema.parse(data);
+  } catch (err) {
+    return err?.issues.map((x) => x.message) || err[0];
+  }
+};
+
 export const dateToString = (date: Date): string => {
   const yyyy = date.getFullYear();
   const mm = String(date.getMonth() + 1).padStart(2, "0");
