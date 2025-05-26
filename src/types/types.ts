@@ -60,7 +60,8 @@ export interface StockingEventInputs {
   latitude_decimal_degrees?: number;
   longitude_decimal_degrees?: number;
   fish_stocked_count: number;
-  fish_weight: number;
+  fish_weight?: number;
+  total_biomass?: number;
   fish_age: number;
   development_stage_id: string;
   fin_clips: string[];

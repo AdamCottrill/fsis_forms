@@ -189,18 +189,7 @@ export const LotCreator = () => {
                     db_field_name="spawn_year"
                     popup_placement="left"
                     required={true}
-                    // rules={{
-                    //   required: "Spawn Year is required.",
-                    //   min: {
-                    //     value: 1950,
-                    //     message: "Must be greater than 1950",
-                    //   },
-                    //   max: {
-                    //     value: new Date().getFullYear(),
-                    //     message: `Must be less than or equal to ${new Date().getFullYear()}`,
-                    //   },
-                    // }}
-                    errors={errors}
+                    error_message={errors?.spawn_year?.message}
                     fgClass="mb-3"
                   />
                 </Col>
@@ -216,7 +205,7 @@ export const LotCreator = () => {
                     popup_placement="right"
                     inputType="text"
                     required={false}
-                    errors={errors}
+                    error_message={errors?.lot_num?.message}
                     fgClass="mb-3"
                   />
                 </Col>

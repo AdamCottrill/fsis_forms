@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 
 import { DataDictOverlay } from "./DataDictOverlay";
 
-import { Controller, Control, FieldValues, FieldError } from "react-hook-form";
+import { Controller, Control, FieldValues } from "react-hook-form";
 
 interface RHFInputProps<T> {
   control: Control<FieldValues, T>;
@@ -15,7 +15,7 @@ interface RHFInputProps<T> {
   label: string;
   placeholderText: string;
   fgClass: string;
-  errors: FieldError | undefined;
+  error_message?: string;
   required: string;
   inputType: "string" | "date" | "number";
   defaultValue: string;
@@ -30,7 +30,7 @@ export const RHFInput: React.FC<RHFInputProps> = ({
   label,
   placeholderText,
   fgClass,
-  errors,
+  error_message,
   required,
   inputType,
   defaultValue,
@@ -62,7 +62,7 @@ export const RHFInput: React.FC<RHFInputProps> = ({
         render={({ field }) => (
           <Form.Control
             {...field}
-            isInvalid={errors[name]}
+            isInvalid={!!error_message}
             type={inputType || "number"}
             placeholder={placeholderText || "---"}
             {...(helpText ? { "aria-describedby": `${name}-help-block` } : {})}
@@ -75,14 +75,14 @@ export const RHFInput: React.FC<RHFInputProps> = ({
           {helpText}
         </Form.Text>
       )}
-      {errors[name] && (
+      {error_message && (
         <Form.Control.Feedback type="invalid">
           <span
             className="text-danger"
             role="alert"
             aria-label={`${name}-error`}
           >
-            {errors[name].message}
+            {error_message}
           </span>
         </Form.Control.Feedback>
       )}

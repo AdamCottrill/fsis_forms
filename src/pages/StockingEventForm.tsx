@@ -115,7 +115,7 @@ export const StockingEventForm = (props) => {
     trigger,
     reset,
     watch,
-    //getValues,
+    getValues,
     setValue,
     formState: { errors },
   } = useForm<StockingEventInputs>({
@@ -131,16 +131,14 @@ export const StockingEventForm = (props) => {
   const [lot_slug] = watch(["lot_slug"]);
   const setSelectedLot = (slug) => setValue("lot_slug", slug);
 
-  //const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
-
   const onSubmit = (values) => {
     console.log("Values:::", values);
   };
 
   const onError = (error) => {
-    // const values = getValues();
-    // console.log("FORM_VALUES:::", values);
-    // console.log("DEV_MSG_ERROR:::", error);
+    const values = getValues();
+    console.log("FORM_VALUES:::", values);
+    console.log("DEV_MSG_ERROR:::", error);
   };
 
   //=============================================================
@@ -280,7 +278,7 @@ export const StockingEventForm = (props) => {
                       popup_placement="left"
                       label="Publication Date"
                       inputType="date"
-                      errors={errors}
+                      error_message={errors?.publication_date?.message}
                       fgClass="mb-3"
                       helpText="The date that this event can be made publicly available."
                       rules={{ deps: ["stocking_date"] }}
@@ -340,7 +338,7 @@ export const StockingEventForm = (props) => {
                       db_field_name="stocking_event_datetime"
                       required={true}
                       inputType="date"
-                      errors={errors}
+                      error_message={errors?.stocking_date?.message}
                       fgClass="mb-3"
                     />
                   </Col>
@@ -366,7 +364,7 @@ export const StockingEventForm = (props) => {
                       name="transit_mortality"
                       db_field_name="transit_mortality_count"
                       label="Transit Mortality"
-                      errors={errors}
+                      error_message={errors?.transit_mortality?.message}
                     />
                   </Col>
 
@@ -376,7 +374,7 @@ export const StockingEventForm = (props) => {
                       name="site_temperature"
                       db_field_name="stocking_site_temperature"
                       label="Site Temperature (&deg;C)"
-                      errors={errors}
+                      error_message={errors?.site_temperature?.message}
                       fgClass="mb-3"
                     />
                   </Col>
@@ -387,7 +385,7 @@ export const StockingEventForm = (props) => {
                       name="water_depth"
                       db_field_name="stocking_water_depth"
                       label="Water Depth (m)"
-                      errors={errors}
+                      error_message={errors?.water_depth?.message}
                       fgClass="mb-3"
                     />
                   </Col>
@@ -479,7 +477,9 @@ export const StockingEventForm = (props) => {
                           db_field_name="latitude_decimal_degrees"
                           label="Latitude"
                           inputType="number"
-                          errors={errors}
+                          error_message={
+                            errors?.latitude_decimal_degrees?.message
+                          }
                           fgClass="mb-3"
                           helpText="Dec. Degrees North"
                           placeholderText=""
@@ -493,7 +493,9 @@ export const StockingEventForm = (props) => {
                           label="Longitude"
                           db_field_name="longitude_decimal_degrees"
                           inputType="number"
-                          errors={errors}
+                          error_message={
+                            errors?.longitude_decimal_degrees?.message
+                          }
                           fgClass="mb-3"
                           helpText="Dec. Degrees West"
                           placeholderText=""
@@ -526,7 +528,7 @@ export const StockingEventForm = (props) => {
                       db_field_name="fish_stocked_count"
                       label="Number of Fish Stocked"
                       inputType="number"
-                      errors={errors}
+                      error_message={errors?.fish_stocked_count?.message}
                       fgClass="mb-3"
                       required={true}
                     />
@@ -539,7 +541,7 @@ export const StockingEventForm = (props) => {
                       db_field_name="fish_weight"
                       label="Fish Weight (g)"
                       inputType="number"
-                      errors={errors}
+                      error_message={errors?.fish_weight?.message}
                       fgClass="mb-3"
                       helpText="Average weight in grams of an individual fish."
                     />
@@ -552,7 +554,7 @@ export const StockingEventForm = (props) => {
                       db_field_name="record_biomass_calc"
                       label="Total Biomass (kg)"
                       inputType="number"
-                      errors={errors}
+                      error_message={errors?.total_biomass?.message}
                       fgClass="mb-3"
                       helpText="Total biomass in kilograms of all stocked fish."
                     />
@@ -567,7 +569,7 @@ export const StockingEventForm = (props) => {
                       db_field_name="fish_age"
                       label="Fish Age"
                       inputType="number"
-                      errors={errors}
+                      error_message={errors?.fish_age?.message}
                       fgClass="mb-3"
                       helpText="The age of the fish (in months) at time of stocking."
                     />
@@ -625,7 +627,7 @@ export const StockingEventForm = (props) => {
                           db_field_name="clip_retention_pct"
                           label="Clip Retention (%)"
                           inputType="number"
-                          errors={errors}
+                          error_message={errors?.clip_retention_pct?.message}
                           fgClass="mb-3"
                         />
                       </Col>
@@ -723,7 +725,11 @@ export const StockingEventForm = (props) => {
                                 name={`tags_applied.${index}.series_start`}
                                 db_field_name="series_start"
                                 label="Tag Series Start"
-                                errors={errors}
+                                //errors?.tags_applied?.[index]?.series_start.message
+                                error_message={
+                                  errors?.tags_applied?.[index]?.series_start
+                                    ?.message
+                                }
                                 fgClass="mb-3"
                               />
                             </Col>
@@ -734,7 +740,10 @@ export const StockingEventForm = (props) => {
                                 name={`tags_applied.${index}.series_end`}
                                 db_field_name="series_end"
                                 label="Tag Series End"
-                                errors={errors}
+                                error_message={
+                                  errors?.tags_applied?.[index]?.series_end
+                                    ?.message
+                                }
                                 fgClass="mb-3"
                               />
                             </Col>
@@ -797,7 +806,10 @@ export const StockingEventForm = (props) => {
                                 label="Tag Retention (%)"
                                 db_field_name="retention_rate_pct"
                                 inputType="number"
-                                errors={errors}
+                                error_message={
+                                  errors?.tags_applied?.[index]
+                                    ?.retention_rate_pct?.message
+                                }
                                 fgClass="mb-3"
                               />
                             </Col>
@@ -809,7 +821,10 @@ export const StockingEventForm = (props) => {
                                 label="Tag Retention Sample Size"
                                 db_field_name="retention_rate_sample_size"
                                 inputType="number"
-                                errors={errors}
+                                error_message={
+                                  errors?.tags_applied?.[index]
+                                    ?.retention_rate_sample_size?.message
+                                }
                                 fgClass="mb-3"
                               />
                             </Col>
@@ -821,7 +836,10 @@ export const StockingEventForm = (props) => {
                                 db_field_name="retention_rate_pop_size"
                                 label="Tag Retention Population Size"
                                 inputType="number"
-                                errors={errors}
+                                error_message={
+                                  errors?.tags_applied?.[index]
+                                    ?.retention_rate_pop_size?.message
+                                }
                                 fgClass="mb-3"
                               />
                             </Col>
