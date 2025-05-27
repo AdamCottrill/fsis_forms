@@ -699,7 +699,7 @@ export const StockingEventForm = (props) => {
                   </AccordionToggle>
                 </Card.Header>
                 <Accordion.Collapse eventKey="tags-applied-card">
-                  <Card.Body>
+                  <Card.Body data-testid="applied-tags">
                     {fields.map((item, index) => (
                       <Card className="my-1" key={item.id}>
                         <Card.Header>
@@ -711,6 +711,7 @@ export const StockingEventForm = (props) => {
                                 type="button"
                                 size="sm"
                                 onClick={() => remove(index)}
+                                aria-label={`Delete Applied Tag ${index + 1}`}
                               >
                                 Delete
                               </Button>

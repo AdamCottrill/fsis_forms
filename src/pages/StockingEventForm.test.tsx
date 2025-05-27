@@ -1435,3 +1435,176 @@ describe("Superrefine validations", () => {
     expect(screen.queryByText(latitudeErrorMsg)).not.toBeInTheDocument();
   }, 60000); // <- timeout, this is a very long running test!
 });
+
+describe("Applied Tags", () => {
+  test("users can add and remove applied tag subforms", async () => {
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    // the form should have a single tag form by default:
+    expect(screen.getByText(/applied tag 1/i)).toBeInTheDocument();
+    // verify that subform 2 is not in the page
+    expect(screen.queryByText(/applied tag 2/i)).not.toBeInTheDocument();
+
+    // click on the 'Add another tag button'
+    await user.click(screen.getByRole("button", { name: /add another tag/i }));
+
+    // verify that that second form is on page
+    await waitFor(() => {
+      expect(screen.getByText(/applied tag 2/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /delete applied tag 2/i }),
+      ).toBeInTheDocument();
+    });
+
+    // click on the delete button
+    await user.click(
+      screen.getByRole("button", { name: /delete applied tag 2/i }),
+    );
+
+    // veriify that the second form is no-longer on the page
+    await waitFor(() => {
+      expect(screen.queryByText(/applied tag 2/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /delete applied tag 2/i }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  test("no applied tag errors if subform is empty", async () => {
+    // if we submit an emtpy form, the response should have not 'tags_appled' errors
+
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("alert", {
+          name: /tags_applied/,
+        }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  test("applied tag errors if one field is populated", async () => {
+    // if we submit the form after putting a value in any of applied
+    // tags inputs, the response should contain several 'tags_appled' errors:
+    // series start, tag_type, tag colour, tag placement and tag origin are all required.
+
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const element = screen.getByLabelText(/tag retention \(\%\)/i);
+    await user.type(element, "90");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    await waitFor(() => {
+      const tagsCard = screen.queryByTestId("applied-tags");
+
+      expect(
+        screen.getByRole("alert", {
+          name: /tags_applied\.\d\.series_start-error/i,
+        }),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("alert", {
+          name: /tags_applied\.\d\.tag_type-error/i,
+        }),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("alert", {
+          name: /tags_applied\.\d\.tag_colour-error/i,
+        }),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("alert", {
+          name: /tags_applied\.\d\.tag_placement-error/i,
+        }),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("alert", {
+          name: /tags_applied\.\d\.tag_origin-error/i,
+        }),
+      ).toBeInTheDocument();
+    });
+  }, 30000);
+
+  test("errror message for other fields appear", async () => {
+    // if tag retention is reported it cannot be less than 1 or higher than 100
+    // population and sample size must both be larger than 0
+    // population must be greater than sample size.
+
+    const user = userEvent.setup();
+    render(<StockingEventForm />);
+
+    const retention_input = screen.getByLabelText(/tag retention \(\%\)/i, {
+      selector: "input",
+    });
+
+    await user.type(retention_input, "101");
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "tags_applied.0.retention_rate_pct-error",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    const errorMsg = /tag retention rate cannot exceed 100/i;
+    await waitFor(() => {
+      expect(screen.getByText(errorMsg)).toBeInTheDocument();
+    });
+
+    // retention rate, pop_size and sam_size all have to be > 0
+
+    await user.type(retention_input, "0");
+
+    const pop_size_input = screen.getByLabelText(/retention population size/i, {
+      selector: "input",
+    });
+    await user.type(pop_size_input, "0");
+
+    const sam_size_input = screen.getByLabelText(/retention sample size/i, {
+      selector: "input",
+    });
+    await user.type(sam_size_input, "0");
+
+    // resubmit and update the validation.
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    //const rate_errorMsg = /tag retention rate must be greater than 0/i;
+    const pop_size_errorMsg = /population size must be greater than 0/i;
+    const sam_size_errorMsg = /sample size must be greater than 0/i;
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "tags_applied.0.retention_rate_pct-error",
+        }),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("alert", {
+          name: "tags_applied.0.retention_rate_pop_size-error",
+        }),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("alert", {
+          name: "tags_applied.0.retention_rate_sample_size-error",
+        }),
+      ).toBeInTheDocument();
+
+      //expect(screen.getByText(rate_errorMsg)).toBeInTheDocument();
+      expect(screen.getByText(pop_size_errorMsg)).toBeInTheDocument();
+      expect(screen.getByText(sam_size_errorMsg)).toBeInTheDocument();
+    });
+  }, 20000);
+});
