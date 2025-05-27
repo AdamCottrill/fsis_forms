@@ -637,6 +637,18 @@ test("empty string development_stage should throw an error", () => {
   expect(issue.message).toMatch(/development stage is a required field/i);
 });
 
+test("inconsistent age and dev_stage should throw an error", () => {
+  // yearlings (51) cannot be 0 months old:
+  const data_in = { ...good_data, development_stage_id: "51", fish_age: 0 };
+
+  expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+
+  const issue = pluck_first_issue(StockingEventSchema, data_in);
+  expect(issue.message).toMatch(
+    /fish age is not consistent with development stage/i,
+  );
+});
+
 describe("fin clip", () => {
   test("missing fin_clips should throw an error", () => {
     const data_in = { ...good_data, fin_clips: [] };

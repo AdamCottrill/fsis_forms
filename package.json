@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest watch --silent",
     "coverage": "vitest run --coverage",
-    "test-file": "vitest ./src/pages/StockingEventForm.test.ts",
+    "test-file": "vitest ./src/schemas/StockingEventSchema.test.ts",
     "test-report": "vitest --reporter=html --outputFile=./test-report/index.html",
     "preview-test-report": "npx vite preview --outDir ./test-report"
   },

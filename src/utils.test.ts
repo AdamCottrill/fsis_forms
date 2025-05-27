@@ -141,7 +141,6 @@ describe("parseSlug", () => {
     const slug = "foo";
     const lots = [];
     const value = parseLotSlug(lots, slug);
-    console.log(value);
     expect(JSON.stringify(value)).toBe("{}");
   });
 });

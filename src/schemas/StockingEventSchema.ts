@@ -5,6 +5,27 @@ import { AppliedTagSchema } from "./AppliedTagSchema";
 
 const choice = z.object({ label: z.string(), value: z.string() });
 
+export const validateDevStageAndFishAge = (
+  fish_age: number,
+  dev_stage: string,
+): boolean => {
+  if (["10", "11", "12"].indexOf(dev_stage) >= 0 && fish_age != 0) {
+    return false;
+  } else if (["50", "52", "53"].indexOf(dev_stage) >= 0 && fish_age < 20) {
+    return false;
+  } else if (dev_stage === "81" && fish_age > 1) {
+    return false;
+  } else if (dev_stage === "31" && (fish_age < 1 || fish_age > 2)) {
+    return false;
+  } else if (dev_stage === "32" && (fish_age < 3 || fish_age > 9)) {
+    return false;
+  } else if (dev_stage === "51" && (fish_age < 10 || fish_age > 19)) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
 export const StockingEventSchema: ZodType<StockingEventInputs> = z
   .object({
     lot_slug: z.string({
@@ -371,4 +392,19 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
         message: "Latitude is required if Longitude is provided",
       });
     }
+
+    // fish age in months must be consistent with development stage
+    if (typeof data.fish_age === "number" && data.development_stage_id) {
+      if (
+        !validateDevStageAndFishAge(data.fish_age, data.development_stage_id)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["fish_age"],
+          message: "Fish Age is not consistent with Development Stage",
+        });
+      }
+    }
+
+    // age min, age max
   });
