@@ -767,6 +767,21 @@ describe("clip_retention_pct", () => {
     const data_out = StockingEventSchema.parse(data_in);
     expect(data_out).toEqual({ ...expected_out, ...patch });
   });
+
+  test("empty string is fine too", () => {
+    // the form return an empty string by default
+    const patch = { clip_retention_pct: "" };
+    const data_in = {
+      ...good_data,
+      ...patch,
+    };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual({
+      ...expected_out,
+      clip_retention_pct: undefined,
+    });
+  });
+
   test("values <=0 will throw an error", () => {
     const data_in = { ...good_data, clip_retention_pct: -0.01 };
     expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);

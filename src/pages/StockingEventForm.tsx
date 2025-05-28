@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useIsFetching } from "@tanstack/react-query";
 
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -86,12 +86,43 @@ export const StockingEventForm = (props) => {
   };
 
   const default_values = {
+    lot_slug: "",
+    stocking_admin_unit_id: null,
+    publication_date: "",
+    stocking_purposes: [],
+    proponent_id: "",
+    release_method: "",
+    //stocking_date: Date;
+    stocking_date: "",
+    // stocking_time: time!!
+    transit_mortality: "",
+    site_temperature: "",
+    rearing_temperature: "",
+    water_depth: "",
+    transit_methods: [],
+    destination_waterbody: "",
+    stocked_waterbody: "",
+    //stocking_site: "",
+    stocking_site: "",
     latitude_decimal_degrees: "",
     longitude_decimal_degrees: "",
-    stocking_purposes: [],
+    fish_stocked_count: "",
+    fish_weight: "",
+    total_biomass: "",
+    fish_age: "",
+    development_stage_id: "",
     fin_clips: [],
-    transit_methods: [],
+    clip_retention_pct: "",
     tags_applied: [{ ...applied_tags_defaults }],
+    inventory_comments: "",
+    marking_comments: "",
+    stocking_comments: "",
+
+    // these are some current fields that we may or may not need:
+    oxytetracycline: false,
+    brand: false,
+    fluorescent_dye: false,
+    other_mark: false,
   };
 
   const developmentStages = useDevelopmentStages();
@@ -108,6 +139,8 @@ export const StockingEventForm = (props) => {
 
   const lotData = useLots();
 
+  const results = useRef(null);
+
   const {
     control,
     register,
@@ -117,11 +150,13 @@ export const StockingEventForm = (props) => {
     watch,
     getValues,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitSuccessful },
   } = useForm<StockingEventInputs>({
     defaultValues: default_values,
     resolver: zodResolver(StockingEventSchema),
   });
+
+  const submittedData = watch();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -133,12 +168,22 @@ export const StockingEventForm = (props) => {
 
   const onSubmit = (values) => {
     console.log("Values:::", values);
+    results.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const onError = (error) => {
     const values = getValues();
     console.log("FORM_VALUES:::", values);
     console.log("DEV_MSG_ERROR:::", error);
+  };
+
+  const handleReset = () => {
+    reset({ default_values });
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
   };
 
   //=============================================================
@@ -205,12 +250,15 @@ export const StockingEventForm = (props) => {
     <>
       <Container>
         <Row className="justify-content-center">
-          <h1>Stocking Event Form</h1>
+          <h1 className="mt-4">Stocking Event Form</h1>
           <RequiredFieldsMsg />
 
           <Loading isFetching={isFetching} />
 
-          <Form onSubmit={handleSubmit(onSubmit, onError)} onReset={reset}>
+          <Form
+            onSubmit={handleSubmit(onSubmit, onError)}
+            onReset={handleReset}
+          >
             <Card className="my-1">
               <Card.Header as="h2">
                 <Row>
@@ -251,7 +299,6 @@ export const StockingEventForm = (props) => {
                 )}
               </Card.Body>
             </Card>
-
             <Card className="my-1">
               <Card.Header as="h2">
                 <div className="h5">Event Admin</div>
@@ -310,7 +357,6 @@ export const StockingEventForm = (props) => {
                 </Card>
               </Card.Body>
             </Card>
-
             <Card className="my-1">
               <Card.Header as="h2">
                 <div className="h5">Event Attributes</div>
@@ -414,7 +460,6 @@ export const StockingEventForm = (props) => {
                 </Card>
               </Card.Body>
             </Card>
-
             <Card className="my-1">
               <Card.Header as="h2">
                 <div className="h5">Spatial Attributes</div>
@@ -514,7 +559,6 @@ export const StockingEventForm = (props) => {
                 </Row>
               </Card.Body>
             </Card>
-
             <Card className="my-1">
               <Card.Header as="h2">
                 <div className="h5">Fish Attributes</div>
@@ -590,7 +634,6 @@ export const StockingEventForm = (props) => {
                 </Row>
               </Card.Body>
             </Card>
-
             <Card className="my-1">
               <Card.Header as="h2">
                 <div className="h5">Fin Clips and Marks</div>
@@ -690,7 +733,6 @@ export const StockingEventForm = (props) => {
                 </Card>
               </Card.Body>
             </Card>
-
             <Accordion>
               <Card className="my-2">
                 <Card.Header as="h2">
@@ -872,7 +914,6 @@ export const StockingEventForm = (props) => {
                 </Accordion.Collapse>
               </Card>
             </Accordion>
-
             <Accordion>
               <Card className="my-2">
                 <Card.Header as="h2">
@@ -918,14 +959,20 @@ export const StockingEventForm = (props) => {
                 </Accordion.Collapse>
               </Card>
             </Accordion>
+            <Row className="my-4 justify-content-between">
+              <Col md={2}>
+                <Button variant="outline-primary" onClick={handleReset}>
+                  Reset Form
+                </Button>
+              </Col>
 
-            <Row className="my-4 justify-content-end">
               <Col md={1}>
                 <Button variant="primary" type="submit">
                   Submit
                 </Button>
               </Col>
             </Row>
+            <DevTool control={control} /> {/* set up the dev tool */}
           </Form>
         </Row>
         <Modal show={show} onHide={handleModalClose} fullscreen={true}>
@@ -947,7 +994,20 @@ export const StockingEventForm = (props) => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <DevTool control={control} /> {/* set up the dev tool */}
+
+        <div ref={results}>
+          {isSubmitSuccessful && (
+            <Card border="success" className="my-2">
+              <Card.Header>Success!</Card.Header>
+              <Card.Body>
+                <Card.Title>
+                  This data would have been sent to the server:{" "}
+                </Card.Title>
+                <pre>{JSON.stringify(submittedData, null, 2)}</pre>
+              </Card.Body>
+            </Card>
+          )}
+        </div>
       </Container>
     </>
   );

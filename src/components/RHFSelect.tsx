@@ -48,7 +48,7 @@ export const RHFSelect = ({
           render={({ field: { onChange, value, ...field } }) => (
             <Select
               {...field}
-              value={options?.find((x) => x.value === value)}
+              value={options?.find((x) => x.value === value) || ""}
               onChange={(val) => onChange(val?.value || val)}
               isClearable={true}
               inputId={`select-${name}`}

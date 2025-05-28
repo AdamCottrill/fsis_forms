@@ -3,7 +3,7 @@ import { z, ZodType } from "zod"; // Add new import
 
 import { AppliedTagSchema } from "./AppliedTagSchema";
 
-const choice = z.object({ label: z.string(), value: z.string() });
+//const choice = z.object({ label: z.string(), value: z.string() });
 
 export const validateDevStageAndFishAge = (
   fish_age: number,
@@ -28,15 +28,21 @@ export const validateDevStageAndFishAge = (
 
 export const StockingEventSchema: ZodType<StockingEventInputs> = z
   .object({
-    lot_slug: z.string({
-      required_error: "Lot Identifier is a required field",
-    }),
-    stocking_admin_unit_id: z
-      .number({
-        required_error: "Stocking Admin Unit is a required field",
+    lot_slug: z
+      .string({
+        required_error: "Lot Identifier is a required field",
       })
-      .int()
-      .positive(),
+      .nonempty({ message: "Lot Identifier is a required field" }),
+    stocking_admin_unit_id: z.preprocess(
+      (x) => (x === null ? undefined : x),
+
+      z
+        .number({
+          required_error: "Stocking Admin Unit is a required field",
+        })
+        .int()
+        .positive(),
+    ),
 
     publication_date: z.string().date().optional().or(z.literal("")),
     stocking_purposes: z.preprocess(
@@ -208,6 +214,31 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       )
       .optional(),
 
+    //    fish_stocked_count: z
+    //      .number({
+    //        required_error:
+    //          "Number of Fish Stocked is required and must be positive.",
+    //      })
+    //      .or(
+    //        z
+    //          .string({
+    //            required_error:
+    //              "Number of Fish Stocked is required and must be positive.",
+    //          })
+    //          .nonempty({
+    //            message: "Number of Fish Stocked is required and must be positive.",
+    //          }),
+    //      )
+    //      .pipe(
+    //        z.coerce
+    //          .number()
+    //          .positive({
+    //            message: "Number of Fish Stocked is required and must be positive.",
+    //          })
+    //          .int(),
+    //      ),
+    //
+
     fish_stocked_count: z.union([
       z.coerce
         .number()
@@ -217,6 +248,7 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
         .int(),
       z.nan(),
     ]),
+
     fish_weight: z
       .literal("")
       .transform(() => undefined)
@@ -334,8 +366,6 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
           }),
       )
       .optional(),
-
-    //tags_applied: ?AppliedTag[];
 
     tags_applied: z.array(AppliedTagSchema).optional(),
 
