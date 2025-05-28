@@ -20,6 +20,7 @@ import Loading from "../components/Loading";
 
 import { RHFAsyncSelect } from "../components/RHFAsyncSelect";
 import { RHFInput } from "../components/RHFInput";
+import { RHFInlineInput } from "../components/RHFInlineInput";
 import { RHFSelect } from "../components/RHFSelect";
 import { RHFTextArea } from "../components/RHFTextArea";
 import { RHFCheckBoxArray } from "../components/RHFCheckBoxArray";
@@ -47,6 +48,7 @@ import { DataDictOverlay } from "../components/DataDictOverlay";
 
 import { StockingEventSchema } from "../schemas/StockingEventSchema";
 import { StockingEventInputs } from "../types/types";
+import Collapse from "react-bootstrap/esm/Collapse";
 
 interface SiteOption {
   readonly value: string;
@@ -122,7 +124,8 @@ export const StockingEventForm = (props) => {
     oxytetracycline: false,
     brand: false,
     fluorescent_dye: false,
-    other_mark: false,
+    other_marks: false,
+    other_marks_description: "",
   };
 
   const developmentStages = useDevelopmentStages();
@@ -163,7 +166,7 @@ export const StockingEventForm = (props) => {
     name: "tags_applied",
   });
 
-  const [lot_slug] = watch(["lot_slug"]);
+  const [lot_slug, other_marks] = watch(["lot_slug", "other_marks"]);
   const setSelectedLot = (slug) => setValue("lot_slug", slug);
 
   const onSubmit = (values) => {
@@ -683,13 +686,7 @@ export const StockingEventForm = (props) => {
                     <Card.Title>Marks and Brands</Card.Title>
 
                     <Row>
-                      <Col>
-                        <Form.Check // prettier-ignore
-                          type="checkbox"
-                          id="mark-flag"
-                          label="Were these fish marked?"
-                        />
-                      </Col>
+                      <p>Were these fish marked in some way?</p>
                     </Row>
 
                     <Row className="my-2">
@@ -720,13 +717,32 @@ export const StockingEventForm = (props) => {
                         />
                       </Col>
 
-                      <Col>
-                        <Form.Check // prettier-ignore
-                          type="checkbox"
-                          id="other_mark"
-                          label="Other"
-                          {...register("other_mark")}
-                        />
+                      <Col xs={6}>
+                        <Row>
+                          <Col sm={3}>
+                            <Form.Check // prettier-ignore
+                              type="checkbox"
+                              id="other_marks"
+                              {...register("other_marks")}
+                              label="Other Marks"
+                            />
+                          </Col>
+
+                          <Col>
+                            <RHFInlineInput
+                              control={control}
+                              name="other_marks_description"
+                              label="Other Marks Description"
+                              inputType="text"
+                              placeholderText="Please Specify"
+                              disabled={!other_marks}
+                              error_message={
+                                errors?.other_marks_description?.message
+                              }
+                              fgClass="mb-3"
+                            />
+                          </Col>
+                        </Row>
                       </Col>
                     </Row>
                   </Card.Body>

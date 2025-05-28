@@ -75,7 +75,8 @@ export interface StockingEventInputs {
   oxytetracycline?: boolean;
   brand?: boolean;
   fluorescent_dye?: boolean;
-  other_mark?: boolean;
+  other_marks?: boolean;
+  other_marks_description?: string;
 }
 
 export interface PreLot {

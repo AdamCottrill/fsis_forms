@@ -214,31 +214,6 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
       )
       .optional(),
 
-    //    fish_stocked_count: z
-    //      .number({
-    //        required_error:
-    //          "Number of Fish Stocked is required and must be positive.",
-    //      })
-    //      .or(
-    //        z
-    //          .string({
-    //            required_error:
-    //              "Number of Fish Stocked is required and must be positive.",
-    //          })
-    //          .nonempty({
-    //            message: "Number of Fish Stocked is required and must be positive.",
-    //          }),
-    //      )
-    //      .pipe(
-    //        z.coerce
-    //          .number()
-    //          .positive({
-    //            message: "Number of Fish Stocked is required and must be positive.",
-    //          })
-    //          .int(),
-    //      ),
-    //
-
     fish_stocked_count: z.union([
       z.coerce
         .number()
@@ -376,7 +351,8 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
     oxytetracycline: z.boolean().optional(),
     brand: z.boolean().optional(),
     fluorescent_dye: z.boolean().optional(),
-    other_mark: z.boolean().optional(),
+    other_marks: z.boolean().optional(),
+    other_marks_description: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     const one_year = ((d) => d.setFullYear(d.getFullYear() + 1))(new Date());
@@ -437,4 +413,16 @@ export const StockingEventSchema: ZodType<StockingEventInputs> = z
     }
 
     // age min, age max
+
+    if (
+      data.other_marks &&
+      (data.other_marks_description === undefined ||
+        data.other_marks_description == "")
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["other_marks_description"],
+        message: "Please provide a description of the other marks",
+      });
+    }
   });

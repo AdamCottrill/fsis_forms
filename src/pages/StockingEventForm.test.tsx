@@ -1256,8 +1256,9 @@ describe("Superrefine validations", () => {
   // + lat is required if long is provided
   // + lon is required if lat is provided
   // + publication date cannot occur before stocking date
+  // + other_marks_description is required if other_marks is checked.
 
-  test("superrefine validation works as expected", async () => {
+  test.only("superrefine validation works as expected", async () => {
     const user = userEvent.setup();
     render(<StockingEventForm />);
 
@@ -1433,6 +1434,43 @@ describe("Superrefine validations", () => {
 
     expect(screen.queryByText(longitudeErrorMsg)).not.toBeInTheDocument();
     expect(screen.queryByText(latitudeErrorMsg)).not.toBeInTheDocument();
+
+    // verify that the other_marks_descitpion error is not in the response:
+
+    const otherMarksErrorMsg =
+      /please provide a description of the other marks/i;
+
+    expect(screen.queryByText(otherMarksErrorMsg)).not.toBeInTheDocument();
+
+    //find and check the 'other marks' check mark and re-submit
+    const mark_checkbox = await screen.findByRole("checkbox", {
+      name: /other marks/i,
+    });
+
+    await userEvent.click(mark_checkbox);
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+
+    //verify that the other_marks_descitpion error is in the response:
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("alert", {
+          name: "other_marks_description-error",
+        }),
+      ).toBeInTheDocument();
+      expect(screen.getByText(otherMarksErrorMsg)).toBeInTheDocument();
+    });
+
+    // add something to the textbox and re-submit
+    const otherMarkDesc = screen.getByLabelText(/other marks description/i, {
+      selector: "input",
+    });
+    await user.type(otherMarkDesc, "coloured elastomer");
+
+    await user.click(screen.getByRole("button", { name: /submit/i }));
+    // verify that the other_marks_descitpion error is not in the response:
+    expect(screen.queryByText(otherMarksErrorMsg)).not.toBeInTheDocument();
   }, 60000); // <- timeout, this is a very long running test!
 });
 

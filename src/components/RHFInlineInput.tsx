@@ -5,25 +5,10 @@ import Col from "react-bootstrap/Col";
 
 import { DataDictOverlay } from "./DataDictOverlay";
 
-import { Controller, Control, FieldValues } from "react-hook-form";
+import { Controller } from "react-hook-form";
+import { RHFInputProps } from "./RHFInput";
 
-export interface RHFInputProps<T> {
-  control: Control<FieldValues, T>;
-  name: string;
-  db_field_name: string;
-  popup_placement: string;
-  label: string;
-  placeholderText: string;
-  fgClass: string;
-  error_message?: string;
-  required: string;
-  inputType: "string" | "date" | "number";
-  defaultValue: string;
-  helpText: string;
-  disabled?: boolean;
-}
-
-export const RHFInput: React.FC<RHFInputProps> = ({
+export const RHFInlineInput: React.FC<RHFInputProps> = ({
   control,
   name,
   db_field_name,
@@ -40,22 +25,19 @@ export const RHFInput: React.FC<RHFInputProps> = ({
 }) => {
   return (
     <Form.Group className={fgClass || ""} controlId={`select-${name}`}>
-      <Row className="justify-content-between">
-        <Col>
-          <Form.Label>
-            {label}
-            {required && <span className="required-field">*</span>}
-          </Form.Label>
-        </Col>
-        {db_field_name && (
-          <Col className="col-2" align="end">
-            <DataDictOverlay
-              db_field_name={db_field_name}
-              popup_placement={popup_placement}
-            />
-          </Col>
-        )}
-      </Row>
+      {label && (
+        <Form.Label>
+          {label}
+          {required && <span className="required-field">*</span>}
+        </Form.Label>
+      )}
+
+      {db_field_name && (
+        <DataDictOverlay
+          db_field_name={db_field_name}
+          popup_placement={popup_placement}
+        />
+      )}
 
       <Controller
         control={control}

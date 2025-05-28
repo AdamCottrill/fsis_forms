@@ -36,7 +36,8 @@ const good_data: StockingEventInputs = {
   oxytetracycline: false,
   brand: false,
   fluorescent_dye: false,
-  other_mark: false,
+  other_marks: false,
+  other_marks_description: "",
 };
 
 // we expect some of our inputs to be transformed if everything works
@@ -799,9 +800,42 @@ describe("clip_retention_pct", () => {
   });
 });
 
-//  //tags_applied: ?StockingEvent[];
 //  inventory_comments: z.string().optional(),
 //  marking_comments: z.string().optional(),
 //  stocking_comments: z.string().optional(),
 //});
 //
+
+describe("other_marks", () => {
+  test("if other_marks is false, description can be empty", () => {
+    const patch = { other_marks: false };
+    const data_in = {
+      ...good_data,
+      ...patch,
+    };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
+  });
+
+  test("if other_marks is true, description can be passed in", () => {
+    const patch = {
+      other_marks: true,
+      other_marks_description: "a novel kind of mark",
+    };
+    const data_in = {
+      ...good_data,
+      ...patch,
+    };
+    const data_out = StockingEventSchema.parse(data_in);
+    expect(data_out).toEqual({ ...expected_out, ...patch });
+  });
+
+  test("if other_marks is true, description can not be empty", () => {
+    const data_in = { ...good_data, other_marks: true };
+    expect(() => StockingEventSchema.parse(data_in)).toThrow(ZodError);
+    const issue = pluck_first_issue(StockingEventSchema, data_in);
+    expect(issue.message).toMatch(
+      /please provide a description of the other marks/i,
+    );
+  });
+});
